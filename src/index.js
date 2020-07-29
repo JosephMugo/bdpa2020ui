@@ -4,23 +4,20 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
-import NavDropdown from 'react-bootstrap/NavDropdown'
-import Form from 'react-bootstrap/Form'
-import FormControl from 'react-bootstrap/FormControl'
-import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Home from './containers/Home'
 
 ReactDOM.render(
   <React.StrictMode>
     <Navbar bg="light" expand="lg">
-  <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+  <Navbar.Brand href="/">Plane Stuff</Navbar.Brand>
   <Navbar.Toggle aria-controls="basic-navbar-nav" />
   <Navbar.Collapse id="basic-navbar-nav">
     <Nav className="mr-auto">
-      <Nav.Link href="#home">Home</Nav.Link>
-      <Nav.Link href="#flights">Flights</Nav.Link>
-      <Nav.Link href="#booking">Booking</Nav.Link>
-      <Nav.Link href="#ticket">Ticket</Nav.Link>
+      <Nav.Link href="/">Home</Nav.Link>
+      <Nav.Link href="/flights">Flights</Nav.Link>
+      <Nav.Link href="/booking">Booking</Nav.Link>
+      <Nav.Link href="/tickets">Ticket</Nav.Link>
     </Nav>
   </Navbar.Collapse>
 </Navbar>
