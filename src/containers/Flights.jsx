@@ -29,8 +29,8 @@ export const Flights = () => {
                     flightNumber: fl.flightNumber,
                     flight_id: fl.flight_id,
                     bookable: fl.bookable,
-                    arriveAtReceiver: fl.arriveAtReceiver,
                     departFromSender: fl.departFromSender,
+                    arriveAtReceiver: fl.arriveAtReceiver,
                     status: fl.status,
                     gate: fl.gate,
                     seatPrice: fl.seatPrice
@@ -71,8 +71,8 @@ export const Flights = () => {
                         <th>Departing To</th>
                         <th>Flight Number</th>
                         <th>Bookable</th>
-                        <th>Arrive At Receiver</th>
                         <th>Depart From Sender</th>
+                        <th>Arrive At Receiver</th>
                         <th>Status</th>
                         <th>Gate</th>
                         <th>Seat Price</th>
@@ -88,8 +88,8 @@ export const Flights = () => {
                             <td>{fl.departingTo}</td>
                             <td>{fl.flightNumber}</td>
                             <td>{fl.bookable}</td>
-                            <td>{new Date(fl.arriveAtReceiver).toDateString()}</td>
-                            <td>{new Date(fl.departFromSender).toDateString()}</td>
+                            <td>{new Date(fl.departFromSender).toLocaleString()}</td>
+                            <td>{new Date(fl.arriveAtReceiver).toLocaleString()}</td>
                             <td>{fl.status}</td>
                             <td>{fl.gate}</td>
                             <td>{fl.seatPrice}</td>
