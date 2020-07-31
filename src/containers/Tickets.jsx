@@ -1,9 +1,11 @@
 import React from "react"
 const Tickets = () => {
     
-    return (<div>
+    return (
+    <div>
        These are your tickets
-    </div>)
+    </div>
+    )
 }
 
 export default Tickets

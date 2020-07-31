@@ -3,22 +3,42 @@ import {
     BrowserRouter as Router,
     //Switch,
     Route,
-   // Link
-  } from "react-router-dom";
-  import Booking from "./containers/Booking"
-  import Tickets from "./containers/Tickets"
-  import Home from "./containers/Home"
+    // Link
+} from "react-router-dom";
+import Navbar from 'react-bootstrap/Navbar'
+import Nav from 'react-bootstrap/Nav'
+
+import Booking from "./containers/Booking"
+import Flights from "./containers/Flights"
+import Home from "./containers/Home"
+import Tickets from "./containers/Tickets"
+
 const App = () => {
-    
-    return (<div>
-        <Router>
-         {/* <Route exact path="/home" component={Home}/>  */}
-        {/* <Route exact path="/flights" component={FlightsPage}/> */}
-        <Route exact path="/booking" component={Booking}/>
-        <Route exact path="/tickets" component={Tickets}/>
-        <Route exact path="/" component={Home}/>
-        </Router>
-    </div>)
+    return (
+        <div>
+            <Navbar bg="light" expand="lg">
+                <Navbar.Brand href="/">Plane Stuff</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="mr-auto">
+                        <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link href="/flights">Flights</Nav.Link>
+                        <Nav.Link href="/booking">Booking</Nav.Link>
+                        <Nav.Link href="/tickets">Ticket</Nav.Link>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+            <Router>
+                {/* <Route exact path="/home" component={Home}/>  */}
+                <div className='content'>
+                <Route exact path="/flights" component={Flights} />
+                <Route exact path="/booking" component={Booking} />
+                <Route exact path="/tickets" component={Tickets} />
+                <Route exact path="/" component={Home} />
+                </div>
+            </Router>
+        </div>
+    )
 }
 
 export default App
