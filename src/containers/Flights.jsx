@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import superagent from "superagent";
 
 import flights_key from '../doNotCommit.js'
@@ -16,10 +16,10 @@ export const Flights = () => {
             console.log(`${flights_key}`)
             const response = await superagent.get('https://airports.api.hscc.bdpa.org/v1/flights/all').set('key', `${flights_key}`)
 
-            // const flightsList = JSON.parse(JSON.stringify(response.body).replace(/null/g, '""'))
-            // const flightsList = JSON.parse(JSON.stringify(response.body).replace(/false/g, '"No"'))
-            const flightsList = response.body
-            const flightsIDList = flightsList.flights.map(fl => {
+            // const flightsJSON = JSON.parse(JSON.stringify(response.body).replace(/null/g, '""'))
+            // const flightsJSON = JSON.parse(JSON.stringify(response.body).replace(/false/g, '"No"'))
+            const flightsJSON = response.body
+            const flightsList = flightsJSON.flights.map(fl => {
                 return {
                     type: fl.type,
                     airline: fl.airline,
@@ -29,16 +29,16 @@ export const Flights = () => {
                     flightNumber: fl.flightNumber,
                     flight_id: fl.flight_id,
                     bookable: fl.bookable,
-                    departFromSender: fl.departFromSender,
-                    arriveAtReceiver: fl.arriveAtReceiver,
+                    departFromSender: new Date(fl.departFromSender).toLocaleString(),
+                    arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleString(),
                     status: fl.status,
                     gate: fl.gate,
-                    seatPrice: fl.seatPrice
+                    seatPrice: `$${fl.seatPrice}`
                 }
             })
 
-            setFlights(flightsList.flights)
-            setSearchFlights(flightsList.flights)
+            setFlights(flightsList)
+            setSearchFlights(flightsList.filter(fl => !fl.status.includes('past')))
 
         } catch (err) {
             console.error(err);
@@ -57,7 +57,7 @@ export const Flights = () => {
                     <InputGroup.Prepend>
                         <Button variant="primary" onClick={makeSuperAgentCall}>Request Flight Information</Button>
                     </InputGroup.Prepend>
-                    <FormControl style={{ float: "right" }} value={searchTerm} onChange={handleSearch} placeholder='Search with flight number or airline' />
+                    <FormControl value={searchTerm} onChange={handleSearch} placeholder='Search with flight number or airline' />
                 </InputGroup>
             </form>
             <br />
@@ -88,8 +88,8 @@ export const Flights = () => {
                             <td>{fl.departingTo}</td>
                             <td>{fl.flightNumber}</td>
                             <td>{fl.bookable}</td>
-                            <td>{new Date(fl.departFromSender).toLocaleString()}</td>
-                            <td>{new Date(fl.arriveAtReceiver).toLocaleString()}</td>
+                            <td>{fl.departFromSender}</td>
+                            <td>{fl.arriveAtReceiver}</td>
                             <td>{fl.status}</td>
                             <td>{fl.gate}</td>
                             <td>{fl.seatPrice}</td>
