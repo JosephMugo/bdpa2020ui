@@ -4,7 +4,7 @@ import {
     //Switch,
     Route,
     // Link
-} from "react-router-dom";
+} from "react-router-dom"
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 

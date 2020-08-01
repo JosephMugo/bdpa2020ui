@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from "react";
-import superagent from "superagent";
+import React, { useState, useEffect } from "react"
+import superagent from "superagent"
 
 import flights_key from '../doNotCommit.js'
 
-import { Table, Button, InputGroup, FormControl } from 'react-bootstrap'
+import { Button, InputGroup, FormControl } from 'react-bootstrap'
+import BootstrapTable from 'react-bootstrap-table-next'
+import paginationFactory from 'react-bootstrap-table2-paginator'
 
 export const Flights = () => {
     const [flights, setFlights] = useState([])
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState("")
     const [searchFlights, setSearchFlights] = useState([])
 
     // done in a try catch format!
     const makeSuperAgentCall = async () => {
         try {
-            console.log(`${flights_key}`)
             const response = await superagent.get('https://airports.api.hscc.bdpa.org/v1/flights/all').set('key', `${flights_key}`)
 
-            // const flightsList = JSON.parse(JSON.stringify(response.body).replace(/null/g, '""'))
-            // const flightsList = JSON.parse(JSON.stringify(response.body).replace(/false/g, '"No"'))
-            const flightsList = response.body
-            const flightsIDList = flightsList.flights.map(fl => {
+            // const flightsJSON = JSON.parse(JSON.stringify(response.body).replace(/null/g, '""'))
+            // const flightsJSON = JSON.parse(JSON.stringify(response.body).replace(/false/g, '"No"'))
+            const flightsJSON = response.body
+            const flightsList = flightsJSON.flights.map(fl => {
                 return {
                     type: fl.type,
                     airline: fl.airline,
@@ -29,26 +30,41 @@ export const Flights = () => {
                     flightNumber: fl.flightNumber,
                     flight_id: fl.flight_id,
                     bookable: fl.bookable,
-                    departFromSender: fl.departFromSender,
-                    arriveAtReceiver: fl.arriveAtReceiver,
+                    departFromSender: new Date(fl.departFromSender).toLocaleTimeString('en-US'),
+                    arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleTimeString('en-US'),
                     status: fl.status,
                     gate: fl.gate,
-                    seatPrice: fl.seatPrice
+                    seatPrice: `$${fl.seatPrice}`
                 }
             })
 
-            setFlights(flightsList.flights)
-            setSearchFlights(flightsList.flights)
+            setFlights(flightsList)
+            setSearchFlights(flightsList)
 
         } catch (err) {
-            console.error(err);
+            console.error(err)
         }
     }
 
     const handleSearch = event => {
-        setSearchTerm(event.target.value);
+        setSearchTerm(event.target.value)
         setSearchFlights(flights.filter(fl => fl.flightNumber.toLowerCase().includes(event.target.value.toLowerCase()) || fl.airline.toLowerCase().includes(event.target.value.toLowerCase())))
     }
+
+    const columns = [
+        { sort: true, dataField: "type", text: "Type"},
+        { sort: true, dataField: "airline", text: "Airline"},
+        { sort: true, dataField: "comingFrom", text: "Coming From"},
+        { sort: true, dataField: "landingAt", text: "Landing At"},
+        { sort: true, dataField: "departingTo", text: "Departing To"},
+        { sort: true, dataField: "flightNumber", text: "Flight No."},
+        { sort: true, dataField: "bookable", text: "Bookable"},
+        { sort: true, dataField: "departFromSender", text: "Depart Time"},
+        { sort: true, dataField: "arriveAtReceiver", text: "Arrival Time"},
+        { sort: true, dataField: "status", text: "Status"},
+        { sort: true, dataField: "gate", text: "Gate"},
+        { sort: true, dataField: "seatPrice", text: "Seat Price"}
+    ]
 
     return (
         <div>
@@ -61,42 +77,7 @@ export const Flights = () => {
                 </InputGroup>
             </form>
             <br />
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Airline</th>
-                        <th>Coming From</th>
-                        <th>Landing At</th>
-                        <th>Departing To</th>
-                        <th>Flight Number</th>
-                        <th>Bookable</th>
-                        <th>Depart From Sender</th>
-                        <th>Arrive At Receiver</th>
-                        <th>Status</th>
-                        <th>Gate</th>
-                        <th>Seat Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {searchFlights.map(fl => (
-                        <tr key={fl.flight_id}>
-                            <td>{fl.type}</td>
-                            <td>{fl.airline}</td>
-                            <td>{fl.comingFrom}</td>
-                            <td>{fl.landingAt}</td>
-                            <td>{fl.departingTo}</td>
-                            <td>{fl.flightNumber}</td>
-                            <td>{fl.bookable}</td>
-                            <td>{new Date(fl.departFromSender).toLocaleString()}</td>
-                            <td>{new Date(fl.arriveAtReceiver).toLocaleString()}</td>
-                            <td>{fl.status}</td>
-                            <td>{fl.gate}</td>
-                            <td>{fl.seatPrice}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+            <BootstrapTable bootstrap4="true" striped="true" hover="true" keyField="flight_id" data={searchFlights} columns={columns} pagination={ paginationFactory() }/>
         </div>
     )
 }
