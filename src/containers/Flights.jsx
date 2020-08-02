@@ -1,25 +1,27 @@
-import React, { useState } from "react";
-import superagent from "superagent";
+import React, { useState } from "react"
+import superagent from "superagent"
 
 import flights_key from '../doNotCommit.js'
 
-import { Table, Button, InputGroup, FormControl } from 'react-bootstrap'
+import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl } from 'react-bootstrap'
 
 export const Flights = () => {
     const [flights, setFlights] = useState([])
-    const [searchTerm, setSearchTerm] = useState("");
-    const [searchFlights, setSearchFlights] = useState([])
+    const [searchTerm, setSearchTerm] = useState("")
+    const [pages, setPages] = useState([])
+    // const [searchFlights, setSearchFlights] = useState([])
 
-    // done in a try catch format!
-    const makeSuperAgentCall = async () => {
+    // makes a basic flight request to the API
+    const makeFlightRequest = async (URL) => {
+        console.log(URL)
+        console.log(pages)
         try {
-            console.log(`${flights_key}`)
-            const response = await superagent.get('https://airports.api.hscc.bdpa.org/v1/flights/all').set('key', `${flights_key}`)
+            const response = await superagent.get(URL).set('key', `${flights_key}`)
 
             // const flightsJSON = JSON.parse(JSON.stringify(response.body).replace(/null/g, '""'))
             // const flightsJSON = JSON.parse(JSON.stringify(response.body).replace(/false/g, '"No"'))
-            const flightsJSON = response.body
-            const flightsList = flightsJSON.flights.map(fl => {
+            // const flightsJSON = response.body
+            const flightsList = response.body.flights.map(fl => {
                 return {
                     type: fl.type,
                     airline: fl.airline,
@@ -37,29 +39,93 @@ export const Flights = () => {
                 }
             })
 
-            setFlights(flightsList)
-            setSearchFlights(flightsList.filter(fl => !fl.status.includes('past')))
+            // filter flights list to avoid showing past flights
+            setFlights(flightsList.filter(fl => !fl.status.includes('past')))
 
         } catch (err) {
-            console.error(err);
+            console.error(err)
         }
     }
 
-    const handleSearch = event => {
-        setSearchTerm(event.target.value);
-        setSearchFlights(flights.filter(fl => fl.flightNumber.toLowerCase().includes(event.target.value.toLowerCase()) || fl.airline.toLowerCase().includes(event.target.value.toLowerCase())))
+    // searches based on user input
+    const updateSearch = event => {
+        setSearchTerm(event.target.value)
+    }
+
+    const sendSearch = () => {
+        pages.length = 0
+        
+        var queryObject = { "flightNumber": searchTerm }
+        var query = encodeURIComponent(JSON.stringify(queryObject))
+        var URL = 'https://airports.api.hscc.bdpa.org/v1/flights/search?match=' + query
+
+        makeFlightRequest(URL)
+    }
+    
+    // requests 100 flights (initial request)
+    const allFlights = () => {
+        pages.length = 0
+
+        var URL = 'https://airports.api.hscc.bdpa.org/v1/flights/all'
+
+        makeFlightRequest(URL)
+    }
+
+    // adds current page to array, then calls current page
+    const nextPage = () => {
+        // set currentPage to flight_id of last item, add item to pages array
+        var currentPage = flights[flights.length - 1].flight_id
+        setPages(pages.concat(currentPage))
+
+        var URL = 'https://airports.api.hscc.bdpa.org/v1/flights/all?after=' + currentPage
+
+        makeFlightRequest(URL)
+    }
+
+    // deletes last page from array, then calls the previous page
+    const prevPage = () => {
+        if (pages.length > 1) {
+            // delete last item in pages array, set prevPage to id of the previous item
+            pages.pop()
+            var prevPage = pages[pages.length - 1]
+
+            var URL = 'https://airports.api.hscc.bdpa.org/v1/flights/all?after=' + prevPage
+
+            makeFlightRequest(URL)
+        } else {
+            // reset pages array
+            pages.length = 0
+
+            var URL = 'https://airports.api.hscc.bdpa.org/v1/flights/all'
+
+            makeFlightRequest(URL)
+        }
     }
 
     return (
         <div>
-            <form noValidate autoComplete="off">
-                <InputGroup>
-                    <InputGroup.Prepend>
-                        <Button variant="primary" onClick={makeSuperAgentCall}>Request Flight Information</Button>
-                    </InputGroup.Prepend>
-                    <FormControl value={searchTerm} onChange={handleSearch} placeholder='Search with flight number or airline' />
-                </InputGroup>
-            </form>
+            <div className='row'>
+                <div className='col-sm-4'>
+                    <ButtonToolbar>
+                        <ButtonGroup className="mr-2">
+                            <Button variant="primary" onClick={allFlights}>Request All Flights</Button>
+                        </ButtonGroup>
+                        <ButtonGroup className="mr-2">
+                            <Button variant="primary" onClick={prevPage}>Prev</Button>
+                            <Button variant="primary" onClick={nextPage}>Next</Button>
+                        </ButtonGroup>
+                    </ButtonToolbar>
+                </div>
+                <div className='col-sm-4' />
+                <div className='col-sm-4'>
+                    <InputGroup>
+                        <InputGroup.Prepend>
+                            <Button variant="primary" onClick={sendSearch}>Search</Button>
+                        </InputGroup.Prepend>
+                        <FormControl value={searchTerm} onChange={updateSearch} placeholder='Search with flight number' />
+                    </InputGroup>
+                </div>
+            </div>
             <br />
             <Table striped bordered hover>
                 <thead>
@@ -79,7 +145,7 @@ export const Flights = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {searchFlights.map(fl => (
+                    {flights.map(fl => (
                         <tr key={fl.flight_id}>
                             <td>{fl.type}</td>
                             <td>{fl.airline}</td>
