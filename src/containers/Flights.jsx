@@ -1,5 +1,7 @@
 import React, { useState } from "react"
 import superagent from "superagent"
+import { usePromiseTracker, trackPromise } from "react-promise-tracker"
+import Loader from 'react-loader-spinner'
 
 import flights_key from '../doNotCommit.js'
 
@@ -54,21 +56,21 @@ export const Flights = () => {
 
     const sendSearch = () => {
         pages.length = 0
-        
+
         var queryObject = { "flightNumber": searchTerm }
         var query = encodeURIComponent(JSON.stringify(queryObject))
         var URL = 'https://airports.api.hscc.bdpa.org/v1/flights/search?match=' + query
 
-        makeFlightRequest(URL)
+        trackPromise(makeFlightRequest(URL))
     }
-    
+
     // requests 100 flights (initial request)
     const allFlights = () => {
         pages.length = 0
 
         var URL = 'https://airports.api.hscc.bdpa.org/v1/flights/all'
 
-        makeFlightRequest(URL)
+        trackPromise(makeFlightRequest(URL))
     }
 
     // adds current page to array, then calls current page
@@ -79,7 +81,7 @@ export const Flights = () => {
 
         var URL = 'https://airports.api.hscc.bdpa.org/v1/flights/all?after=' + currentPage
 
-        makeFlightRequest(URL)
+        trackPromise(makeFlightRequest(URL))
     }
 
     // deletes last page from array, then calls the previous page
@@ -91,7 +93,7 @@ export const Flights = () => {
 
             var URL = 'https://airports.api.hscc.bdpa.org/v1/flights/all?after=' + prevPage
 
-            makeFlightRequest(URL)
+            trackPromise(makeFlightRequest(URL))
         } else {
             // reset pages array
             pages.length = 0
@@ -102,69 +104,89 @@ export const Flights = () => {
         }
     }
 
-    return (
-        <div>
-            <div className='row'>
-                <div className='col-sm-4'>
-                    <ButtonToolbar>
-                        <ButtonGroup className="mr-2">
-                            <Button variant="primary" onClick={allFlights}>Request All Flights</Button>
-                        </ButtonGroup>
-                        <ButtonGroup className="mr-2">
-                            <Button variant="primary" onClick={prevPage}>Prev</Button>
-                            <Button variant="primary" onClick={nextPage}>Next</Button>
-                        </ButtonGroup>
-                    </ButtonToolbar>
-                </div>
-                <div className='col-sm-4' />
-                <div className='col-sm-4'>
-                    <InputGroup>
-                        <InputGroup.Prepend>
-                            <Button variant="primary" onClick={sendSearch}>Search</Button>
-                        </InputGroup.Prepend>
-                        <FormControl value={searchTerm} onChange={updateSearch} placeholder='Search with flight number' />
-                    </InputGroup>
-                </div>
+    const LoadingIndicator = props => {
+        const { promiseInProgress } = usePromiseTracker();
+        return (
+            promiseInProgress &&
+            <div
+                style={{
+                    width: "100%",
+                    height: "35px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+                <Loader type="ThreeDots" color="lightgray" height="100" width="100" />
             </div>
-            <br />
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Airline</th>
-                        <th>Coming From</th>
-                        <th>Landing At</th>
-                        <th>Departing To</th>
-                        <th>Flight Number</th>
-                        <th>Bookable</th>
-                        <th>Depart From Sender</th>
-                        <th>Arrive At Receiver</th>
-                        <th>Status</th>
-                        <th>Gate</th>
-                        <th>Seat Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {flights.map(fl => (
-                        <tr key={fl.flight_id}>
-                            <td>{fl.type}</td>
-                            <td>{fl.airline}</td>
-                            <td>{fl.comingFrom}</td>
-                            <td>{fl.landingAt}</td>
-                            <td>{fl.departingTo}</td>
-                            <td>{fl.flightNumber}</td>
-                            <td>{fl.bookable}</td>
-                            <td>{fl.departFromSender}</td>
-                            <td>{fl.arriveAtReceiver}</td>
-                            <td>{fl.status}</td>
-                            <td>{fl.gate}</td>
-                            <td>{fl.seatPrice}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+        );
+    }
+
+return (
+    <div>
+        <div className='row'>
+            <div className='col-sm-4'>
+                <ButtonToolbar>
+                    <ButtonGroup className="mr-2">
+                        <Button variant="primary" onClick={allFlights}>Request All Flights</Button>
+                    </ButtonGroup>
+                    <ButtonGroup className="mr-2">
+                        <Button variant="primary" onClick={prevPage}>Prev</Button>
+                        <Button variant="primary" onClick={nextPage}>Next</Button>
+                    </ButtonGroup>
+                </ButtonToolbar>
+            </div>
+            <div className='col-sm-4'>
+                <LoadingIndicator />
+            </div>
+            <div className='col-sm-4'>
+                <InputGroup>
+                    <InputGroup.Prepend>
+                        <Button variant="primary" onClick={sendSearch}>Search</Button>
+                    </InputGroup.Prepend>
+                    <FormControl value={searchTerm} onChange={updateSearch} placeholder='Search with flight number' />
+                </InputGroup>
+            </div>
         </div>
-    )
+        <br />
+        <Table striped bordered hover>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Airline</th>
+                    <th>Coming From</th>
+                    <th>Landing At</th>
+                    <th>Departing To</th>
+                    <th>Flight Number</th>
+                    <th>Bookable</th>
+                    <th>Depart From Sender</th>
+                    <th>Arrive At Receiver</th>
+                    <th>Status</th>
+                    <th>Gate</th>
+                    <th>Seat Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {flights.map(fl => (
+                    <tr key={fl.flight_id}>
+                        <td>{fl.type}</td>
+                        <td>{fl.airline}</td>
+                        <td>{fl.comingFrom}</td>
+                        <td>{fl.landingAt}</td>
+                        <td>{fl.departingTo}</td>
+                        <td>{fl.flightNumber}</td>
+                        <td>{fl.bookable}</td>
+                        <td>{fl.departFromSender}</td>
+                        <td>{fl.arriveAtReceiver}</td>
+                        <td>{fl.status}</td>
+                        <td>{fl.gate}</td>
+                        <td>{fl.seatPrice}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </Table>
+    </div>
+)
 }
 
 export default Flights
