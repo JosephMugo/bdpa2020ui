@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Form, Button, Col } from "react-bootstrap"
-
+const verifySignUp = require("../services/validator")
 const security_questions = [
     "What was the house number and street name you lived in as a child?",
     "What primary school did you attend?",
