@@ -9,10 +9,14 @@ import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, Dro
 
 export const Flights = () => {
     const [flights, setFlights] = useState([])
+    const [shownFlights, setShownFlights] = useState("arrival")
+
     const [searchCategory, setSearchCategory] = useState('flightNumber')
+    const [searchTerm, setSearchTerm] = useState('')
+
     const [sortCategory, setSortCategory] = useState('flightNumber')
     const [sortOrder, setSortOrder] = useState('asc')
-    const [searchTerm, setSearchTerm] = useState('')
+
     const [pages, setPages] = useState([])
     const [baseURL, setBaseURL] = useState("")
 
@@ -22,8 +26,7 @@ export const Flights = () => {
     const makeFlightRequest = async (URL) => {
         setFlights([])
         console.log(URL)
-        console.log(pages)
-        console.log(pages.length)
+
         try {
             const response = await superagent.get(URL).set('key', `${flights_key}`)
 
@@ -48,13 +51,18 @@ export const Flights = () => {
                 }
             })
 
-            // filter flights list to avoid showing past flights
             setFlights(flightsList)
-            // setFlights(flightsList.filter(fl => !fl.status.includes('past')))
+            
+            // filter flights list to avoid showing past flights
+            // setShownFlights(flightsList.filter(fl => !fl.status.includes('past')))
 
         } catch (err) {
             console.error(err)
         }
+    }
+
+    const updateShownFlights = (type) => {
+        setShownFlights(type)
     }
 
     const updateSortOrder = (order) => {
@@ -162,10 +170,14 @@ export const Flights = () => {
     return (
         <div>
             <div className='row'>
-                <div className='col-sm-6'>
+                <div className='col-sm-8'>
                     <ButtonToolbar>
                         <ButtonGroup className='mr-2'>
                             <Button variant='primary' onClick={allFlights}>Request All Flights</Button>
+                            <DropdownButton as={ButtonGroup} title={shownFlights} id='bg-nested-dropdown'>
+                                <Dropdown.Item onClick={() => updateShownFlights('arrival')}>Arrivals</Dropdown.Item>
+                                <Dropdown.Item onClick={() => updateShownFlights('departure')}>Departures</Dropdown.Item>
+                            </DropdownButton>
                         </ButtonGroup>
                         <ButtonGroup className='mr-2'>
                             <Button variant='secondary' disabled>{`Page ${pages.length + 1}`}</Button>
@@ -190,7 +202,6 @@ export const Flights = () => {
                         </ButtonGroup>
                     </ButtonToolbar>
                 </div>
-                <div className='col-sm-2' />
                 <div className='col-sm-4'>
                     <InputGroup>
                         <DropdownButton as={InputGroup.Prepend} title={searchCategory} id='bg-nested-dropdown'>
@@ -213,7 +224,7 @@ export const Flights = () => {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>Type</th>
+                        {/* <th>Type</th> */}
                         <th>Airline</th>
                         <th>Coming From</th>
                         <th>Landing At</th>
@@ -228,9 +239,9 @@ export const Flights = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {flights.filter(fl => !fl.status.includes('past')).map(fl => (
+                    {flights.filter(fl => !fl.status.includes('past') && fl.type.includes(`${shownFlights}`)).map(fl => (
                         <tr key={fl.flight_id}>
-                            <td>{fl.type}</td>
+                            {/* <td>{fl.type}</td> */}
                             <td>{fl.airline}</td>
                             <td>{fl.comingFrom}</td>
                             <td>{fl.landingAt}</td>
