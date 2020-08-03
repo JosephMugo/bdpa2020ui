@@ -52,7 +52,7 @@ export const Flights = () => {
             })
 
             setFlights(flightsList)
-            
+
             // filter flights list to avoid showing past flights
             // setShownFlights(flightsList.filter(fl => !fl.status.includes('past')))
 
@@ -77,7 +77,7 @@ export const Flights = () => {
         pages.length = 0
 
         var queryObject = {}
-        queryObject[sortCategory] = "[^=]*$"
+        queryObject[sortCategory] = "^A"
         console.log(queryObject)
 
         var query = encodeURIComponent(JSON.stringify(queryObject))
@@ -228,14 +228,14 @@ export const Flights = () => {
                         <th>Airline</th>
                         <th>Coming From</th>
                         <th>Landing At</th>
-                        <th>Departing To</th>
+                        {shownFlights === 'departure' && <th>Departing To</th>}
                         <th>Flight Number</th>
                         <th>Bookable</th>
                         <th>Depart From Sender</th>
                         <th>Arrive At Receiver</th>
                         <th>Status</th>
-                        <th>Gate</th>
-                        <th>Seat Price</th>
+                        {shownFlights === 'departure' && <th>Gate</th>}
+                        {/* <th>Seat Price</th> */}
                     </tr>
                 </thead>
                 <tbody>
@@ -245,14 +245,14 @@ export const Flights = () => {
                             <td>{fl.airline}</td>
                             <td>{fl.comingFrom}</td>
                             <td>{fl.landingAt}</td>
-                            <td>{fl.departingTo}</td>
+                            {shownFlights === 'departure' && <td>{fl.departingTo}</td>}
                             <td>{fl.flightNumber}</td>
                             <td>{fl.bookable}</td>
                             <td>{fl.departFromSender}</td>
                             <td>{fl.arriveAtReceiver}</td>
                             <td>{fl.status}</td>
-                            <td>{fl.gate}</td>
-                            <td>{fl.seatPrice}</td>
+                            {shownFlights === 'departure' && <td>{fl.gate}</td>}
+                            {/* <td>{fl.seatPrice}</td> */}
                         </tr>
                     ))}
                 </tbody>
