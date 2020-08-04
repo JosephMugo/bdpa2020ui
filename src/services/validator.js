@@ -1,4 +1,4 @@
-const { isDate, isEmail, isMobilePhone, blacklist } = require("validator")
+const { isDate, isMobilePhone, blacklist } = require("validator")
 const verifySignUp = (user) => {
     console.log("user", user)
     return false

@@ -1,6 +1,6 @@
 import React from "react"
 // import { Form, Button, Col } from "react-bootstrap"
-import { Formik, Field, Form, ErrorMessage } from 'formik'
+import { Formik, Field, Form, ErrorMessage, useFormikContext } from 'formik'
 import * as Yup from 'yup'
 const verifySignUp = require("../services/validator")
 const securityQuestions = [
@@ -26,17 +26,21 @@ const SignUp = () => {
                     state: Yup.string().required('Required'),
                     zip: Yup.string().required('Required'),
                     country: Yup.string().required('Required'),
-                    phone: Yup.string().required('Required'),
                     email: Yup.string()
                         .email('Email is invalid')
                         .required('Required'),
                     password: Yup.string()
-                        .min(6, 'Password must be at least 6 characters')
-                        .required('Required'),
+                        .min(10, 'Must be at least 10 characters')
+                        .max(30, "Must be less than 30 characters")
+                        .required('Required')
+                        .matches(
+                            /^[a-zA-Z0-9!@#$%^&*?_~]+$/,
+                            "Cannot contain special characters or spaces"
+                        ),
                     securityQuestion1: Yup.string().required('Required'),
                     securityQuestion2: Yup.string().required('Required'),
                     securityQuestion3: Yup.string().required('Required'),
-                    captcha: Yup.string().oneOf(['78', null], 'Invalid Captcha').required('Required')
+                    captcha: Yup.string().matches("78", 'Invalid Captcha').required('Required')
                 })}
                 onSubmit={fields => {
                     alert('SUCCESS!! :-)\n\n' + JSON.stringify(fields, null, 4))
@@ -109,8 +113,7 @@ const SignUp = () => {
                         <div className="form-row">
                             <div className="form-group col">
                                 <label htmlFor="phone">Phone Number</label>
-                                <Field name="phone" type="text" className={'form-control' + (errors.phone && touched.phone ? ' is-invalid' : '')} />
-                                <ErrorMessage name="phone" component="div" className="invalid-feedback" />
+                                <Field name="phone" type="text" className={'form-control'} />
                             </div>
                             <div className="form-group col">
                                 <label htmlFor="email">Email Adress</label>
