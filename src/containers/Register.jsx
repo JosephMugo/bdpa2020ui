@@ -8,7 +8,7 @@ const securityQuestions = [
     "What primary school did you attend?",
     "What is your favorite food?"
 ]
-const SignUp = () => {
+const Register = () => {
     return (
         <>
             <h2>Register New Account</h2>
@@ -43,8 +43,8 @@ const SignUp = () => {
                     captcha: Yup.string().matches("78", 'Invalid Captcha').required('Required')
                 })}
                 onSubmit={fields => {
-                    alert('SUCCESS!! :-)\n\n' + JSON.stringify(fields, null, 4))
-                    // createUser()
+                    const { captcha, ...info } = fields
+                    createUser(info)
                 }}
             >
                 {({ errors, status, touched }) => (
@@ -158,4 +158,4 @@ const SignUp = () => {
         </>
     )
 }
-export default SignUp
+export default Register

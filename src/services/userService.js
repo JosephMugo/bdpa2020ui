@@ -3,7 +3,7 @@ import Cookies from "universal-cookie";
 const baseUserURL = "http://localhost:3535"
 
 export const createUser = async (user) => {
-
+    console.log(user)
     const addUrl = baseUserURL + '/user/add'
     const response = await superagent.post(addUrl, user)
 
@@ -12,7 +12,7 @@ export const createUser = async (user) => {
     return
 }
 
-export const logUserIn = async (user, password) => {
+export const login = async (user, password) => {
     const postBody = { user }
     const base64String = Buffer.from(`${user}:${password}`, 'ascii').toString("base64")
     const headers = {
