@@ -13,8 +13,7 @@ import Flights from "./containers/Flights"
 import Home from "./containers/Home"
 import Tickets from "./containers/Tickets"
 import Login from "./containers/Login"
-import SignUp from "./containers/SignUp"
-
+import Register from "./containers/Register"
 
 const App = () => {
     return (
@@ -29,7 +28,7 @@ const App = () => {
                         <Nav.Link href="/booking">Booking</Nav.Link>
                         <Nav.Link href="/tickets">Ticket</Nav.Link>
                         <Nav.Link href="/login">Login</Nav.Link>
-                        <Nav.Link href="/signup">Sign Up</Nav.Link>
+                        <Nav.Link href="/register">Register</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
@@ -40,7 +39,7 @@ const App = () => {
                 <Route exact path="/booking" component={Booking} />
                 <Route exact path="/tickets" component={Tickets} />
                 <Route exact path="/login" component={Login} />
-                <Route exact path="/signup" component={SignUp} />
+                <Route exact path="/register" component={Register} />
                 <Route exact path="/" component={Home} />
                 </div>
             </Router>
