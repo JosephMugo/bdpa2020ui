@@ -4,7 +4,7 @@ import {
     //Switch,
     Route,
     // Link
-} from "react-router-dom";
+} from "react-router-dom"
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 
@@ -12,6 +12,9 @@ import Booking from "./containers/Booking"
 import Flights from "./containers/Flights"
 import Home from "./containers/Home"
 import Tickets from "./containers/Tickets"
+import Login from "./containers/Login"
+import SignUp from "./containers/SignUp"
+
 
 const App = () => {
     return (
@@ -25,6 +28,8 @@ const App = () => {
                         <Nav.Link href="/flights">Flights</Nav.Link>
                         <Nav.Link href="/booking">Booking</Nav.Link>
                         <Nav.Link href="/tickets">Ticket</Nav.Link>
+                        <Nav.Link href="/login">Login</Nav.Link>
+                        <Nav.Link href="/signup">Sign Up</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
@@ -34,6 +39,8 @@ const App = () => {
                 <Route exact path="/flights" component={Flights} />
                 <Route exact path="/booking" component={Booking} />
                 <Route exact path="/tickets" component={Tickets} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/signup" component={SignUp} />
                 <Route exact path="/" component={Home} />
                 </div>
             </Router>
