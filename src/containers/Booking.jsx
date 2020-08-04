@@ -27,27 +27,31 @@ const Bookings = (flights) => {
     } else {
         return (
             <div>
-                <h2>Bookings</h2>
-                <Form noValidate validated={isValid} onSubmit={handleSubmit}>
-                    <Form.Row>
-                        {formGroup("First Name", 6, true)}
-                        {formGroup("Last Name", 6, true)}
-                    </Form.Row>
-                    <Form.Group controlId="password">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control required type="password" aria-describedby="passwordHelpBlock" />
-                        <Form.Control.Feedback type="invalid">Required</Form.Control.Feedback>
-                    </Form.Group>
-                    <Button type="submit" >Register</Button>
-                </Form>
-                Card info and what not: exp date, zip code, type of card
-                If logged in ask to save info to not type it later
-                Select seat number
-                How many bags
-                first is free second carry on is $30 second checked is $50 and more is $100
-                max 2 carry-on and 5 checked
-                must book 24 hours before flight
+                <div className="row">
+                    <div className='col-sm-4'>
+                        <h2>Bookings</h2>
+                        <Form noValidate validated={isValid} onSubmit={handleSubmit}>
+                            <Form.Row>
+                                {formGroup("First Name", 6, true)}
+                                {formGroup("Last Name", 6, true)}
+                            </Form.Row>
+                            <Form.Group controlId="password">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control required type="password" aria-describedby="passwordHelpBlock" />
+                                <Form.Control.Feedback type="invalid">Required</Form.Control.Feedback>
+                            </Form.Group>
+                            <Button type="submit" >Register</Button>
+                        </Form>
+                    </div>
+                </div>
             </div>
+            // Card info and what not: exp date, zip code, type of card
+            // If logged in ask to save info to not type it later
+            // Select seat number
+            // How many bags
+            // first is free second carry on is $30 second checked is $50 and more is $100
+            // max 2 carry-on and 5 checked
+            // must book 24 hours before flight
         )
     }
 }

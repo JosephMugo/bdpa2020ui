@@ -19,22 +19,26 @@ const SignIn = () => {
         event.stopPropagation()
         setValid(true)
     }
-    
+
     return (
         <>
-            <h2>Login</h2>
-            <Form noValidate validated={isValid} onSubmit={handleSubmit}>
-                <Form.Row>
-                    {formGroup("First Name", 6, true)}
-                    {formGroup("Last Name", 6, true)}
-                </Form.Row>
-                <Form.Group controlId="password">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control required type="password" aria-describedby="passwordHelpBlock" />
-                    <Form.Control.Feedback type="invalid">Required</Form.Control.Feedback>
-                </Form.Group>
-                <Button type="submit" >Register</Button>
-            </Form>
+            <div className="row">
+                <div className='col-sm-4'>
+                    <h2>Login</h2>
+                    <Form noValidate validated={isValid} onSubmit={handleSubmit}>
+                        <Form.Row>
+                            {formGroup("First Name", 6, true)}
+                            {formGroup("Last Name", 6, true)}
+                        </Form.Row>
+                        <Form.Group controlId="password">
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control required type="password" aria-describedby="passwordHelpBlock" />
+                            <Form.Control.Feedback type="invalid">Required</Form.Control.Feedback>
+                        </Form.Group>
+                        <Button type="submit" >Register</Button>
+                    </Form>
+                </div>
+            </div>
         </>
     )
 }
