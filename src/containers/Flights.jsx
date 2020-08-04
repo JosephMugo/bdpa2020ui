@@ -1,4 +1,4 @@
-import React, { setState, useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import superagent from 'superagent'
 import { usePromiseTracker, trackPromise } from 'react-promise-tracker'
 import Loader from 'react-loader-spinner'
