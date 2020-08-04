@@ -2,7 +2,7 @@ import React from "react"
 // import { Form, Button, Col } from "react-bootstrap"
 import { Formik, Field, Form, ErrorMessage, useFormikContext } from 'formik'
 import * as Yup from 'yup'
-const verifySignUp = require("../services/validator")
+import { createUser } from "../services/userService";
 const securityQuestions = [
     "What was the house number and street name you lived in as a child?",
     "What primary school did you attend?",
@@ -44,6 +44,7 @@ const SignUp = () => {
                 })}
                 onSubmit={fields => {
                     alert('SUCCESS!! :-)\n\n' + JSON.stringify(fields, null, 4))
+                    // createUser()
                 }}
             >
                 {({ errors, status, touched }) => (
