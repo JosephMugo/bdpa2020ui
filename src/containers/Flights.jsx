@@ -8,6 +8,8 @@ import flights_key from '../doNotCommit.js'
 import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap'
 
 export const Flights = () => {
+    const [airports, setAirports] = useState([])
+
     const [flights, setFlights] = useState([])
     const [shownFlights, setShownFlights] = useState('arrival')
     const [err, setErr] = useState(false)
@@ -22,6 +24,31 @@ export const Flights = () => {
     /*
     Handles basic API requests, used by every other API request function
     */
+
+    const makeAirportRequest = async () => {
+        var URL = 'https://airports.api.hscc.bdpa.org/v1/info/airports'
+
+        try {
+            const response = await superagent.get(URL).set('key', `${flights_key}`)
+
+            const airportsList = response.body.airports.map(air => {
+                return {
+                    name: air.name,
+                    shortName: air.shortName,
+                    city: air.city,
+                    state: air.state,
+                    country: air.country
+                }
+            })
+
+            setAirports(airportsList)
+            return airportsList
+
+        } catch (err) {
+            console.error(err)
+            setErr(true)
+        }
+    }
 
     const makeFlightRequest = async (after, sort, search, resetPages) => {
         if (resetPages) {
@@ -54,20 +81,62 @@ export const Flights = () => {
                     flightNumber: fl.flightNumber,
                     flight_id: fl.flight_id,
                     bookable: fl.bookable,
-                    departFromSender: new Date(fl.departFromSender).toLocaleString(),
                     arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleString(),
+                    departFromReceiver: new Date(fl.departFromReceiver).toLocaleString(),
                     status: fl.status,
                     gate: fl.gate,
-                    seatPrice: `$${fl.seatPrice}`
                 }
             })
 
-            setFlights(flightsList)
+            // setFlights(flightsList)
+
+            // return flightsList
+            getFlightsWithAirports(flightsList)
 
         } catch (err) {
             console.error(err)
             setErr(true)
         }
+    }
+
+    const getFlightsWithAirports = async (flights) => {
+        let myAirports = airports
+
+        if (airports.length === 0) {
+            myAirports = await makeAirportRequest()
+        }
+
+        // const airports = await makeAirportRequest()
+
+        const newFlights = flights.map(fl => {
+            const comingFrom = myAirports.find(air => air.shortName === fl.comingFrom).city
+            const landingAt = myAirports.find(air => air.shortName === fl.landingAt).city
+
+            let departingToCity = ''
+            
+            if (fl.departingTo !== null) {
+                departingToCity = myAirports.find(air => air.shortName === fl.departingTo).city
+                console.log(departingToCity)
+            }
+
+            return {
+                type: fl.type,
+                airline: fl.airline,
+                comingFrom,
+                landingAt,
+                departingToCity,
+                departingTo: fl.departingTo,
+                flightNumber: fl.flightNumber,
+                flight_id: fl.flight_id,
+                bookable: fl.bookable,
+                arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleString(),
+                departFromReceiver: new Date(fl.departFromReceiver).toLocaleString(),
+                status: fl.status,
+                gate: fl.gate,
+            }
+        })
+
+        setFlights(newFlights)
     }
 
     /*
@@ -189,10 +258,12 @@ export const Flights = () => {
                         <DropdownButton as={InputGroup.Prepend} title={searchCategory} id='bg-nested-dropdown'>
                             <Dropdown.Item onClick={() => updateSearchCategory('flightNumber')}>Flight Number</Dropdown.Item>
                             <Dropdown.Item onClick={() => updateSearchCategory('airline')}>Airline</Dropdown.Item>
-                            <Dropdown.Item onClick={() => updateSearchCategory('comingFrom')}>Coming From</Dropdown.Item>
-                            <Dropdown.Item onClick={() => updateSearchCategory('departingTo')}>Departing To</Dropdown.Item>
+                            <Dropdown.Item onClick={() => updateSearchCategory('comingFrom')}>Coming From City</Dropdown.Item>
+                            <Dropdown.Item onClick={() => updateSearchCategory('landingAt')}>Landing At City</Dropdown.Item>
+                            <Dropdown.Item onClick={() => updateSearchCategory('departingTo')}>Departing To Airport</Dropdown.Item>
+                            <Dropdown.Item onClick={() => updateSearchCategory('departingToCity')}>Departing To City</Dropdown.Item>
                             <Dropdown.Item onClick={() => updateSearchCategory('arriveAtReceiver')}>Arrival Time</Dropdown.Item>
-                            <Dropdown.Item onClick={() => updateSearchCategory('departFromSender')}>Departure Time</Dropdown.Item>
+                            <Dropdown.Item onClick={() => updateSearchCategory('departFromReceiver')}>Departure Time</Dropdown.Item>
                         </DropdownButton>
                         <FormControl value={searchTerm} onChange={updateSearchTerm} placeholder={`Search with ${searchCategory}`} />
                         <InputGroup.Append>
@@ -209,14 +280,14 @@ export const Flights = () => {
                         <th>Airline</th>
                         <th>Coming From</th>
                         <th>Landing At</th>
-                        {shownFlights === 'departure' && <th>Departing To</th>}
+                        {shownFlights === 'departure' && <th>Airport Departing To</th>}
+                        {shownFlights === 'departure' && <th>City Departing To</th>}
                         <th>Flight Number</th>
                         <th>Bookable</th>
-                        <th>Depart From Sender</th>
-                        <th>Arrive At Receiver</th>
+                        <th>Arrival Time</th> {/* Arrival at receiver time */}
+                        {shownFlights === 'departure' && <th>Departure Time</th>} {/* Departure from receiver time */}
                         <th>Status</th>
                         {shownFlights === 'departure' && <th>Gate</th>}
-                        {/* <th>Seat Price</th> */}
                     </tr>
                 </thead>
                 <tbody>
@@ -227,13 +298,14 @@ export const Flights = () => {
                             <td>{fl.comingFrom}</td>
                             <td>{fl.landingAt}</td>
                             {shownFlights === 'departure' && <td>{fl.departingTo}</td>}
+                            {shownFlights === 'departure' && <td>{fl.departingToCity}</td>}
                             <td>{fl.flightNumber}</td>
-                            <td>{fl.bookable}</td>
-                            <td>{fl.departFromSender}</td>
+                            {fl.bookable === true && <td>Available</td>}
+                            {fl.bookable === false && <td>N/A</td>}
                             <td>{fl.arriveAtReceiver}</td>
+                            {shownFlights === 'departure' && <td>{fl.departFromReceiver}</td>}
                             <td>{fl.status}</td>
                             {shownFlights === 'departure' && <td>{fl.gate}</td>}
-                            {/* <td>{fl.seatPrice}</td> */}
                         </tr>
                     ))}
                 </tbody>
