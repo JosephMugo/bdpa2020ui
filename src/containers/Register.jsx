@@ -1,6 +1,6 @@
 import React from "react"
 // import { Form, Button, Col } from "react-bootstrap"
-import { Formik, Field, Form, ErrorMessage, useFormikContext } from 'formik'
+import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { createUser } from "../services/userService";
 const securityQuestions = [
@@ -13,6 +13,7 @@ const Register = () => {
         const { captcha, ...info } = fields
         await createUser(info)
     }
+    const required = Yup.string().required('Required')
     return (
         <>
             <div className='row'>
@@ -24,28 +25,19 @@ const Register = () => {
                         email: "", phone: "", password: "", securityQuestion1: "", securityQuestion2: "", securityQuestion3: "", captcha: ""
                     }}
                     validationSchema={Yup.object().shape({
-                        firstName: Yup.string().required('Required'),
-                        lastName: Yup.string().required('Required'),
-                        birthdate: Yup.string().required('Required'),
-                        city: Yup.string().required('Required'),
-                        state: Yup.string().required('Required'),
-                        zip: Yup.string().required('Required'),
-                        country: Yup.string().required('Required'),
-                        email: Yup.string()
-                            .email('Email is invalid')
-                            .required('Required'),
-                        password: Yup.string()
+                        firstName: required, lastName: required,
+                        birthdate: required, sex: required,
+                        city: required, state: required, zip: required, country: required,
+                        email: required.email('Email is invalid'),
+                        password: required
                             .min(10, 'Must be at least 10 characters')
                             .max(30, "Must be less than 30 characters")
-                            .required('Required')
                             .matches(
                                 /^[a-zA-Z0-9!@#$%^&*?_~]+$/,
                                 "Cannot contain special characters or spaces"
                             ),
-                        securityQuestion1: Yup.string().required('Required'),
-                        securityQuestion2: Yup.string().required('Required'),
-                        securityQuestion3: Yup.string().required('Required'),
-                        captcha: Yup.string().matches("78", 'Invalid Captcha').required('Required')
+                        securityQuestion1: required, securityQuestion2: required, securityQuestion3: required,
+                        captcha: required.matches("78", 'Invalid Captcha')
                     })}
                     onSubmit={handleSubmit}
                 >
@@ -83,11 +75,10 @@ const Register = () => {
                                 </div>
                                 <div className="form-group col">
                                     <label>Sex</label>
-                                    <Field name="sex" as="select" className={'form-control'}>
+                                    <Field name="sex" as="select" className={'form-control' + (errors.sex && touched.sex ? ' is-invalid' : '')}>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
                                         <option value="Other">Genderqueer/Non-Binary</option>
-                                        <option value="">Prefer not to disclose</option>
                                     </Field>
                                 </div>
                             </div>
