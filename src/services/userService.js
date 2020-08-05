@@ -6,7 +6,7 @@ export const createUser = async (user) => {
     // console.log(user)
     const addUrl = baseUserURL + '/user/add'
     try {
-        const response = await superagent.post(addUrl, user)
+        await superagent.post(addUrl, user)
         return true
     } catch (err) {
         if (err.status === 409) { console.log("Username taken") }
@@ -17,16 +17,11 @@ export const createUser = async (user) => {
 
 export const login = async (user) => {
     const { username, firstName, lastName, password } = user
-    const postBody = { username }
-    const base64String = Buffer.from(`${user}:${password}`, 'ascii').toString("base64")
-    const headers = {
-        Authorization: `Basic ${base64String}`
-    }
-
+    const base64String = Buffer.from(`${username}:${firstName}:${lastName}:${password}`, 'ascii').toString("base64")
+    console.log(base64String)
+    const headers = { Authorization: `Basic ${base64String}` }
     const tokenUrl = baseUserURL + '/token'
-
-    const response = await superagent.post(tokenUrl, postBody).set(headers)
-
+    const response = await superagent.post(tokenUrl, username).set(headers)
     if (response.status === 401) return false
 
     console.log("RESPONSE FROM TOKEN? ", response)

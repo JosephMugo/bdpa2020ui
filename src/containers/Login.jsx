@@ -4,14 +4,15 @@ import * as Yup from 'yup'
 import { login } from "../services/userService";
 const Login = () => {
     const handleLogin = async (fields) => {
-        await login(fields)
+        const response = await login(fields)
+        console.log(response)
     }
     const required = Yup.string().required('Required')
     return (
         <>
             <h2>Login</h2>
             <Formik
-                initialValues={{ firstName: "", lastName: "", password: "" }}
+                initialValues={{ username: "", firstName: "", lastName: "", password: "" }}
                 validationSchema={Yup.object().shape({
                     username: required,
                     firstName: required,

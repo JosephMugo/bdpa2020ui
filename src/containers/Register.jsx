@@ -14,8 +14,7 @@ const Register = () => {
         const { captcha, ...info } = fields
         setUsernameValidity(3)
         const response = await createUser(info)
-        console.log(response)
-        setUsernameValidity(0+response)
+        setUsernameValidity(0 + response)
     }
     const required = Yup.string().required('Required')
     return (
