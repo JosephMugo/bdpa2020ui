@@ -19,11 +19,12 @@ const Register = () => {
             <h2>Register New Account</h2>
             <Formik
                 initialValues={{
-                    title: "", firstName: "", middleName: "", lastName: "", suffix: "",
+                    username: "", title: "", firstName: "", middleName: "", lastName: "", suffix: "",
                     birthdate: "", sex: "", city: "", state: "", zip: "", country: "",
                     email: "", phone: "", password: "", securityQuestion1: "", securityQuestion2: "", securityQuestion3: "", captcha: ""
                 }}
                 validationSchema={Yup.object().shape({
+                    username: required.matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
                     firstName: required, lastName: required,
                     birthdate: required, sex: required,
                     city: required, state: required, zip: required, country: required,
@@ -42,6 +43,10 @@ const Register = () => {
             >
                 {({ errors, status, touched }) => (
                     <Form>
+                        <div className="form-group">
+                            <label htmlFor="username">Username</label>
+                            <Field name="username" type="text" className={'form-control' + (errors.username && touched.username ? ' is-invalid' : '')} />
+                        </div>
                         <div className="form-row">
                             <div className="form-group col-2">
                                 <label htmlFor="title">Title</label>
