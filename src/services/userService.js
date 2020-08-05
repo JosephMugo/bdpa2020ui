@@ -2,6 +2,20 @@ import superagent from "superagent";
 import Cookies from "universal-cookie";
 const baseUserURL = "http://localhost:3535"
 
+export const rememberMe = async (remember = false) => {
+    try {
+        const cookies = new Cookies()
+
+        console.log(remember)
+        if (remember === true) cookies.set('rememberMe', remember)
+        if (remember === false) cookies.remove("rememberMe")
+    } catch (err) {
+        console.log("error", err)
+    }
+
+    return false
+}
+
 export const createUser = async (user) => {
     // console.log(user)
     const addUrl = baseUserURL + '/user/add'

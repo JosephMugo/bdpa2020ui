@@ -8,6 +8,8 @@ import {
 import Cookies from "universal-cookie";
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
+import IdleJs from "idle-js"
+
 import Booking from "./containers/Booking"
 import Flights from "./containers/Flights"
 import Home from "./containers/Home"
@@ -20,6 +22,7 @@ import RegisterAdmin from "./containers/RegisterAdmin"
 
 const App = () => {
     const cookies = new Cookies()
+    const [rememberMe, setRememberMe] = useState(cookies.get("rememberMe"))
     const [token, setToken] = useState(cookies.get("userToken")), [role, setRole] = useState(cookies.get("role"))
     console.log("cookies", cookies.getAll())
 
@@ -27,8 +30,31 @@ const App = () => {
         console.log("signout")
         cookies.remove("userToken")
         cookies.remove("role")
+        cookies.remove("rememberMe")
+
+        idle.stop()
+        idle.reset()
     }
-    
+
+    console.log(rememberMe)
+    // Auto logout feature
+    if (!rememberMe && token) {
+        var idle = new IdleJs({
+            idle: 900000, // idle time in ms; 900,000 ms = 15 minutes
+            events: ['mousemove', 'keydown', 'mousedown', 'touchstart'], // events that will trigger the idle resetter
+            onIdle: function () {
+                window.setTimeout(signOut, 1000)
+                window.setTimeout(() => window.open("/", "_top"), 1000) // 900,000 ms = 15 minutes
+            }, // callback function to be executed after idle time
+            onActive: function () { }, // callback function to be executed after back form idleness
+            onHide: function () { }, // callback function to be executed when window become hidden
+            onShow: function () { }, // callback function to be executed when window become visible
+            keepTracking: true, // set it to false if you want to be notified only on the first idleness change
+            startAtIdle: false // set it to true if you want to start in the idle state
+        });
+        idle.start();
+    }
+
     return (
         <div>
             <Navbar bg="dark" variant="dark" expand="lg">
@@ -47,6 +73,7 @@ const App = () => {
                         {!token && <Nav.Link href="/login">Login</Nav.Link>}
                         {!token && <Nav.Link href="/register">Register</Nav.Link>}
                         {!token && <Nav.Link href="/register_admin">Register Admin</Nav.Link>}
+                        {token && !rememberMe && <Nav.Link>Login Expiration: 15 minutes</Nav.Link>}
                         {token && <Nav.Link href="/" onClick={signOut}>Sign Out</Nav.Link>}
                     </Nav>
                 </Navbar.Collapse>

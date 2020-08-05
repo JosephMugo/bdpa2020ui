@@ -1,15 +1,31 @@
 import React, { useState } from "react"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
+import { Form as BootstrapForm } from 'react-bootstrap'
 import * as Yup from 'yup'
-import { login } from "../services/userService";
+import { login, rememberMe } from "../services/userService";
 const Login = () => {
+    const [checked, setChecked] = useState(false)
     const [validUser, setUserValidity] = useState(2)
+
     const handleLogin = async (fields) => {
         setUserValidity(3)
         const response = await login(fields)
         setUserValidity(0 + response)
         if (response) window.setTimeout(() => window.open("/dashboard_customer", "_top"), 1000)
     }
+
+    const handleRememberMe = async () => {
+        var currentChecked = true
+
+        if (checked === true) {
+            currentChecked = false
+        }
+
+        setChecked(currentChecked)
+
+        const response = await rememberMe(currentChecked)
+    }
+
     const required = Yup.string().required('Required')
     return (
         <>
@@ -59,10 +75,10 @@ const Login = () => {
                                     <button type="submit" className="btn btn-primary mr-2">Login</button>
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
-                                <h5>{["Incorrect Credentials", "Logged In!", "", "Loading..."][validUser]}</h5>
                             </Form>
                         )}
                     </Formik>
+                    <BootstrapForm.Check type='checkbox' onClick={handleRememberMe} label='Remember Me' />
                 </div>
             </div>
         </>
