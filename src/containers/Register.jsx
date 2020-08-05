@@ -19,9 +19,10 @@ const Register = () => {
             <h2>Register New Account</h2>
             <Formik
                 initialValues={{
-                    username: "", title: "", firstName: "", middleName: "", lastName: "", suffix: "",
+                    title: "", firstName: "", middleName: "", lastName: "", suffix: "",
                     birthdate: "", sex: "", city: "", state: "", zip: "", country: "",
-                    email: "", phone: "", password: "", securityQuestion1: "", securityQuestion2: "", securityQuestion3: "", captcha: ""
+                    email: "", phone: "", username: "", password: "",
+                    securityQuestion1: "", securityQuestion2: "", securityQuestion3: "", captcha: ""
                 }}
                 validationSchema={Yup.object().shape({
                     username: required.matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
@@ -43,10 +44,6 @@ const Register = () => {
             >
                 {({ errors, status, touched }) => (
                     <Form>
-                        <div className="form-group">
-                            <label htmlFor="username">Username</label>
-                            <Field name="username" type="text" className={'form-control' + (errors.username && touched.username ? ' is-invalid' : '')} />
-                        </div>
                         <div className="form-row">
                             <div className="form-group col-2">
                                 <label htmlFor="title">Title</label>
@@ -118,6 +115,11 @@ const Register = () => {
                                 <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
                                 <ErrorMessage name="email" component="div" className="invalid-feedback" />
                             </div>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="username">Username</label>
+                            <Field name="username" type="text" className={'form-control' + (errors.username && touched.username ? ' is-invalid' : '')} />
+                            <ErrorMessage name="username" component="div" className="invalid-feedback" />
                         </div>
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
