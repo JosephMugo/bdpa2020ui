@@ -7,6 +7,7 @@ export const createUser = async (user) => {
     const addUrl = baseUserURL + '/user/add'
     try {
         await superagent.post(addUrl, user)
+        console.log("User registered")
         return true
     } catch (err) {
         if (err.status === 409) { console.log("Username taken") }
@@ -21,16 +22,16 @@ export const login = async (user) => {
     console.log(base64String)
     const headers = { Authorization: `Basic ${base64String}` }
     const tokenUrl = baseUserURL + '/token'
-    const response = await superagent.post(tokenUrl, username).set(headers)
-    if (response.status === 401) return false
-
-    console.log("RESPONSE FROM TOKEN? ", response)
-
-    const token = response.body.token
-
-    const cookies = new Cookies();
-
-    cookies.set('userToken', token)
-
-    return true
+    try {
+        const response = await superagent.post(tokenUrl, username).set(headers)
+        const token = response.body.token
+        console.log("token",token)
+        const cookies = new Cookies();
+        cookies.set('userToken', token)
+        return true
+    } catch (err) {
+        if (err.status === 401) console.log("Bad credentials")
+        else console.log("error", err)
+    }
+    return false
 }

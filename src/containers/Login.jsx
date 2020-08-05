@@ -1,10 +1,13 @@
-import React from "react"
+import React, { useState } from "react"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { login } from "../services/userService";
 const Login = () => {
+    const [validUser, setUserValidity] = useState(2)
     const handleLogin = async (fields) => {
+        setUserValidity(3)
         const response = await login(fields)
+        setUserValidity(0 + response)
         console.log(response)
     }
     const required = Yup.string().required('Required')
@@ -49,6 +52,7 @@ const Login = () => {
                             <button type="submit" className="btn btn-primary mr-2">Login</button>
                             <button type="reset" className="btn btn-secondary">Reset</button>
                         </div>
+                        <h5>{["Incorrect Credentials", "Logged In!", "", "Loading..."][validUser]}</h5>
                     </Form>
                 )}
             </Formik>
