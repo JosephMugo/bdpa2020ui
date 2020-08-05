@@ -7,13 +7,12 @@ export const createUser = async (user) => {
     const addUrl = baseUserURL + '/user/add'
     try {
         const response = await superagent.post(addUrl, user)
-        console.log("Response", response)
+        return true
     } catch (err) {
-        console.log("fdsasdf", err)
+        if (err.status === 409) { console.log("Username taken") }
+        else console.log("Bad credentials")
     }
-    // console.log(response.status)
-    // if(response.status===401) console.log("User taken")
-    return
+    return false
 }
 
 export const login = async (user) => {

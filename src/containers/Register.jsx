@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 // import { Form, Button, Col } from "react-bootstrap"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
@@ -9,9 +9,13 @@ const securityQuestions = [
     "What is your favorite food?"
 ]
 const Register = () => {
+    const [validUsername, setUsernameValidity] = useState(2)
     const handleSubmit = async (fields) => {
         const { captcha, ...info } = fields
-        await createUser(info)
+        setUsernameValidity(3)
+        const response = await createUser(info)
+        console.log(response)
+        setUsernameValidity(0+response)
     }
     const required = Yup.string().required('Required')
     return (
@@ -42,7 +46,7 @@ const Register = () => {
                 })}
                 onSubmit={handleSubmit}
             >
-                {({ errors, status, touched }) => (
+                {({ errors, touched }) => (
                     <Form>
                         <div className="form-row">
                             <div className="form-group col-2">
@@ -77,10 +81,12 @@ const Register = () => {
                             <div className="form-group col">
                                 <label>Sex</label>
                                 <Field name="sex" as="select" className={'form-control' + (errors.sex && touched.sex ? ' is-invalid' : '')}>
+                                    <option value=""></option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                     <option value="Other">Genderqueer/Non-Binary</option>
                                 </Field>
+                                <ErrorMessage name="sex" component="div" className="invalid-feedback" />
                             </div>
                         </div>
                         <div className="form-row">
@@ -151,6 +157,7 @@ const Register = () => {
                             <button type="submit" className="btn btn-primary mr-2">Register</button>
                             <button type="reset" className="btn btn-secondary">Reset</button>
                         </div>
+                        <h5>{["Username Already Taken", "User Registered!", "", "Loading..."][validUsername]}</h5>
                     </Form>
                 )}
             </Formik>
