@@ -21,6 +21,13 @@ const App = () => {
     const cookies = new Cookies()
     const [token, setToken] = useState(cookies.get("userToken")), [role, setRole] = useState(cookies.get("role"))
     console.log("cookies", cookies.getAll())
+
+    const signOut = () => {
+        console.log("signout")
+        cookies.remove("userToken")
+        cookies.remove("role")
+    }
+    
     return (
         <div>
             <Navbar bg="dark" variant="dark" expand="lg">
@@ -34,8 +41,11 @@ const App = () => {
                         <Nav.Link href="/tickets">Ticket</Nav.Link>
                         {token && <Nav.Link href="/dashboard_customer">Customer Dashboard</Nav.Link>}
                         {token && role === "admin" && <Nav.Link href="/dashboard_admin">Admin Dashboard</Nav.Link>}
+                    </Nav>
+                    <Nav>
                         {!token && <Nav.Link href="/login">Login</Nav.Link>}
                         {!token && <Nav.Link href="/register">Register</Nav.Link>}
+                        {token && <Nav.Link href="/" onClick={signOut}>Sign Out</Nav.Link>}
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

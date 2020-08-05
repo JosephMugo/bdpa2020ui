@@ -3,11 +3,6 @@ import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, Dro
 import Cookies from "universal-cookie"
 const cookies = new Cookies()
 const DashboardCustomer = () => {
-    const signOut = () => {
-        console.log("signout")
-        cookies.remove("userToken")
-        cookies.remove("role")
-    }
     return (
         <>
             <p>Welcome {cookies.get("username")}!</p>
@@ -71,7 +66,6 @@ const DashboardCustomer = () => {
                     <Dropdown.Item>1 hour</Dropdown.Item>
                 </DropdownButton>
             </div>
-            <Button variant='secondary' href="/" onClick={signOut}>Sign out</Button>
         </>
     )
 }
