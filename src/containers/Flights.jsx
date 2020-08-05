@@ -26,7 +26,7 @@ export const Flights = () => {
     */
 
     const makeAirportRequest = async () => {
-        var URL = 'https://airports.api.hscc.bdpa.org/v1/info/airports'
+        const URL = 'https://airports.api.hscc.bdpa.org/v1/info/airports'
 
         try {
             const response = await superagent.get(URL).set('key', `${flights_key}`)
@@ -57,10 +57,9 @@ export const Flights = () => {
 
         var queryObject = {}
         queryObject[searchCategory] = `^${search}`
-
+        console.log(queryObject)
         var query = encodeURIComponent(JSON.stringify(queryObject))
         var URL = `https://airports.api.hscc.bdpa.org/v1/flights/search?regexMatch=${query}&after=${after}&sort=${sort}`
-
         // resets the flights table and shown network errors
         setFlights([])
         setErr(false)
