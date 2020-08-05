@@ -24,7 +24,7 @@ const Login = () => {
                 })}
                 onSubmit={handleLogin}
             >
-                {({ errors, status, touched }) => (
+                {({ errors, touched }) => (
                     <Form>
                         <div className="form-group">
                             <label htmlFor="username">Username</label>

@@ -15,6 +15,7 @@ const Register = () => {
         setUsernameValidity(3)
         const response = await createUser(info)
         setUsernameValidity(0 + response)
+        if (response) window.setTimeout(() => window.open("/login", "_top"), 1000)
     }
     const required = Yup.string().required('Required')
     return (

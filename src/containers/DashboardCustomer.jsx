@@ -1,16 +1,16 @@
 import React from "react"
 import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap'
 import Cookies from "universal-cookie"
+const cookies = new Cookies()
 const DashboardCustomer = () => {
     const signOut = () => {
         console.log("signout")
-        const cookies = new Cookies()
         cookies.remove("userToken")
         cookies.remove("role")
     }
     return (
         <>
-            <p>Welcome USERNAME to your private dashboard!</p>
+            <p>Welcome {cookies.get("username")}!</p>
             <p>Last Login IP: LAST_IP</p>
             <p>Last Login Date: LAST_DATE</p>
 

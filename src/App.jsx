@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import {
     BrowserRouter as Router,
     //Switch,
@@ -18,7 +18,9 @@ import Login from "./containers/Login"
 import Register from "./containers/Register"
 
 const App = () => {
-    const cookies = new Cookies(), token = cookies.get("userToken"), role = cookies.get("userRole")
+    const cookies = new Cookies()
+    const [token, setToken] = useState(cookies.get("userToken")), [role, setRole] = useState(cookies.get("role"))
+    console.log("cookies", cookies.getAll())
     return (
         <div>
             <Navbar bg="dark" variant="dark" expand="lg">
@@ -30,13 +32,11 @@ const App = () => {
                         <Nav.Link href="/flights">Flights</Nav.Link>
                         <Nav.Link href="/booking">Booking</Nav.Link>
                         <Nav.Link href="/tickets">Ticket</Nav.Link>
-                        {token && role === "customer" && <Nav.Link href="/dashboard_customer">Customer Dashboard</Nav.Link>}
+                        {token && <Nav.Link href="/dashboard_customer">Customer Dashboard</Nav.Link>}
                         {token && role === "admin" && <Nav.Link href="/dashboard_admin">Admin Dashboard</Nav.Link>}
+                        {!token && <Nav.Link href="/login">Login</Nav.Link>}
+                        {!token && <Nav.Link href="/register">Register</Nav.Link>}
                     </Nav>
-                    {!token && <Nav>
-                        <Nav.Link href="/login">Login</Nav.Link>
-                        <Nav.Link href="/register">Register</Nav.Link>
-                    </Nav>}
                 </Navbar.Collapse>
             </Navbar>
             <Router>
@@ -52,7 +52,7 @@ const App = () => {
                     <Route exact path="/" component={Home} />
                 </div>
             </Router>
-        </div>
+        </div >
     )
 }
 

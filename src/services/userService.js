@@ -24,11 +24,13 @@ export const login = async (user) => {
     const tokenUrl = baseUserURL + '/token'
     try {
         const response = await superagent.post(tokenUrl, username).set(headers)
-        const token = response.body.token
+        const { token, role } = response.body
         console.log("token", token)
-        console.log("role", response.body.role)
+        console.log(username, role)
         const cookies = new Cookies()
+        cookies.set('username', username)
         cookies.set('userToken', token)
+        cookies.set('role', role)
         return true
     } catch (err) {
         if (err.status === 401) console.log("Bad credentials")
