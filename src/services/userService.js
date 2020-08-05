@@ -5,13 +5,20 @@ const baseUserURL = "http://localhost:3535"
 export const createUser = async (user) => {
     // console.log(user)
     const addUrl = baseUserURL + '/user/add'
-    const response = await superagent.post(addUrl, user)
-    console.log("Response", response)
+    try {
+        const response = await superagent.post(addUrl, user)
+        console.log("Response", response)
+    } catch (err) {
+        console.log("fdsasdf", err)
+    }
+    // console.log(response.status)
+    // if(response.status===401) console.log("User taken")
     return
 }
 
-export const login = async (user, password) => {
-    const postBody = { user }
+export const login = async (user) => {
+    const { username, firstName, lastName, password } = user
+    const postBody = { username }
     const base64String = Buffer.from(`${user}:${password}`, 'ascii').toString("base64")
     const headers = {
         Authorization: `Basic ${base64String}`

@@ -4,22 +4,29 @@ import * as Yup from 'yup'
 import { login } from "../services/userService";
 const Login = () => {
     const handleLogin = async (fields) => {
-        await login(fields.firstName + ":" + fields.lastName, fields.password)
+        await login(fields)
     }
+    const required = Yup.string().required('Required')
     return (
         <>
             <h2>Login</h2>
             <Formik
                 initialValues={{ firstName: "", lastName: "", password: "" }}
                 validationSchema={Yup.object().shape({
-                    firstName: Yup.string().required('Required'),
-                    lastName: Yup.string().required('Required'),
-                    password: Yup.string().required('Required')
+                    username: required,
+                    firstName: required,
+                    lastName: required,
+                    password: required,
                 })}
                 onSubmit={handleLogin}
             >
                 {({ errors, status, touched }) => (
                     <Form>
+                        <div className="form-group">
+                            <label htmlFor="username">Username</label>
+                            <Field name="username" type="text" className={'form-control' + (errors.username && touched.username ? ' is-invalid' : '')} />
+                            <ErrorMessage name="username" component="div" className="invalid-feedback" />
+                        </div>
                         <div className="form-row">
                             <div className="form-group col">
                                 <label htmlFor="firstName">First Name</label>
