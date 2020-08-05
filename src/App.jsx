@@ -18,8 +18,8 @@ import Register from "./containers/Register"
 const App = () => {
     return (
         <div>
-            <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="/">Plane Stuff</Navbar.Brand>
+            <Navbar bg="dark" variant="dark" expand="lg">
+                <Navbar.Brand href="/">BDPA Airlines</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
@@ -27,6 +27,8 @@ const App = () => {
                         <Nav.Link href="/flights">Flights</Nav.Link>
                         <Nav.Link href="/booking">Booking</Nav.Link>
                         <Nav.Link href="/tickets">Ticket</Nav.Link>
+                    </Nav>
+                    <Nav>
                         <Nav.Link href="/login">Login</Nav.Link>
                         <Nav.Link href="/register">Register</Nav.Link>
                     </Nav>
@@ -35,12 +37,12 @@ const App = () => {
             <Router>
                 {/* <Route exact path="/home" component={Home}/>  */}
                 <div className='content'>
-                <Route exact path="/flights" component={Flights} />
-                <Route exact path="/booking" component={Booking} />
-                <Route exact path="/tickets" component={Tickets} />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/register" component={Register} />
-                <Route exact path="/" component={Home} />
+                    <Route exact path="/flights" component={Flights} />
+                    <Route exact path="/booking" component={Booking} />
+                    <Route exact path="/tickets" component={Tickets} />
+                    <Route exact path="/login" component={Login} />
+                    <Route exact path="/register" component={Register} />
+                    <Route exact path="/" component={Home} />
                 </div>
             </Router>
         </div>
