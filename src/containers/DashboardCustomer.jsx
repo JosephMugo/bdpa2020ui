@@ -1,10 +1,15 @@
 import React from "react"
 import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap'
-
+import Cookies from "universal-cookie"
 const DashboardCustomer = () => {
-
+    const signOut = () => {
+        console.log("signout")
+        const cookies = new Cookies()
+        cookies.remove("userToken")
+        cookies.remove("role")
+    }
     return (
-        <div>
+        <>
             <p>Welcome USERNAME to your private dashboard!</p>
             <p>Last Login IP: LAST_IP</p>
             <p>Last Login Date: LAST_DATE</p>
@@ -66,7 +71,8 @@ const DashboardCustomer = () => {
                     <Dropdown.Item>1 hour</Dropdown.Item>
                 </DropdownButton>
             </div>
-        </div>
+            <Button variant='secondary' href="/" onClick={signOut}>Sign out</Button>
+        </>
     )
 }
 

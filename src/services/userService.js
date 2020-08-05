@@ -25,8 +25,9 @@ export const login = async (user) => {
     try {
         const response = await superagent.post(tokenUrl, username).set(headers)
         const token = response.body.token
-        console.log("token",token)
-        const cookies = new Cookies();
+        console.log("token", token)
+        console.log("role", response.body.role)
+        const cookies = new Cookies()
         cookies.set('userToken', token)
         return true
     } catch (err) {

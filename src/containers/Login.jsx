@@ -8,7 +8,7 @@ const Login = () => {
         setUserValidity(3)
         const response = await login(fields)
         setUserValidity(0 + response)
-        console.log(response)
+        if (response) window.setTimeout(() => window.open("/dashboard_customer", "_top"), 1000)
     }
     const required = Yup.string().required('Required')
     return (
