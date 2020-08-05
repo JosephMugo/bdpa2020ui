@@ -106,37 +106,40 @@ export const Flights = () => {
             myAirports = await makeAirportRequest()
         }
 
-        // const airports = await makeAirportRequest()
+        // If myAirports is still empty, abort gracefully
+        if (myAirports !== undefined) {
+            // const airports = await makeAirportRequest()
 
-        const newFlights = flights.map(fl => {
-            const comingFrom = myAirports.find(air => air.shortName === fl.comingFrom).city
-            const landingAt = myAirports.find(air => air.shortName === fl.landingAt).city
+            const newFlights = flights.map(fl => {
+                const comingFrom = myAirports.find(air => air.shortName === fl.comingFrom).city
+                const landingAt = myAirports.find(air => air.shortName === fl.landingAt).city
 
-            let departingToCity = ''
-            
-            if (fl.departingTo !== null) {
-                departingToCity = myAirports.find(air => air.shortName === fl.departingTo).city
-                console.log(departingToCity)
-            }
+                let departingToCity = ''
 
-            return {
-                type: fl.type,
-                airline: fl.airline,
-                comingFrom,
-                landingAt,
-                departingToCity,
-                departingTo: fl.departingTo,
-                flightNumber: fl.flightNumber,
-                flight_id: fl.flight_id,
-                bookable: fl.bookable,
-                arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleString(),
-                departFromReceiver: new Date(fl.departFromReceiver).toLocaleString(),
-                status: fl.status,
-                gate: fl.gate,
-            }
-        })
+                if (fl.departingTo !== null) {
+                    departingToCity = myAirports.find(air => air.shortName === fl.departingTo).city
+                    console.log(departingToCity)
+                }
 
-        setFlights(newFlights)
+                return {
+                    type: fl.type,
+                    airline: fl.airline,
+                    comingFrom,
+                    landingAt,
+                    departingToCity,
+                    departingTo: fl.departingTo,
+                    flightNumber: fl.flightNumber,
+                    flight_id: fl.flight_id,
+                    bookable: fl.bookable,
+                    arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleString(),
+                    departFromReceiver: new Date(fl.departFromReceiver).toLocaleString(),
+                    status: fl.status,
+                    gate: fl.gate,
+                }
+            })
+
+            setFlights(newFlights)
+        }
     }
 
     /*
