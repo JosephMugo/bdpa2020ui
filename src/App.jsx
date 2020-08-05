@@ -16,6 +16,7 @@ import DashboardCustomer from "./containers/DashboardCustomer"
 import DashboardAdmin from "./containers/DashboardAdmin"
 import Login from "./containers/Login"
 import Register from "./containers/Register"
+import RegisterAdmin from "./containers/RegisterAdmin"
 
 const App = () => {
     const cookies = new Cookies()
@@ -45,6 +46,7 @@ const App = () => {
                     <Nav>
                         {!token && <Nav.Link href="/login">Login</Nav.Link>}
                         {!token && <Nav.Link href="/register">Register</Nav.Link>}
+                        {!token && <Nav.Link href="/register_admin">Register Admin</Nav.Link>}
                         {token && <Nav.Link href="/" onClick={signOut}>Sign Out</Nav.Link>}
                     </Nav>
                 </Navbar.Collapse>
@@ -59,6 +61,7 @@ const App = () => {
                     <Route exact path="/dashboard_admin" component={DashboardAdmin} />
                     <Route exact path="/login" component={Login} />
                     <Route exact path="/register" component={Register} />
+                    <Route exact path="/register_admin" component={RegisterAdmin} />
                     <Route exact path="/" component={Home} />
                 </div>
             </Router>
