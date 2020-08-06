@@ -13,33 +13,40 @@ const Bookings = () => {
     console.log(id)
     const makeFlightRequest = async () => {
         console.log(123)
-        const URL = "https://airports.api.hscc.bdpa.org/v1/flights/search?regexMatch=%7B%22flightNumber%22%3A%22%5E%22%7D&after=&sort="
+        var myTargetIds = [id]
+        var myQuery = encodeURIComponent(JSON.stringify(myTargetIds))
+        var myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
         try {
-            const response = await superagent.get(URL).set('key', `${flights_key}`)
-            const flightsList = response.body.flights.map(fl => {
-                return {
-                    type: fl.type,
-                    airline: fl.airline,
-                    comingFrom: fl.comingFrom,
-                    landingAt: fl.landingAt,
-                    departingTo: fl.departingTo,
-                    flightNumber: fl.flightNumber,
-                    flight_id: fl.flight_id,
-                    bookable: fl.bookable,
-                    arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleString(),
-                    departFromReceiver: new Date(fl.departFromReceiver).toLocaleString(),
-                    status: fl.status,
-                    gate: fl.gate,
-                }
-            })
-            console.log(flightsList)
-            flightsList.filter(fl => !fl.status.includes('past') && fl.type.includes("departingTo"))
-            setFlights(flightsList)
+            const response = await superagent.get(myURL).set('key', `${flights_key}`)
+            console.log(response.body.flights)
+            setFlights(response.body.flights[0])
+            // const flightsList = response.body.flights.map(fl => {
+            //     console.log(fl)
+            //     return {
+            //         type: fl.type,
+            //         airline: fl.airline,
+            //         comingFrom: fl.comingFrom,
+            //         landingAt: fl.landingAt,
+            //         //departingTo: fl.departingTo,
+            //         flight_id: fl.flight_id,
+            //         bookable: fl.bookable,
+            //         arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleString(),
+            //         departFromReceiver: new Date(fl.departFromReceiver).toLocaleString(),
+            //         seatPrice: fl.seatPrice
+            //     }
+            // })
+            // console.log("flightslist",flightsList)
+            // const newList = (flightsList.filter(flight => flight.flight_id.includes("5f0")))
+            // console.log("newList",newList)
+            //const newList = flightsList.filter(fl => !fl.status === ('past') && fl.type ===("departingTo"))
+            //setFlights(response)
+            //console.log("hey",newList)
 
             //             // return flightsList
             //             getFlightsWithAirports(flightsList)
 
         } catch (err) {
+            console.log("ERROR HAPPENED")
             console.error(err)
         }
     }
@@ -47,9 +54,17 @@ const Bookings = () => {
 
     }
     useEffect(() => {
-        if (!flights) makeFlightRequest()
+        console.log("use effect works")
+        if (flights.length < 1){ //console.log(flights.length) 
+            makeFlightRequest()}else{
+            console.log(flights.length)
+        }
     })
     const required = Yup.string().required('Required')
+    const price = flights.seatPrice
+    const departingTime = new Date(flights.departFromReceiver).toLocaleString()
+    const to = flights.landingAt
+    const from = flights.comingFrom
     return (
         <>
             <div className='row'>
@@ -58,6 +73,9 @@ const Bookings = () => {
                     <hr />
                     <h2 align='center'>Book Flights</h2>
                     <hr />
+                    {(id !== null || id !== undefined || id !== "") && <h3 align='center'>Costs: {price}</h3>}
+                    {(id !== null || id !== undefined || id !== "") && <h3 align='center'>Departing: {departingTime}</h3>}
+                    {(id !== null || id !== undefined || id !== "") && <h3 align='center'>To: {to} From: {from}</h3>}
                     <Formik
                         initialValues={{ location: "", search: "", date: "" }}
                         validationSchema={Yup.object().shape({
