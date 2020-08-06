@@ -54,8 +54,6 @@ const DashboardCustomer = () => {
                             </tr>
                         </tbody>
                     </Table>
-                </div>
-                <div className='col-sm-6'>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -72,6 +70,8 @@ const DashboardCustomer = () => {
                             </tr>
                         </tbody>
                     </Table>
+                </div>
+                <div className='col-sm-6'>
                     <h3>Personal Information</h3>
                     {userInfo && <Formik
                         initialValues={userInfo}
@@ -176,7 +176,9 @@ const DashboardCustomer = () => {
         When a guest account books a flight, they get an confirmation number. Customers will be able to enter that confirmation number and, if the last name on the ticket matches the last name of the customer, that flight will become associated with their account as if they had purchased it while logged in */}
             </div>
             <div><Button variant='primary'>Change default sorting order of flights</Button></div>
+            <br />
             <div><Button variant='primary'>Choose the default automatic logout time</Button></div>
+            <br />
             <div>
                 <DropdownButton as={ButtonGroup} title="Change default automatic logout time" id='bg-nested-dropdown'>
                     <Dropdown.Item>5 minutes</Dropdown.Item>
