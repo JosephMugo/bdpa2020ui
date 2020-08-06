@@ -91,7 +91,7 @@ const App = () => {
             </Navbar>
             <Router>
                 {/* <Route exact path="/home" component={Home}/>  */}
-                <div className='content'>
+                <div className='fade-in content'>
                     <Route exact path="/flights" component={Flights} />
                     <Route exact path="/booking" component={Booking} />
                     <Route exact path="/tickets" component={Tickets} />

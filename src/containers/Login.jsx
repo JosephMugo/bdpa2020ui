@@ -87,12 +87,12 @@ const Login = () => {
                                     {loginAttempt === '3' && <button type="submit" className="btn btn-primary mr-2" disabled>Too many attempts, please wait an hour</button>}
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
-                                <h5>{["Incorrect Credentials", "Logged In!", "", "Loading..."][validUser]}</h5>
                             </Form>
                         )}
                     </Formik>
                     <BootstrapForm.Check type='checkbox' onClick={handleRememberMe} label='Remember Me' />
                     <hr />
+                    <h5>{["Incorrect Credentials", "Logged In!", "", "Loading..."][validUser]}</h5>
                     <Alert variant='warning'>
                         Current Login Attempt: {loginAttempt}
                         <br />
