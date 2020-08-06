@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
-import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap'
+import { Table, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-bootstrap'
 import Cookies from "universal-cookie"
-import { Formik, Field, Form, ErrorMessage } from 'formik'
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik'
 import * as Yup from 'yup'
 import { requestUserInfo, updateUserInfo } from '../services/userService'
 
@@ -80,6 +80,7 @@ const DashboardCustomer = () => {
                             birthdate: required, sex: required,
                             city: required, state: required, zip: required, country: required,
                             email: required.email('Email is invalid'),
+                            card: Yup.string().matches(/^[0-9]+$/, "Can only cantain numbers")
                         })}
                         onSubmit={handleSubmit}
                     >
@@ -160,6 +161,11 @@ const DashboardCustomer = () => {
                                     </div>
                                 </div>
                                 <div className="form-group">
+                                    <label htmlFor="card">Credit Card</label>
+                                    <Field name="card" type="text" className={'form-control' + (errors.card ? ' is-invalid' : '')} />
+                                    <ErrorMessage name="card" component="div" className="invalid-feedback" />
+                                </div>
+                                <div className="form-group">
                                     <button type="submit" className="btn btn-primary mr-2">Update Personal Information</button>
                                 </div>
                                 <h5>{["Personal Information Not Updated", "Personal Information Updated!", "", "Loading..."][infoUpdated]}</h5>
@@ -168,7 +174,6 @@ const DashboardCustomer = () => {
                     </Formik>}
                 </div>
                 {/* 
-    Update their stored information (email, address, etc)
     Change the default sorting order of flights in the flight view
     Save or remove credit/debit cards
     Choose the default automatic logout time: either 15 minutes, 5 minutes, or 1 hour.
