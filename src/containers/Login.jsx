@@ -1,10 +1,17 @@
 import React, { useState } from "react"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
-import { Form as BootstrapForm } from 'react-bootstrap'
+import { Form as BootstrapForm, Alert } from 'react-bootstrap'
 import * as Yup from 'yup'
+import Cookies from "universal-cookie";
 import { login, rememberMe } from "../services/userService";
 const Login = () => {
+    // Dealing with login attempts
+    const cookies = new Cookies()
+    const loginAttempt = cookies.get("loginAttempt")
+
+    // check if Remember Me check box is checked
     const [checked, setChecked] = useState(false)
+
     const [validUser, setUserValidity] = useState(2)
 
     const handleLogin = async (fields) => {
@@ -72,13 +79,21 @@ const Login = () => {
                                     <ErrorMessage name="password" component="div" className="invalid-feedback" />
                                 </div>
                                 <div className="form-group">
-                                    <button type="submit" className="btn btn-primary mr-2">Login</button>
+                                    {loginAttempt !== '3' && <button type="submit" className="btn btn-primary mr-2">Login</button>}
+                                    {loginAttempt === '3' && <button type="submit" className="btn btn-primary mr-2" disabled>Too many attempts, please wait an hour</button>}
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
+                                <h5>{["Incorrect Credentials", "Logged In!", "", "Loading..."][validUser]}</h5>
                             </Form>
                         )}
                     </Formik>
                     <BootstrapForm.Check type='checkbox' onClick={handleRememberMe} label='Remember Me' />
+                    <hr />
+                    <Alert variant='warning'>
+                        Current Login Attempt: {loginAttempt}
+                        <br />
+                        (3rd failed attempt will freeze login)
+                    </Alert>
                 </div>
             </div>
         </>

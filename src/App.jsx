@@ -36,7 +36,15 @@ const App = () => {
         idle.reset()
     }
 
-    console.log(rememberMe)
+    // Setting login timeouts
+    const loginAttempt = cookies.get("loginAttempt")
+
+    // after 3 login attemtps, set timeout before removing counter
+    if (loginAttempt === '3') {
+        window.setTimeout(() => window.open("/login", "_top"), 3600000) // 3,600,000 ms = 1 hour
+        window.setTimeout(() => cookies.remove('loginAttempt'), 3600000) // 3,600,000 ms = 1 hour
+    }
+    
     // Auto logout feature
     if (!rememberMe && token) {
         var idle = new IdleJs({

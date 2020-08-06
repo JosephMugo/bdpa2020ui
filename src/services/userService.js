@@ -45,9 +45,25 @@ export const login = async (user) => {
         cookies.set('username', username)
         cookies.set('userToken', token)
         cookies.set('role', role)
+
+        // Remove failed login cookies
+        cookies.remove('loginAttempt')
         return true
     } catch (err) {
-        if (err.status === 401) console.log("Bad credentials")
+        if (err.status === 401) {
+            console.log("Bad credentials")
+
+            const cookies = new Cookies()
+            const loginAttempt = cookies.get("loginAttempt")
+
+            if (loginAttempt === '2') {
+                cookies.set('loginAttempt', '3')
+            } else if (loginAttempt === '1') {
+                cookies.set('loginAttempt', '2')
+            } else {
+                cookies.set('loginAttempt', '1')
+            }
+        } 
         else console.log("error", err)
     }
     return false
