@@ -309,7 +309,7 @@ export const Flights = () => {
                             {shownFlights === 'departure' && <td>{fl.departFromReceiver}</td>}
                             <td>{fl.status}</td>
                             {shownFlights === 'departure' && <td>{fl.gate}</td>}
-                           {fl.status=== "scheduled" && <td><Button href="/booking">Book</Button></td>}
+                           {fl.status=== "scheduled" && <td><Button href={`/booking/${fl.flight_id}`}>Book</Button></td>}
                         </tr>
                     ))}
                 </tbody>

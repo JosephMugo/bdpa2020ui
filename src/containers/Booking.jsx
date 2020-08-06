@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react"
 import superagent from 'superagent'
-
+import {useParams} from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import flights_key from '../doNotCommit.js'
-const Bookings = (flight_id) => {
+const Bookings = () => {
     const [flights, setFlights] = useState([])
     const [shownFlights, setShownFlights] = useState([])
+    const params=useParams()
+    const id = params.flight_id
+    console.log(params)
+    console.log(id)
     const makeFlightRequest = async () => {
         console.log(123)
         const URL = "https://airports.api.hscc.bdpa.org/v1/flights/search?regexMatch=%7B%22flightNumber%22%3A%22%5E%22%7D&after=&sort="
@@ -57,6 +61,7 @@ const Bookings = (flight_id) => {
                 onSubmit={searchFlights}
             >
                 {({ errors, touched }) => (
+                    (id === null || id === undefined || id === "") &&
                     <Form>
                         <div className="form-row">
                             <div className="form-group col">
