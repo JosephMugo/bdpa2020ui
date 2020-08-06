@@ -8,7 +8,7 @@ import { requestUserInfo, updateUserInfo } from '../services/userService'
 const cookies = new Cookies()
 const DashboardCustomer = () => {
     const [userInfo, setUserInfo] = useState(false), [infoUpdated, setInfoUpdated] = useState(2)
-    const [lastLoginDate, setLastLoginDate] = useState(false)
+    const [lastLoginDate, setLastLoginDate] = useState(false), [lastLoginIp, setLastLoginIp] = useState(false)
     let failedUserInfoGets = 0
     const getUserInfo = async () => {
         const requestedUserInfo = await requestUserInfo(cookies.get("username"))
@@ -16,6 +16,7 @@ const DashboardCustomer = () => {
         if (requestedUserInfo) setUserInfo(requestedUserInfo)
         else failedUserInfoGets++
         setLastLoginDate(requestedUserInfo.lastLoginDate)
+        setLastLoginIp(requestedUserInfo.lastLoginIp)
     }
     useEffect(() => {
         if (!userInfo || failedUserInfoGets > 100) getUserInfo()
@@ -31,8 +32,8 @@ const DashboardCustomer = () => {
     return (
         <>
             <p>Welcome {cookies.get("username")}!</p>
-            {/* {userInfo && <p>Last Login IP: {userInfo.lastLoginIp}</p>} */}
-            {userInfo && lastLoginDate && <p> Last Login Date: {"" + (new Date(Number(lastLoginDate)))}</p>}
+            {userInfo && lastLoginIp && <p>Last Login IP: {lastLoginIp}</p>}
+            {userInfo && lastLoginDate && <p> Last Login Date: {"" + (new Date(lastLoginDate))}</p>}
 
             <div className='row'>
                 <div className='col-sm-6'>
