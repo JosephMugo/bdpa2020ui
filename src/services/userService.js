@@ -12,10 +12,8 @@ export const rememberMe = async (remember = false) => {
     } catch (err) {
         console.log("error", err)
     }
-
     return false
 }
-
 export const createUser = async (user) => {
     // console.log(user)
     const addUrl = baseUserURL + '/user/add'
@@ -29,7 +27,6 @@ export const createUser = async (user) => {
     }
     return false
 }
-
 export const login = async (user) => {
     const { username, firstName, lastName, password } = user
     const base64String = Buffer.from(`${username}:${firstName}:${lastName}:${password}`, 'ascii').toString("base64")
@@ -51,4 +48,18 @@ export const login = async (user) => {
         else console.log("error", err)
     }
     return false
+}
+export const requestUserInfo = async (username) => {
+    console.log("Requesting", username)
+    const cookies = new Cookies(), token = cookies.get("userToken")
+    const headers = { Authorization: `Bearer ${token}` }
+    const tokenUrl = baseUserURL + '/user/update'
+    try {
+        const response = await superagent.get(tokenUrl, username).set(headers)
+        return response.body
+    } catch (err) {
+        if (err.status === 401) console.log("Bad credentials")
+        else console.log("error", err)
+    }
+    return {}
 }
