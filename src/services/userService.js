@@ -60,7 +60,7 @@ export const login = async (user) => {
             } else {
                 cookies.set('loginAttempt', '1')
             }
-        } 
+        }
         else console.log("error", err)
     }
     return false
@@ -69,7 +69,7 @@ export const requestUserInfo = async (username) => {
     console.log("Requesting", username)
     const cookies = new Cookies(), token = cookies.get("userToken")
     const headers = { Authorization: `Bearer ${token}` }
-    const tokenUrl = baseUserURL + '/user/update'
+    const tokenUrl = baseUserURL + '/user/get'
     try {
         const response = await superagent.get(tokenUrl, username).set(headers)
         return response.body
@@ -77,5 +77,19 @@ export const requestUserInfo = async (username) => {
         if (err.status === 401) console.log("Bad credentials")
         else console.log("error", err)
     }
-    return {}
+    return false
+}
+export const updateUserInfo = async user => {
+    console.log("Updating", user.username)
+    const cookies = new Cookies(), token = cookies.get("userToken")
+    const headers = { Authorization: `Bearer ${token}` }
+    const tokenUrl = baseUserURL + '/user/update'
+    try {
+        const response = await superagent.post(tokenUrl, user).set(headers)
+        return response.body
+    } catch (err) {
+        if (err.status === 401) console.log("Bad credentials")
+        else console.log("error", err)
+    }
+    return false
 }

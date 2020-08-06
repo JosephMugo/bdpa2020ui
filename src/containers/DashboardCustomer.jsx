@@ -3,20 +3,27 @@ import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, Dro
 import Cookies from "universal-cookie"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
-import { requestUserInfo } from '../services/userService'
+import { requestUserInfo, updateUserInfo } from '../services/userService'
 
 const cookies = new Cookies()
 const DashboardCustomer = () => {
-    const [userInfo, setUserInfo] = useState(false)
-
+    const [userInfo, setUserInfo] = useState(false), [infoUpdated, setInfoUpdated] = useState(2)
+    let failedUserInfoGets = 0
     const getUserInfo = async () => {
         const requestedUserInfo = await requestUserInfo(cookies.get("username"))
         console.log("userInfo", requestedUserInfo)
-        setUserInfo(requestedUserInfo)
+        if (requestedUserInfo) setUserInfo(requestedUserInfo)
+        else failedUserInfoGets++
     }
     useEffect(() => {
-        if (!userInfo.username) getUserInfo()
+        if (!userInfo || failedUserInfoGets > 100) getUserInfo()
     })
+    const handleSubmit = async info => {
+        setInfoUpdated(3)
+        const response = await updateUserInfo(info)
+        setUserInfo(response)
+        setInfoUpdated(response ? 1 : 0)
+    }
     const required = Yup.string().required('Required')
     return (
         <>
@@ -70,7 +77,7 @@ const DashboardCustomer = () => {
                             city: required, state: required, zip: required, country: required,
                             email: required.email('Email is invalid'),
                         })}
-                        onSubmit={() => { console.log("update info") }}
+                        onSubmit={handleSubmit}
                     >
                         {({ errors, touched }) => (
                             <Form>
@@ -151,6 +158,7 @@ const DashboardCustomer = () => {
                                 <div className="form-group">
                                     <button type="submit" className="btn btn-primary mr-2">Update Personal Information</button>
                                 </div>
+                                <h5>{["Personal Information Not Updated", "Personal Information Updated!", "", "Loading..."][infoUpdated]}</h5>
                             </Form>
                         )}
                     </Formik>}
