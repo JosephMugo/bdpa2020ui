@@ -22,14 +22,14 @@ const Register = () => {
         <>
             <div className='row'>
                 <div className='col-sm-3'>
+                </div>
+                <div className='col-sm-6'>
                     <hr />
                     <h2 align='center'>Register Customer Account</h2>
                     <hr />
                     <p>You are only moments away from joining the best website in the world! Please enter some personal information and we'll get your account set up right away.</p>
                     <p>As a customer, you are given access to a wide variety of services. Join today!</p>
                     <hr />
-                </div>
-                <div className='col-sm-6'>
                     <Formik
                         initialValues={{
                             title: "", firstName: "", middleName: "", lastName: "", suffix: "",

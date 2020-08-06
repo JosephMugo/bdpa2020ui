@@ -5,8 +5,7 @@ const Home = () => {
 
     return (
         <div>
-            <h1 style={{ textAlign:"center"}} >Welcome</h1>
-            <Carousel style={{width: "75%", margin: "auto",borderRadius:"55px 55px 55px 55px",overflow: "hidden"}}>
+            <Carousel style={{width: "75%", margin: "auto",borderRadius:"15px 15px 15px 15px",overflow: "hidden"}}>
                 <Carousel.Item>
                     <Image rounded
                     className="d-block w-100"

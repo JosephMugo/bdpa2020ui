@@ -7,8 +7,11 @@ const AdminCreateUser = () => {
     return (
         <>
             <div className='row'>
-                <div className='col-sm-4'>
-                    <h2> Admin Create User Account</h2>
+                <div className='col-sm-3'></div>
+                <div className='col-sm-6'>
+                    <hr />
+                    <h2 align='center'>Admin Create Customer Account</h2>
+                    <hr />
                     <Formik
                         initialValues={{
                              firstName: "", lastName: "", birthdate: "", sex: "", city: "", state: "", zip: "", country: "",
