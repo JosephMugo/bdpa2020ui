@@ -55,16 +55,21 @@ const Bookings = () => {
     }
     useEffect(() => {
         console.log("use effect works")
-        if (flights.length < 1){ //console.log(flights.length) 
+        if (flights !== undefined && flights.length < 1){ //console.log(flights.length) 
             makeFlightRequest()}else{
-            console.log(flights.length)
         }
     })
     const required = Yup.string().required('Required')
-    const price = flights.seatPrice
-    const departingTime = new Date(flights.departFromReceiver).toLocaleString()
-    const to = flights.landingAt
-    const from = flights.comingFrom
+    let price
+    let arrivingTime
+    let to
+    let from
+    if (flights !== undefined){
+    price = flights.seatPrice
+    arrivingTime = new Date(flights.arriveAtReceiver).toLocaleString()
+    to = flights.landingAt
+    from = flights.comingFrom
+    }
     return (
         <>
             <div className='row'>
@@ -74,7 +79,7 @@ const Bookings = () => {
                     <h2 align='center'>Book Flights</h2>
                     <hr />
                     {(id !== null || id !== undefined || id !== "") && <h3 align='center'>Costs: {price}</h3>}
-                    {(id !== null || id !== undefined || id !== "") && <h3 align='center'>Departing: {departingTime}</h3>}
+                    {(id !== null || id !== undefined || id !== "") && <h3 align='center'>Arriving: {arrivingTime}</h3>}
                     {(id !== null || id !== undefined || id !== "") && <h3 align='center'>To: {to} From: {from}</h3>}
                     <Formik
                         initialValues={{ location: "", search: "", date: "" }}
@@ -118,12 +123,12 @@ const Bookings = () => {
                     <Formik
                         initialValues={{
                             firstName: "", middleName: "", lastName: "",
-                            birthdate: "", sex: "", email: "", phone: "",
+                            birthdate: "", sex: "", email: "", phone: "",cardNum:"",expdate:"",zip:""
                         }}
                         validationSchema={Yup.object().shape({
                             firstName: required, lastName: required,
                             birthdate: required, sex: required,
-                            email: required.email('Email is invalid'), phone: required
+                            email: required.email('Email is invalid'), phone: required, cardNum: required, expdate: required, zip: required
                         })}
                         onSubmit={console.log("check info here")}
                     >
@@ -171,6 +176,30 @@ const Bookings = () => {
                                         <label htmlFor="email">Email Address</label>
                                         <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
+                                    </div>
+                                </div>
+                                <div className="form-row">
+                                    <div className="form-group col">
+                                        <label htmlFor="cardNum">Card Number</label>
+                                        <Field name="cardNum" type="text" className={'form-control'+ (errors.email && touched.email ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="cardNum" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label htmlFor="expdate">Expiration Date YYYY/MM/DD</label>
+                                        <Field name="expdate" type="expdate" className={'form-control' + (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
+                                    </div>
+                                </div>
+                                <div className="form-row">
+                                    <div className="form-group col">
+                                        <label htmlFor="billAdress">Billing Adress</label>
+                                        <Field name="billAdress" type="text" className={'form-control'+ (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                    <label htmlFor="zip">Zip</label>
+                                        <Field name="zip" type="text" className={'form-control'+ (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
                                 <div className="form-group">
