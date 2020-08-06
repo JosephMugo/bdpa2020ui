@@ -1,9 +1,9 @@
 import React from "react"
 import * as Yup from 'yup'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
-import { AdminCreateUser } from "../services/userService";
+import { createUser } from "../services/userService";
 
-const Register = () => {
+const AdminCreateUser = () => {
     return (
         <>
             <div className='row'>
@@ -120,7 +120,7 @@ const Register = () => {
                                     <ErrorMessage name="captcha" component="div" className="invalid-feedback" />
                                 </div>
                                 <div className="form-group">
-                                    <button type="submit" className="btn btn-primary mr-2">Register</button>
+                                    <button type="submit" className="btn btn-primary mr-2">AdminCreateUser</button>
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
                             </Form>

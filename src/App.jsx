@@ -17,8 +17,10 @@ import Tickets from "./containers/Tickets"
 import DashboardCustomer from "./containers/DashboardCustomer"
 import DashboardAdmin from "./containers/DashboardAdmin"
 import Login from "./containers/Login"
+import ForgotPassword from "./containers/ForgotPassword"
 import Register from "./containers/Register"
 import RegisterAdmin from "./containers/RegisterAdmin"
+import AdminCreateUser from "./containers/AdminCreateUser"
 
 const App = () => {
     const cookies = new Cookies()
@@ -81,6 +83,7 @@ const App = () => {
                         {!token && <Nav.Link href="/login">Login</Nav.Link>}
                         {!token && <Nav.Link href="/register">Register</Nav.Link>}
                         {!token && <Nav.Link href="/register_admin">Register Admin</Nav.Link>}
+                        {!token && <Nav.Link href="/admin_create_user">Admin Create User</Nav.Link>}
                         {token && !rememberMe && <Nav.Link>Login Expiration: 15 minutes</Nav.Link>}
                         {token && <Nav.Link href="/" onClick={signOut}>Sign Out</Nav.Link>}
                     </Nav>
@@ -95,8 +98,10 @@ const App = () => {
                     <Route exact path="/dashboard_customer" component={DashboardCustomer} />
                     <Route exact path="/dashboard_admin" component={DashboardAdmin} />
                     <Route exact path="/login" component={Login} />
+                    <Route exact path="/forgot_password" component={ForgotPassword} />
                     <Route exact path="/register" component={Register} />
                     <Route exact path="/register_admin" component={RegisterAdmin} />
+                    <Route exact path="/admin_create_user" component={AdminCreateUser} />
                     <Route exact path="/" component={Home} />
                 </div>
             </Router>
