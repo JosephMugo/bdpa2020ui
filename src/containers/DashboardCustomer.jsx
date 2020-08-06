@@ -8,7 +8,7 @@ import { requestUserInfo, updateUserInfo } from '../services/userService'
 const cookies = new Cookies()
 const DashboardCustomer = () => {
     const [userInfo, setUserInfo] = useState(false), [infoUpdated, setInfoUpdated] = useState(2)
-    const [lastLoginDate, setLastLoginDate] = useState(false)
+    const [lastLoginDate, setLastLoginDate] = useState(false), [lastLoginIp, setLastLoginIp] = useState(false)
     let failedUserInfoGets = 0
     const getUserInfo = async () => {
         const requestedUserInfo = await requestUserInfo(cookies.get("username"))
@@ -16,6 +16,7 @@ const DashboardCustomer = () => {
         if (requestedUserInfo) setUserInfo(requestedUserInfo)
         else failedUserInfoGets++
         setLastLoginDate(requestedUserInfo.lastLoginDate)
+        setLastLoginIp(requestedUserInfo.lastLoginIp)
     }
     useEffect(() => {
         if (!userInfo || failedUserInfoGets > 100) getUserInfo()
@@ -30,9 +31,9 @@ const DashboardCustomer = () => {
     const required = Yup.string().required('Required')
     return (
         <>
-            <p>Welcome {cookies.get("username")}!</p>
-            {/* {userInfo && <p>Last Login IP: {userInfo.lastLoginIp}</p>} */}
-            {userInfo && lastLoginDate && <p> Last Login Date: {"" + (new Date(Number(lastLoginDate)))}</p>}
+            <h4>Welcome {cookies.get("username")}!</h4>
+            {userInfo && lastLoginIp && <p>Last Login IP: {lastLoginIp}</p>}
+            {userInfo && lastLoginDate && <p> Last Login Date: {"" + new Date(lastLoginDate)}</p>}
 
             <div className='row'>
                 <div className='col-sm-6'>
@@ -53,8 +54,6 @@ const DashboardCustomer = () => {
                             </tr>
                         </tbody>
                     </Table>
-                </div>
-                <div className='col-sm-6'>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -71,6 +70,8 @@ const DashboardCustomer = () => {
                             </tr>
                         </tbody>
                     </Table>
+                </div>
+                <div className='col-sm-6'>
                     <h3>Personal Information</h3>
                     {userInfo && <Formik
                         initialValues={userInfo}
@@ -175,7 +176,9 @@ const DashboardCustomer = () => {
         When a guest account books a flight, they get an confirmation number. Customers will be able to enter that confirmation number and, if the last name on the ticket matches the last name of the customer, that flight will become associated with their account as if they had purchased it while logged in */}
             </div>
             <div><Button variant='primary'>Change default sorting order of flights</Button></div>
+            <br />
             <div><Button variant='primary'>Choose the default automatic logout time</Button></div>
+            <br />
             <div>
                 <DropdownButton as={ButtonGroup} title="Change default automatic logout time" id='bg-nested-dropdown'>
                     <Dropdown.Item>5 minutes</Dropdown.Item>

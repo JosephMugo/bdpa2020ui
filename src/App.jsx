@@ -46,7 +46,7 @@ const App = () => {
         window.setTimeout(() => window.open("/login", "_top"), 3600000) // 3,600,000 ms = 1 hour
         window.setTimeout(() => cookies.remove('loginAttempt'), 3600000) // 3,600,000 ms = 1 hour
     }
-    
+
     // Auto logout feature
     if (!rememberMe && token) {
         var idle = new IdleJs({
@@ -82,8 +82,8 @@ const App = () => {
                     <Nav>
                         {!token && <Nav.Link href="/login">Login</Nav.Link>}
                         {!token && <Nav.Link href="/register">Register</Nav.Link>}
-                        {!token && <Nav.Link href="/register_admin">Register Admin</Nav.Link>}
-                        {!token && <Nav.Link href="/admin_create_user">Admin Create User</Nav.Link>}
+                        {token && <Nav.Link href="/register_admin">Register Admin</Nav.Link>} {/*&& role === "root"*/}
+                        {token && <Nav.Link href="/admin_create_user">Admin Create User</Nav.Link>} {/*&& role === "admin"*/}
                         {token && !rememberMe && <Nav.Link>Login Expiration: 15 minutes</Nav.Link>}
                         {token && <Nav.Link href="/" onClick={signOut}>Sign Out</Nav.Link>}
                     </Nav>
@@ -91,7 +91,7 @@ const App = () => {
             </Navbar>
             <Router>
                 {/* <Route exact path="/home" component={Home}/>  */}
-                <div className='content'>
+                <div className='fade-in content'>
                     <Route exact path="/flights" component={Flights} />
                     <Route exact path="/booking" component={Booking} />
                     <Route exact path="/booking/:flight_id" component={Booking} />
