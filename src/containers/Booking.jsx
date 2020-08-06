@@ -145,7 +145,7 @@ const Bookings = (flight_id) => {
                                         <Field name="phone" type="text" className={'form-control'} />
                                     </div>
                                     <div className="form-group col">
-                                        <label htmlFor="email">Email Adress</label>
+                                        <label htmlFor="email">Email Address</label>
                                         <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                     </div>
