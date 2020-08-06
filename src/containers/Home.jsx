@@ -14,8 +14,8 @@ const Home = () => {
                     alt="First slide"
                     />
                     <Carousel.Caption>
-                    <h3>Planes</h3>
-                    <p>For all your booking needs</p>
+                    <h3>Unlimited Adventures</h3>
+                    <p>Our airlines can take you virtually anywhere in the world in order the experience the world fully</p>
                     </Carousel.Caption>
                 </Carousel.Item>
                 <Carousel.Item>
@@ -26,8 +26,8 @@ const Home = () => {
                     />
 
                     <Carousel.Caption>
-                    <h3>Another Plane</h3>
-                    <p>Plane knowledge</p>
+                    <h3>Luxurious Flights</h3>
+                    <p>Enjoy several beverages, refreshments, and comfortable seating for an overall lavish experience</p>
                     </Carousel.Caption>
                 </Carousel.Item>
                 <Carousel.Item>
@@ -38,8 +38,8 @@ const Home = () => {
                     />
 
                     <Carousel.Caption>
-                    <h3>Planes</h3>
-                    <p>Description</p>
+                    <h3>Additional Features</h3>
+                    <p>Our planes also include heated floors and nightime mode for any time of the day for any passenger</p>
                     </Carousel.Caption>
                 </Carousel.Item>
             </Carousel>
