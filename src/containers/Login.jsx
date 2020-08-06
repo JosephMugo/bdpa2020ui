@@ -42,12 +42,12 @@ const Login = () => {
         <>
             <div className='row'>
                 <div className='col-sm-3'>
-                    <hr />
-                    <h2 align='center'>Login</h2>
-                    <hr />
                 </div>
                 <div className='col-sm-1' />
                 <div className='col-sm-4'>
+                    <hr />
+                    <h2 align='center'>Login</h2>
+                    <hr />
                     <Formik
                         initialValues={{ username: "", firstName: "", lastName: "", password: "" }}
                         validationSchema={Yup.object().shape({

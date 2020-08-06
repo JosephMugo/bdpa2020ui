@@ -22,13 +22,13 @@ const Register = () => {
         <>
             <div className='row'>
                 <div className='col-sm-3'>
+                </div>
+                <div className='col-sm-6'>
                     <hr />
                     <h2 align='center'>Register Admin Account</h2>
                     <hr />
                     <p>As an admin, you now have access to a number of administration features! Join today.</p>
                     <hr />
-                </div>
-                <div className='col-sm-6'>
                     <Formik
                         initialValues={{
                             title: "", firstName: "", middleName: "", lastName: "", suffix: "",
@@ -119,7 +119,7 @@ const Register = () => {
                             </Form>
                         )}
                     </Formik>
-                    
+
                 </div>
                 <div className='col-sm-3' />
             </div>

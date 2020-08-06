@@ -48,110 +48,117 @@ const Bookings = (flight_id) => {
     const required = Yup.string().required('Required')
     return (
         <>
-            <h2>Book Flight</h2>
-            <Formik
-                initialValues={{ location: "", search: "", date: "" }}
-                validationSchema={Yup.object().shape({
-                    location: required, search: required, date: required
-                })}
-                onSubmit={searchFlights}
-            >
-                {({ errors, touched }) => (
-                    <Form>
-                        <div className="form-row">
-                            <div className="form-group col">
-                                <label htmlFor="search">Arrival Location</label>
-                                <Field name="location" as="select" className={'form-control' + (errors.location ? ' is-invalid' : '')}>
-                                    <option value="" ></option>
-                                    <option value="city" >City</option>
-                                    <option selected value="state">State</option>
-                                    <option value="country">Country</option>
-                                    <option value="airport">Airport</option>
-                                </Field>
-                                <ErrorMessage name="location" component="div" className="invalid-feedback" />
-                            </div>
-                            <div className="form-group col">
-                                <label htmlFor="search">Search</label>
-                                <Field name="search" type="text" className={'form-control' + (errors.search && touched.search ? ' is-invalid' : '')} />
-                                <ErrorMessage name="search" component="div" className="invalid-feedback" />
-                            </div>
-                            <div className="form-group col">
-                                <label htmlFor="date">Date</label>
-                                <Field name="date" type="text" className={'form-control' + (errors.date && touched.date ? ' is-invalid' : '')} />
-                                <ErrorMessage name="date" component="div" className="invalid-feedback" />
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <button type="submit" className="btn btn-primary mr-2">Search</button>
-                            <button type="reset" className="btn btn-secondary">Reset</button>
-                        </div>
-                    </Form>)}
-            </Formik>
-            <Formik
-                initialValues={{
-                    firstName: "", middleName: "", lastName: "",
-                    birthdate: "", sex: "", email: "", phone: "",
-                }}
-                validationSchema={Yup.object().shape({
-                    firstName: required, lastName: required,
-                    birthdate: required, sex: required,
-                    email: required.email('Email is invalid'), phone: required
-                })}
-                onSubmit={console.log("check info here")}
-            >
-                {({ errors, touched }) => (
-                    <Form>
-                        <div className="form-row">
-                            <div className="form-group col-3">
-                                <label htmlFor="firstName">First Name</label>
-                                <Field name="firstName" type="text" className={'form-control' + (errors.firstName && touched.firstName ? ' is-invalid' : '')} />
-                                <ErrorMessage name="firstName" component="div" className="invalid-feedback" />
-                            </div>
-                            <div className="form-group col-3">
-                                <label htmlFor="middleName">Middle Name</label>
-                                <Field name="middleName" type="text" className="form-control" />
-                            </div>
-                            <div className="form-group col-3">
-                                <label htmlFor="lastName">Last Name</label>
-                                <Field name="lastName" type="text" className={'form-control' + (errors.lastName && touched.lastName ? ' is-invalid' : '')} />
-                                <ErrorMessage name="lastName" component="div" className="invalid-feedback" />
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-group col">
-                                <label htmlFor="birthdate">Date of Birth YYYY/MM/DD</label>
-                                <Field name="birthdate" type="text" className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
-                                <ErrorMessage name="birthdate" component="div" className="invalid-feedback" />
-                            </div>
-                            <div className="form-group col">
-                                <label>Sex</label>
-                                <Field name="sex" as="select" className={'form-control' + (errors.sex && touched.sex ? ' is-invalid' : '')}>
-                                    <option value=""></option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Genderqueer/Non-Binary</option>
-                                </Field>
-                                <ErrorMessage name="sex" component="div" className="invalid-feedback" />
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-group col">
-                                <label htmlFor="phone">Phone Number</label>
-                                <Field name="phone" type="text" className={'form-control'} />
-                            </div>
-                            <div className="form-group col">
-                                <label htmlFor="email">Email Adress</label>
-                                <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
-                                <ErrorMessage name="email" component="div" className="invalid-feedback" />
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <button type="submit" className="btn btn-primary mr-2">Book Flight</button>
-                            <button type="reset" className="btn btn-secondary">Reset</button>
-                        </div>
-                    </Form>
-                )}
-            </Formik>
+            <div className='row'>
+                <div className='col-sm-3' />
+                <div className='col-sm-6'>
+                    <hr />
+                    <h2 align='center'>Book Flights</h2>
+                    <hr />
+                    <Formik
+                        initialValues={{ location: "", search: "", date: "" }}
+                        validationSchema={Yup.object().shape({
+                            location: required, search: required, date: required
+                        })}
+                        onSubmit={searchFlights}
+                    >
+                        {({ errors, touched }) => (
+                            <Form>
+                                <div className="form-row">
+                                    <div className="form-group col">
+                                        <label htmlFor="search">Arrival Location</label>
+                                        <Field name="location" as="select" className={'form-control' + (errors.location ? ' is-invalid' : '')}>
+                                            <option value="" ></option>
+                                            <option value="city" >City</option>
+                                            <option selected value="state">State</option>
+                                            <option value="country">Country</option>
+                                            <option value="airport">Airport</option>
+                                        </Field>
+                                        <ErrorMessage name="location" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label htmlFor="search">Search</label>
+                                        <Field name="search" type="text" className={'form-control' + (errors.search && touched.search ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="search" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label htmlFor="date">Date</label>
+                                        <Field name="date" type="text" className={'form-control' + (errors.date && touched.date ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="date" component="div" className="invalid-feedback" />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <button type="submit" className="btn btn-primary mr-2">Search</button>
+                                    <button type="reset" className="btn btn-secondary">Reset</button>
+                                </div>
+                            </Form>)}
+                    </Formik>
+                    <Formik
+                        initialValues={{
+                            firstName: "", middleName: "", lastName: "",
+                            birthdate: "", sex: "", email: "", phone: "",
+                        }}
+                        validationSchema={Yup.object().shape({
+                            firstName: required, lastName: required,
+                            birthdate: required, sex: required,
+                            email: required.email('Email is invalid'), phone: required
+                        })}
+                        onSubmit={console.log("check info here")}
+                    >
+                        {({ errors, touched }) => (
+                            <Form>
+                                <div className="form-row">
+                                    <div className="form-group col-3">
+                                        <label htmlFor="firstName">First Name</label>
+                                        <Field name="firstName" type="text" className={'form-control' + (errors.firstName && touched.firstName ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="firstName" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col-3">
+                                        <label htmlFor="middleName">Middle Name</label>
+                                        <Field name="middleName" type="text" className="form-control" />
+                                    </div>
+                                    <div className="form-group col-3">
+                                        <label htmlFor="lastName">Last Name</label>
+                                        <Field name="lastName" type="text" className={'form-control' + (errors.lastName && touched.lastName ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="lastName" component="div" className="invalid-feedback" />
+                                    </div>
+                                </div>
+                                <div className="form-row">
+                                    <div className="form-group col">
+                                        <label htmlFor="birthdate">Date of Birth YYYY/MM/DD</label>
+                                        <Field name="birthdate" type="text" className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="birthdate" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label>Sex</label>
+                                        <Field name="sex" as="select" className={'form-control' + (errors.sex && touched.sex ? ' is-invalid' : '')}>
+                                            <option value=""></option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Genderqueer/Non-Binary</option>
+                                        </Field>
+                                        <ErrorMessage name="sex" component="div" className="invalid-feedback" />
+                                    </div>
+                                </div>
+                                <div className="form-row">
+                                    <div className="form-group col">
+                                        <label htmlFor="phone">Phone Number</label>
+                                        <Field name="phone" type="text" className={'form-control'} />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label htmlFor="email">Email Adress</label>
+                                        <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="email" component="div" className="invalid-feedback" />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <button type="submit" className="btn btn-primary mr-2">Book Flight</button>
+                                    <button type="reset" className="btn btn-secondary">Reset</button>
+                                </div>
+                            </Form>
+                        )}
+                    </Formik>
+                </div>
+            </div>
         </>
     )
 }
