@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
-import { Form as BootstrapForm, Alert } from 'react-bootstrap'
+import { Button, Form as BootstrapForm, Alert } from 'react-bootstrap'
 import * as Yup from 'yup'
 import Cookies from "universal-cookie";
 import { login, rememberMe } from "../services/userService";
@@ -31,6 +31,10 @@ const Login = () => {
         setChecked(currentChecked)
 
         const response = await rememberMe(currentChecked)
+    }
+
+    const forgotPassword = () => {
+        window.setTimeout(() => window.open("/forgot_password", "_top"), 10)
     }
 
     const required = Yup.string().required('Required')
@@ -94,6 +98,7 @@ const Login = () => {
                         <br />
                         (3rd failed attempt will freeze login)
                     </Alert>
+                    <Button variant='primary' onClick={forgotPassword}>Forgot Password</Button>
                 </div>
             </div>
         </>

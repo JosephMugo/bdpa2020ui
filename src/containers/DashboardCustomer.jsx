@@ -8,19 +8,22 @@ import { requestUserInfo, updateUserInfo } from '../services/userService'
 const cookies = new Cookies()
 const DashboardCustomer = () => {
     const [userInfo, setUserInfo] = useState(false), [infoUpdated, setInfoUpdated] = useState(2)
+    const [lastLoginDate, setLastLoginDate] = useState(false)
     let failedUserInfoGets = 0
     const getUserInfo = async () => {
         const requestedUserInfo = await requestUserInfo(cookies.get("username"))
         console.log("userInfo", requestedUserInfo)
         if (requestedUserInfo) setUserInfo(requestedUserInfo)
         else failedUserInfoGets++
+        setLastLoginDate(requestedUserInfo.lastLoginDate)
     }
     useEffect(() => {
         if (!userInfo || failedUserInfoGets > 100) getUserInfo()
     })
     const handleSubmit = async info => {
         setInfoUpdated(3)
-        const response = await updateUserInfo(info)
+        const { _id, ...userInfo } = info
+        const response = await updateUserInfo(userInfo)
         setUserInfo(response)
         setInfoUpdated(response ? 1 : 0)
     }
@@ -28,8 +31,8 @@ const DashboardCustomer = () => {
     return (
         <>
             <p>Welcome {cookies.get("username")}!</p>
-            <p>Last Login IP: LAST_IP</p>
-            <p>Last Login Date: LAST_DATE</p>
+            {/* {userInfo && <p>Last Login IP: {userInfo.lastLoginIp}</p>} */}
+            {userInfo && lastLoginDate && <p> Last Login Date: {"" + (new Date(Number(lastLoginDate)))}</p>}
 
             <div className='row'>
                 <div className='col-sm-6'>
