@@ -31,9 +31,9 @@ const DashboardCustomer = () => {
     const required = Yup.string().required('Required')
     return (
         <>
-            <p>Welcome {cookies.get("username")}!</p>
+            <h4>Welcome {cookies.get("username")}!</h4>
             {userInfo && lastLoginIp && <p>Last Login IP: {lastLoginIp}</p>}
-            {userInfo && lastLoginDate && <p> Last Login Date: {"" + (new Date(lastLoginDate))}</p>}
+            {userInfo && lastLoginDate && <p> Last Login Date: {"" + new Date(lastLoginDate)}</p>}
 
             <div className='row'>
                 <div className='col-sm-6'>
