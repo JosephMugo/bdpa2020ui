@@ -1,28 +1,57 @@
 import React, { useState, useEffect } from "react"
 import superagent from 'superagent'
-import {useParams} from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
-import * as Yup from 'yup'
+import { object, string, date } from 'yup'
+import { parse, isDate, format } from "date-fns"
+import Cookies from "universal-cookie"
+import { requestUserInfo } from '../services/userService'
+import { addTicket } from "../services/ticketService"
 import flights_key from '../doNotCommit.js'
-import { addTicket } from "../services/ticketService";
+const cookies = new Cookies()
 const Bookings = () => {
-    const [flights, setFlights] = useState([])
-    const [shownFlights, setShownFlights] = useState([])
-    const params=useParams()
-    const id = params.flight_id
-    console.log(params)
-    console.log(id)
-    const makeFlightRequest = async () => {
-        console.log(123)
-        var myTargetIds = [id]
-        var myQuery = encodeURIComponent(JSON.stringify(myTargetIds))
-        var myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
+    const [userInfo, setUserInfo] = useState(false)
+    const [flights, setFlights] = useState(false), [shownFlights, setShownFlights] = useState(false), [noFlyList, setNoFlyList] = useState(false)
+    const [id] = useState(useParams().flight_id), [selected, setSelected] = useState()
+    const [validTicket, setValidTicket] = useState(2)
+    const getUserInfo = async () => {
+        setUserInfo(true)
+        const requestedUserInfo = await requestUserInfo(cookies.get("username"))
+        console.log("userInfo", requestedUserInfo)
+        if (requestedUserInfo) {
+            requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy/MM/dd")
+            requestedUserInfo.expdate = ""
+            requestedUserInfo.billAdress = ""
+            setUserInfo(requestedUserInfo)
+        }
+        else setUserInfo({
+            firstName: "", middleName: "", lastName: "",
+            birthdate: "", sex: "", email: "", phone: "",
+            card: "", expdate: "", billAdress: "", zip: ""
+        })
+    }
+    const getNoFlyList = async () => {
+        try {
+            setNoFlyList(true)
+            const response = await superagent.get('https://airports.api.hscc.bdpa.org/v1/info/no-fly-list').set('key', `${flights_key}`)
+            setNoFlyList(response.body.noFlyList.map(noFly => noFly.birthdate = new Date(...Object.values(noFly.birthdate).reverse())))
+            console.log("noFlyList", response.body.noFlyList)
+        } catch (err) {
+            console.log(err)
+            setNoFlyList(false)
+        }
+    }
+    const makeFlightRequest = async (fields) => {
+        let myTargetIds, myQuery, myURL
+        if (id) myTargetIds = [id]
+        myQuery = encodeURIComponent(JSON.stringify(myTargetIds))
+        myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
         try {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
-            console.log(response.body.flights)
-            setFlights(response.body.flights[0])
+            setFlights(response.body.flights)
+            if (id) setSelected(response.body.flights[0])
             // const flightsList = response.body.flights.map(fl => {
-            //     console.log(fl)
+            //     console.log(asdf  fl)
             //     return {
             //         type: fl.type,
             //         airline: fl.airline,
@@ -46,52 +75,42 @@ const Bookings = () => {
             //             // return flightsList
             //             getFlightsWithAirports(flightsList)
 
-        } catch (err) {
-            console.log("ERROR HAPPENED")
-            console.error(err)
+        } catch (err) { console.error(err) }
+    }
+    const searchFlights = fields => { }
+    useEffect(() => { if (!noFlyList) getNoFlyList() })
+    useEffect(() => { if (!selected || !flights) makeFlightRequest() })
+    useEffect(() => { if (!userInfo && cookies.get("username")) getUserInfo() })
+    const handleSubmit = async (fields) => {
+        const canFly = userInfo => {
+            return !noFlyList.some(noFly => noFly.name.first === userInfo.firstName && noFly.name.last === userInfo.lastName
+                && (!noFly.name.middle || !userInfo.middle || noFly.name.middle === userInfo.middle)
+                && noFly.birthdate === new Date(userInfo.birthdate) && noFly.sex === userInfo.sex)
+        }
+        console.log(canFly(fields))
+        if (canFly(fields)) {
+            const response = await addTicket(id)
         }
     }
-    const searchFlights = fields => {
-            
-    }
-    const handleSubmit = async (info) => {
-        const response = await addTicket(id)
-        if (response) window.setTimeout(() => window.open("/tickets", "_top"), 1000)
-    }
-    useEffect(() => {
-        console.log("use effect works")
-        if (flights !== undefined && flights.length < 1){ //console.log(flights.length) 
-            makeFlightRequest()}else{
-        }
-    })
-    const required = Yup.string().required('Required')
-    let price
-    let arrivingTime
-    let to
-    let from
-    if (flights !== undefined){
-    price = flights.seatPrice
-    arrivingTime = new Date(flights.arriveAtReceiver).toLocaleString()
-    to = flights.landingAt
-    from = flights.comingFrom
-    }
+    const required = string().required('Required')
     return (
         <>
-            <div className='row'>
-                <div className='col-sm-3' />
-                <div className='col-sm-6'>
+            <div align='center'>
+                <div className='col-sm-8'>
                     <hr />
-                    <h2 align='center'>Book Flights</h2>
+                    <h2>Book Flights</h2>
                     <hr />
-                    {(id !== null || id !== undefined || id !== "") && <h3 align='center'>Costs: {price}</h3>}
-                    {(id !== null || id !== undefined || id !== "") && <h3 align='center'>Arriving: {arrivingTime}</h3>}
-                    {(id !== null || id !== undefined || id !== "") && <h3 align='center'>To: {to} From: {from}</h3>}
-                    <Formik
+                    {selected && <>
+                        <h3 align='center'>Price: {selected.seatPrice}</h3>
+                        <h3 align='center'>Arriving: {new Date(selected.arriveAtReceiver).toLocaleString()}</h3>
+                        <h3 align='center'>To: {selected.landingAt} From: {selected.comingFrom}</h3>
+                    </>}
+                    {!id && <Formik
                         initialValues={{ location: "", search: "", date: "" }}
-                        validationSchema={Yup.object().shape({
+                        validationSchema={object().shape({
                             location: required, search: required, date: required
                         })}
-                        onSubmit={handleSubmit} // originally for flights
+                        onSubmit={searchFlights}
                     >
                         {({ errors, touched }) => (
                             (id === null || id === undefined || id === "") &&
@@ -124,32 +143,35 @@ const Bookings = () => {
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
                             </Form>)}
-                    </Formik>
-                    <Formik
-                        initialValues={{
-                            firstName: "", middleName: "", lastName: "",
-                            birthdate: "", sex: "", email: "", phone: "",cardNum:"",expdate:"",zip:""
-                        }}
-                        validationSchema={Yup.object().shape({
+                    </Formik>}
+                    {userInfo && userInfo !== true && <Formik
+                        initialValues={userInfo}
+                        validationSchema={object().shape({
                             firstName: required, lastName: required,
-                            birthdate: required, sex: required,
-                            email: required.email('Email is invalid'), phone: required, cardNum: required, expdate: required, zip: required
+                            birthdate: date().required("Required").transform((originalValue) => {
+                                return isDate(originalValue) ? originalValue : parse(originalValue, "yyyy-MM-dd", new Date());
+                            }).max(new Date()), sex: required,
+                            email: required.email('Email is invalid'), phone: required.matches(/^[0-9]+$/, "Can only contain numbers"),
+                            card: string().matches(/^[0-9]+$/, "Can only cantain numbers"),
+                            expdate: date().required("Required").transform((originalValue) => {
+                                return isDate(originalValue) ? originalValue : parse(originalValue, "yyyy-MM-dd", new Date());
+                            }).max(new Date()), zip: required
                         })}
                         onSubmit={handleSubmit}
                     >
                         {({ errors, touched }) => (
                             <Form>
                                 <div className="form-row">
-                                    <div className="form-group col-3">
+                                    <div className="form-group col">
                                         <label htmlFor="firstName">First Name</label>
                                         <Field name="firstName" type="text" className={'form-control' + (errors.firstName && touched.firstName ? ' is-invalid' : '')} />
                                         <ErrorMessage name="firstName" component="div" className="invalid-feedback" />
                                     </div>
-                                    <div className="form-group col-3">
+                                    <div className="form-group col">
                                         <label htmlFor="middleName">Middle Name</label>
                                         <Field name="middleName" type="text" className="form-control" />
                                     </div>
-                                    <div className="form-group col-3">
+                                    <div className="form-group col">
                                         <label htmlFor="lastName">Last Name</label>
                                         <Field name="lastName" type="text" className={'form-control' + (errors.lastName && touched.lastName ? ' is-invalid' : '')} />
                                         <ErrorMessage name="lastName" component="div" className="invalid-feedback" />
@@ -164,10 +186,10 @@ const Bookings = () => {
                                     <div className="form-group col">
                                         <label>Sex</label>
                                         <Field name="sex" as="select" className={'form-control' + (errors.sex && touched.sex ? ' is-invalid' : '')}>
-                                            <option value=""></option>
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
+                                            <option value="maled" >Male</option>
+                                            <option value="female" >Female</option>
                                             <option value="other">Genderqueer/Non-Binary</option>
+                                            <option value=""></option>
                                         </Field>
                                         <ErrorMessage name="sex" component="div" className="invalid-feedback" />
                                     </div>
@@ -185,9 +207,9 @@ const Bookings = () => {
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group col">
-                                        <label htmlFor="cardNum">Card Number</label>
-                                        <Field name="cardNum" type="text" className={'form-control'+ (errors.email && touched.email ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="cardNum" component="div" className="invalid-feedback" />
+                                        <label htmlFor="card">Card Number</label>
+                                        <Field name="card" type="text" className={'form-control' + (errors.card && touched.card ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="card" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
                                         <label htmlFor="expdate">Expiration Date YYYY/MM/DD</label>
@@ -198,13 +220,13 @@ const Bookings = () => {
                                 <div className="form-row">
                                     <div className="form-group col">
                                         <label htmlFor="billAdress">Billing Adress</label>
-                                        <Field name="billAdress" type="text" className={'form-control'+ (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
+                                        <Field name="billAdress" type="text" className={'form-control' + (errors.billAdress && touched.billAdress ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="billAdress" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
-                                    <label htmlFor="zip">Zip</label>
-                                        <Field name="zip" type="text" className={'form-control'+ (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
+                                        <label htmlFor="zip">Zip</label>
+                                        <Field name="zip" type="text" className={'form-control' + (errors.zip && touched.zip ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="zip" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
                                 <div className="form-group">
@@ -213,7 +235,9 @@ const Bookings = () => {
                                 </div>
                             </Form>
                         )}
-                    </Formik>
+                    </Formik>}
+                    <hr />
+                    <h5>{["Ticket Not Saved", "Ticket Saved", "", "Loading...", "You're on the No Fly List"][validTicket]}</h5>
                 </div>
             </div>
         </>

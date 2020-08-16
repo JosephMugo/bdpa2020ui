@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react"
 import { Table, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-bootstrap'
 import Cookies from "universal-cookie"
-import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik'
-import * as Yup from 'yup'
+import { Formik, Field, Form, ErrorMessage } from 'formik'
+import { object, string, date } from 'yup'
+import { parse, isDate } from "date-fns"
 import { requestUserInfo, updateUserInfo } from '../services/userService'
 
 const cookies = new Cookies()
@@ -28,7 +29,7 @@ const DashboardCustomer = () => {
         setUserInfo(response)
         setInfoUpdated(response ? 1 : 0)
     }
-    const required = Yup.string().required('Required')
+    const required = string().required('Required')
     return (
         <>
             <h4>Welcome {cookies.get("username")}!</h4>
@@ -75,12 +76,14 @@ const DashboardCustomer = () => {
                     <h3>Personal Information</h3>
                     {userInfo && <Formik
                         initialValues={userInfo}
-                        validationSchema={Yup.object().shape({
+                        validationSchema={object().shape({
                             firstName: required, lastName: required,
-                            birthdate: required, sex: required,
+                            birthdate: date().required("Required").transform((originalValue) => {
+                                return isDate(originalValue) ? originalValue : parse(originalValue, "yyyy-MM-dd", new Date());
+                            }).max(new Date()), sex: required,
                             city: required, state: required, zip: required, country: required,
                             email: required.email('Email is invalid'),
-                            card: Yup.string().matches(/^[0-9]+$/, "Can only cantain numbers")
+                            card: string().matches(/^[0-9]+$/, "Can only cantain numbers")
                         })}
                         onSubmit={handleSubmit}
                     >

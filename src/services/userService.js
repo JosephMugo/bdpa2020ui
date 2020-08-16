@@ -2,16 +2,12 @@ import superagent from "superagent";
 import Cookies from "universal-cookie";
 const baseUserURL = "http://localhost:3535"
 
+const cookies = new Cookies()
 export const rememberMe = async (remember = false) => {
     try {
-        const cookies = new Cookies()
-
-        console.log(remember)
-        if (remember === true) cookies.set('rememberMe', remember)
-        if (remember === false) cookies.remove("rememberMe")
-    } catch (err) {
-        console.log("error", err)
-    }
+        if (remember) cookies.set('rememberMe', remember)
+        else cookies.remove("rememberMe")
+    } catch (err) {console.log("error", err)}
     return false
 }
 export const createUser = async (user) => {
@@ -38,7 +34,6 @@ export const login = async (user) => {
         const { token, role } = response.body
         console.log("token", token)
         console.log(username, role)
-        const cookies = new Cookies()
         cookies.set('username', username)
         cookies.set('userToken', token)
         cookies.set('role', role)
@@ -49,17 +44,10 @@ export const login = async (user) => {
     } catch (err) {
         if (err.status === 401) {
             console.log("Bad credentials")
-
-            const cookies = new Cookies()
             const loginAttempt = cookies.get("loginAttempt")
-
-            if (loginAttempt === '2') {
-                cookies.set('loginAttempt', '3')
-            } else if (loginAttempt === '1') {
-                cookies.set('loginAttempt', '2')
-            } else {
-                cookies.set('loginAttempt', '1')
-            }
+            if (loginAttempt === '2') cookies.set('loginAttempt', '3')
+            else if (loginAttempt === '1') cookies.set('loginAttempt', '2')
+            else cookies.set('loginAttempt', '1')
         }
         else console.log("error", err)
     }
@@ -74,18 +62,19 @@ export const requestUserInfo = async (username) => {
         const response = await superagent.get(tokenUrl, username).set(headers)
         return response.body
     } catch (err) {
-        if (err.status === 401) console.log("Bad credentials")
+        if (err.status === 400) console.log("Unauthorized")
+        if (err.status === 401) console.log("Unauthorized")
         else console.log("error", err)
     }
     return false
 }
 export const updateUserInfo = async user => {
     console.log("Updating", user.username)
-    const cookies = new Cookies(), token = cookies.get("userToken")
+    const token = cookies.get("userToken")
     const headers = { Authorization: `Bearer ${token}` }
-    const tokenUrl = baseUserURL + '/user/update'
+    const updateUrl = baseUserURL + '/user/update'
     try {
-        const response = await superagent.post(tokenUrl, user).set(headers)
+        const response = await superagent.post(updateUrl, user).set(headers)
         return response.body
     } catch (err) {
         if (err.status === 401) console.log("Bad credentials")
