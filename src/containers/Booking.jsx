@@ -4,6 +4,7 @@ import {useParams} from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import flights_key from '../doNotCommit.js'
+import { addTicket } from "../services/ticketService";
 const Bookings = () => {
     const [flights, setFlights] = useState([])
     const [shownFlights, setShownFlights] = useState([])
@@ -51,7 +52,11 @@ const Bookings = () => {
         }
     }
     const searchFlights = fields => {
-
+            
+    }
+    const handleSubmit = async (info) => {
+        const response = await addTicket(id)
+        if (response) window.setTimeout(() => window.open("/tickets", "_top"), 1000)
     }
     useEffect(() => {
         console.log("use effect works")
@@ -86,7 +91,7 @@ const Bookings = () => {
                         validationSchema={Yup.object().shape({
                             location: required, search: required, date: required
                         })}
-                        onSubmit={searchFlights}
+                        onSubmit={handleSubmit} // originally for flights
                     >
                         {({ errors, touched }) => (
                             (id === null || id === undefined || id === "") &&
@@ -130,7 +135,7 @@ const Bookings = () => {
                             birthdate: required, sex: required,
                             email: required.email('Email is invalid'), phone: required, cardNum: required, expdate: required, zip: required
                         })}
-                        onSubmit={console.log("check info here")}
+                        onSubmit={handleSubmit}
                     >
                         {({ errors, touched }) => (
                             <Form>
