@@ -8,7 +8,7 @@ import { requestUserInfo, updateUserInfo } from '../services/userService'
 
 const cookies = new Cookies()
 const DashboardCustomer = () => {
-    const [userInfo, setUserInfo] = useState(false), [infoUpdated, setInfoUpdated] = useState(2)
+    const [userInfo, setUserInfo] = useState(false), [updateResponse, setUpdateResponse] = useState(2)
     const [lastLoginDate, setLastLoginDate] = useState(false), [lastLoginIp, setLastLoginIp] = useState(false)
     let failedUserInfoGets = 0
     const getUserInfo = async () => {
@@ -23,11 +23,11 @@ const DashboardCustomer = () => {
         if (!userInfo || failedUserInfoGets > 100) getUserInfo()
     })
     const handleSubmit = async info => {
-        setInfoUpdated(3)
+        setUpdateResponse(3)
         const { _id, ...userInfo } = info
         const response = await updateUserInfo(userInfo)
         setUserInfo(response)
-        setInfoUpdated(response ? 1 : 0)
+        setUpdateResponse(response ? 1 : 0)
     }
     const required = string().required('Required')
     return (
@@ -171,7 +171,7 @@ const DashboardCustomer = () => {
                                 <div className="form-group">
                                     <button type="submit" className="btn btn-primary mr-2">Update Personal Information</button>
                                 </div>
-                                <h5>{["Personal Information Not Updated", "Personal Information Updated!", "", "Loading..."][infoUpdated]}</h5>
+                                <h5>{["Personal Information Not Updated", "Personal Information Updated!", "", "Loading..."][updateResponse]}</h5>
                             </Form>
                         )}
                     </Formik>}

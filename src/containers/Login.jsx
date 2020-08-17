@@ -12,12 +12,12 @@ const Login = () => {
     // check if Remember Me check box is checked
     const [checked, setChecked] = useState(false)
 
-    const [validUser, setUserValidity] = useState(2)
+    const [loginResponse, setLoginResponse] = useState(2)
 
     const handleLogin = async (fields) => {
-        setUserValidity(3)
+        setLoginResponse(3)
         const response = await login(fields)
-        setUserValidity(0 + response)
+        setLoginResponse(0 + response)
         if (response) window.setTimeout(() => window.open("/dashboard_customer", "_top"), 1000)
     }
 
@@ -92,7 +92,7 @@ const Login = () => {
                     </Formik>
                     <BootstrapForm.Check type='checkbox' onClick={handleRememberMe} label='Remember Me' />
                     <hr />
-                    <h5>{["Incorrect Credentials", "Logged In!", "", "Loading..."][validUser]}</h5>
+                    <h5>{["Incorrect Credentials", "Logged In!", "", "Loading..."][loginResponse]}</h5>
                     <Alert variant='warning'>
                         Current Login Attempt: {loginAttempt}
                         <br />

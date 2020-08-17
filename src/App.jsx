@@ -16,12 +16,10 @@ import Register from "./containers/Register"
 import RegisterAdmin from "./containers/RegisterAdmin"
 import AdminCreateUser from "./containers/AdminCreateUser"
 
+const cookies = new Cookies()
 const App = () => {
-    const cookies = new Cookies()
     const [rememberMe] = useState(cookies.get("rememberMe"))
     const [token] = useState(cookies.get("userToken")), [role] = useState(cookies.get("role"))
-    console.log("cookies", cookies.getAll())
-
     const signOut = () => {
         console.log("signout")
         cookies.remove("username")

@@ -10,13 +10,13 @@ const securityQuestions = [
     "What is your favorite food?"
 ]
 const Register = () => {
-    const [validUsername, setUsernameValidity] = useState(2)
+    const [registerResponse, setRegisterResponse] = useState(2)
     const handleSubmit = async (fields) => {
         const { captcha, ...info } = fields
         info.birthdate = new Date(info.birthdate)
-        setUsernameValidity(3)
+        setRegisterResponse(3)
         const response = await createUser(info)
-        setUsernameValidity(0 + response)
+        setRegisterResponse(0 + response)
         if (response) window.setTimeout(() => window.open("/login", "_top"), 1000)
     }
     const required = string().required('Required')
@@ -169,7 +169,7 @@ const Register = () => {
                                     <button type="submit" className="btn btn-primary mr-2">Register</button>
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
-                                <h5>{["Username Already Taken", "User Registered!", "", "Loading..."][validUsername]}</h5>
+                                <h5>{["Username Already Taken", "User Registered!", "", "Loading..."][registerResponse]}</h5>
                             </Form>
                         )}
                     </Formik>
