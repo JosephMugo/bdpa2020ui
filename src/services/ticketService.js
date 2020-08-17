@@ -8,6 +8,13 @@ export const addTicket = async (flight_id) => {
     const headers = { Authorization: `Bearer ${token}` }
     const postBody = { user, flight_id }
     const addTicketURL = baseUserURL + '/ticket/add'
-    const response = await superagent.post(addTicketURL, postBody).set(headers)
-    console.log("addTicket response", response)
+    try {
+        const response = await superagent.post(addTicketURL, postBody).set(headers)
+        console.log("addTicket response", response)
+        return true
+    } catch (err) {
+        console.log(err)
+    }
+    return false
+
 }
