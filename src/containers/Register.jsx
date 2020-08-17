@@ -1,8 +1,9 @@
 import React, { useState } from "react"
 // import { Form, Button, Col } from "react-bootstrap"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
-import * as Yup from 'yup'
-import { createUser } from "../services/userService";
+import { object, string, date } from 'yup'
+import { parse, isDate } from "date-fns"
+import { createUser } from "../services/userService"
 const securityQuestions = [
     "What was the house number and street name you lived in as a child?",
     "What primary school did you attend?",
@@ -12,20 +13,19 @@ const Register = () => {
     const [validUsername, setUsernameValidity] = useState(2)
     const handleSubmit = async (fields) => {
         const { captcha, ...info } = fields
+        info.birthdate = new Date(info.birthdate)
         setUsernameValidity(3)
         const response = await createUser(info)
         setUsernameValidity(0 + response)
         if (response) window.setTimeout(() => window.open("/login", "_top"), 1000)
     }
-    const required = Yup.string().required('Required')
+    const required = string().required('Required')
     return (
         <>
-            <div className='row'>
-                <div className='col-sm-3'>
-                </div>
-                <div className='col-sm-6'>
+            <div align='center'>
+                <div className='col-sm-8'>
                     <hr />
-                    <h2 align='center'>Register Customer Account</h2>
+                    <h2>Register Customer Account</h2>
                     <hr />
                     <p>You are only moments away from joining the best website in the world! Please enter some personal information and we'll get your account set up right away.</p>
                     <p>As a customer, you are given access to a wide variety of services. Join today!</p>
@@ -37,12 +37,14 @@ const Register = () => {
                             email: "", phone: "", username: "", password: "",
                             securityQuestion1: "", securityQuestion2: "", securityQuestion3: "", captcha: ""
                         }}
-                        validationSchema={Yup.object().shape({
+                        validationSchema={object().shape({
                             username: required.matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
                             firstName: required, lastName: required,
-                            birthdate: required, sex: required,
-                            city: required, state: required, zip: required, country: required,
-                            email: required.email('Email is invalid'),
+                            birthdate: date().required("Required").transform((originalValue) => {
+                                return isDate(originalValue) ? originalValue : parse(originalValue, "yyyy-MM-dd", new Date());
+                            }).max(new Date()),
+                            sex: required, city: required, state: required, zip: required, country: required,
+                            email: required.email('Email is invalid'), phone: string().matches(/^[0-9]+$/, "Can only contain numbers"),
                             password: required
                                 .min(10, 'Must be at least 10 characters')
                                 .max(30, "Must be less than 30 characters")
@@ -123,7 +125,8 @@ const Register = () => {
                                 <div className="form-row">
                                     <div className="form-group col">
                                         <label htmlFor="phone">Phone Number</label>
-                                        <Field name="phone" type="text" className={'form-control'} />
+                                        <Field name="phone" type="text" className={'form-control' + (errors.phone ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="phone" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
                                         <label htmlFor="email">Email Adress</label>

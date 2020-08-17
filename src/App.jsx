@@ -1,15 +1,9 @@
 import React, { useState } from "react"
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    // Link
-} from "react-router-dom"
+import { BrowserRouter as Router, Route } from "react-router-dom"
 import Cookies from "universal-cookie";
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import IdleJs from "idle-js"
-
 import Booking from "./containers/Booking"
 import Flights from "./containers/Flights"
 import Home from "./containers/Home"
@@ -24,23 +18,22 @@ import AdminCreateUser from "./containers/AdminCreateUser"
 
 const App = () => {
     const cookies = new Cookies()
-    const [rememberMe, setRememberMe] = useState(cookies.get("rememberMe"))
-    const [token, setToken] = useState(cookies.get("userToken")), [role, setRole] = useState(cookies.get("role"))
+    const [rememberMe] = useState(cookies.get("rememberMe"))
+    const [token] = useState(cookies.get("userToken")), [role] = useState(cookies.get("role"))
     console.log("cookies", cookies.getAll())
 
     const signOut = () => {
         console.log("signout")
+        cookies.remove("username")
         cookies.remove("userToken")
         cookies.remove("role")
         cookies.remove("rememberMe")
-
         idle.stop()
         idle.reset()
     }
 
     // Setting login timeouts
     const loginAttempt = cookies.get("loginAttempt")
-
     // after 3 login attemtps, set timeout before removing counter
     if (loginAttempt === '3') {
         window.setTimeout(() => window.open("/login", "_top"), 3600000) // 3,600,000 ms = 1 hour
