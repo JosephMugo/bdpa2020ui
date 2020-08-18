@@ -78,9 +78,7 @@ const DashboardCustomer = () => {
                         initialValues={userInfo}
                         validationSchema={object().shape({
                             firstName: required, lastName: required,
-                            birthdate: date().required("Required").transform((originalValue) => {
-                                return isDate(originalValue) ? originalValue : parse(originalValue, "yyyy-MM-dd", new Date());
-                            }).max(new Date()), sex: required,
+                            birthdate: date().required("Required").max(new Date(), "Invalid Date of Birth"), sex: required,
                             city: required, state: required, zip: required, country: required,
                             email: required.email('Email is invalid'),
                             card: string().matches(/^[0-9]+$/, "Can only cantain numbers")
@@ -123,9 +121,9 @@ const DashboardCustomer = () => {
                                         <label>Sex</label>
                                         <Field name="sex" as="select" className={'form-control' + (errors.sex && touched.sex ? ' is-invalid' : '')}>
                                             <option value=""></option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Other">Genderqueer/Non-Binary</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Genderqueer/Non-Binary</option>
                                         </Field>
                                         <ErrorMessage name="sex" component="div" className="invalid-feedback" />
                                     </div>

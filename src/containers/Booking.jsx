@@ -21,15 +21,18 @@ const Bookings = () => {
             console.log("userInfo", requestedUserInfo)
             if (requestedUserInfo) {
                 requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy/MM/dd")
+                requestedUserInfo.cardName = ""
+                requestedUserInfo.cvv = ""
                 requestedUserInfo.expdate = ""
-                requestedUserInfo.billAdress = ""
+                requestedUserInfo.address = ""
                 setUserInfo(requestedUserInfo)
             }
         }
         else setUserInfo({
             firstName: "", middleName: "", lastName: "",
-            birthdate: "", sex: "", email: "", phone: "",
-            card: "", expdate: "", billAdress: "", zip: ""
+            birthdate: null, sex: "", email: "", phone: "",
+            cardName: "", card: "", cvv: "", expdate: null,
+            address: "", city: "", state: "", zip: ""
         })
     }
     const getNoFlyList = async () => {
@@ -122,19 +125,17 @@ const Bookings = () => {
                         initialValues={userInfo}
                         validationSchema={object().shape({
                             firstName: required, lastName: required,
-                            birthdate: date().required("Required").transform((originalValue) => {
-                                return isDate(originalValue) ? originalValue : parse(originalValue, "yyyy-MM-dd", new Date());
-                            }).max(new Date()), sex: required,
+                            birthdate: date().required("Required").max(new Date(), "Invalid Date of Birth"), sex: required,
                             email: required.email('Email is invalid'), phone: required.matches(/^[0-9]+$/, "Can only contain numbers"),
-                            card: required.matches(/^[0-9]+$/, "Can only cantain numbers"),
-                            expdate: date().required("Required").transform((originalValue) => {
-                                return isDate(originalValue) ? originalValue : parse(originalValue, "yyyy-MM-dd", new Date());
-                            }).min(new Date()), zip: required
+                            cardName: required,
+                            card: required.matches(/^[0-9]+$/, "Can only cantain numbers"), cvv: required.matches(/^[0-9]+$/, "Can only cantain numbers"),
+                            expdate: date().required("Required").min(new Date((new Date()).getYear() + 1900, (new Date()).getMonth()), "Invalid Expiration Date"), address: required, city: required, state: required, zip: required
                         })}
                         onSubmit={handleSubmit}
                     >
                         {({ errors, touched }) => (
                             <Form>
+                                <h4>Identifying Information</h4>
                                 <div className="form-row">
                                     <div className="form-group col">
                                         <label htmlFor="firstName">First Name</label>
@@ -180,23 +181,45 @@ const Bookings = () => {
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
+                                <h4>Payment Information</h4>
+                                <div className="form-group">
+                                    <label htmlFor="cardName">Cardholder Name</label>
+                                    <Field name="cardName" type="text" className={'form-control' + (errors.cardName && touched.cardName ? ' is-invalid' : '')} />
+                                    <ErrorMessage name="cardName" component="div" className="invalid-feedback" />
+                                </div>
                                 <div className="form-row">
                                     <div className="form-group col">
                                         <label htmlFor="card">Card Number</label>
                                         <Field name="card" type="text" className={'form-control' + (errors.card && touched.card ? ' is-invalid' : '')} />
                                         <ErrorMessage name="card" component="div" className="invalid-feedback" />
                                     </div>
-                                    <div className="form-group col">
-                                        <label htmlFor="expdate">Expiration Date YYYY/MM/DD</label>
-                                        <Field name="expdate" type="expdate" className={'form-control' + (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
+                                    <div className="form-group col-3">
+                                        <label htmlFor="cvv">CVV</label>
+                                        <Field name="cvv" type="expdate" className={'form-control' + (errors.cvv && touched.cvv ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="cvv" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
+                                <div className="form-group">
+                                    <label htmlFor="expdate">Expiration Date YYYY/MM</label>
+                                    <Field name="expdate" type="text" className={'form-control' + (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
+                                    <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
+                                </div>
+                                <h4>Billing Address</h4>
                                 <div className="form-row">
                                     <div className="form-group col">
-                                        <label htmlFor="billAdress">Billing Adress</label>
-                                        <Field name="billAdress" type="text" className={'form-control' + (errors.billAdress && touched.billAdress ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="billAdress" component="div" className="invalid-feedback" />
+                                        <label htmlFor="address">Address</label>
+                                        <Field name="address" type="text" className={'form-control' + (errors.address && touched.address ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="address" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label htmlFor="city">City</label>
+                                        <Field name="city" type="text" className={'form-control' + (errors.city && touched.city ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="city" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label htmlFor="state">State</label>
+                                        <Field name="state" type="text" className={'form-control' + (errors.state && touched.state ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="state" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
                                         <label htmlFor="zip">Zip</label>
