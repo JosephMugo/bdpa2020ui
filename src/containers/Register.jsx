@@ -2,8 +2,8 @@ import React, { useState } from "react"
 // import { Form, Button, Col } from "react-bootstrap"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
-import { parse, isDate } from "date-fns"
 import { createUser } from "../services/userService"
+import captcha from "../assets/captcha.png"
 const securityQuestions = [
     "What was the house number and street name you lived in as a child?",
     "What primary school did you attend?",
@@ -159,7 +159,8 @@ const Register = () => {
                                     <ErrorMessage name="securityQuestion3" component="div" className="invalid-feedback" />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="captcha">What's 47+31?</label>
+                                    <label htmlFor="captcha">What's</label>
+                                    <img src={captcha} alt="captcha"/>
                                     <Field name="captcha" type="text" className={'form-control' + (errors.captcha && touched.captcha ? ' is-invalid' : '')} />
                                     <ErrorMessage name="captcha" component="div" className="invalid-feedback" />
                                 </div>
