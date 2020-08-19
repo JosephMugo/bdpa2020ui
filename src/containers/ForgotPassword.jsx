@@ -70,18 +70,20 @@ const ForgotPassword = () => {
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group col">
-                                        <label htmlFor="securityQuestion1">Security Question 1</label>
+                                        <label htmlFor="securityQuestion1">{securityQuestions[0]}</label>
                                         <Field name="securityQuestion1" type="text" className={'form-control' + (errors.securityQuestion1 && touched.securityQuestion1 ? ' is-invalid' : '')} />
                                         <ErrorMessage name="securityQuestion1" component="div" className="invalid-feedback" />
                                     </div>
+                                </div>
+                                <div className="form-row">
                                     <div className="form-group col">
-                                        <label htmlFor="securityQuestion2">Security Question 2</label>
+                                        <label htmlFor="securityQuestion2">{securityQuestions[1]}</label>
                                         <Field name="securityQuestion2" type="text" className={'form-control' + (errors.securityQuestion2 && touched.securityQuestion2 ? ' is-invalid' : '')} />
                                         <ErrorMessage name="securityQuestion2" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="securityQuestion3">Security Question 3</label>
+                                    <label htmlFor="securityQuestion3">{securityQuestions[2]}</label>
                                     <Field name="securityQuestion3" type="securityQuestion3" className={'form-control' + (errors.securityQuestion3 && touched.securityQuestion3 ? ' is-invalid' : '')} />
                                     <ErrorMessage name="securityQuestion3" component="div" className="invalid-feedback" />
                                 </div>
