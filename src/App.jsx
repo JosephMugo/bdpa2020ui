@@ -74,7 +74,7 @@ const App = () => {
                         {!token && <Nav.Link href="/login">Login</Nav.Link>}
                         {!token && <Nav.Link href="/register">Register</Nav.Link>}
                         {token && <Nav.Link href="/register_admin">Register Admin</Nav.Link>} {/*&& role === "root"*/}
-                        {token && <Nav.Link href="/admin_create_user">Admin Create User</Nav.Link>} {/*&& role === "admin"*/}
+                        {role === "admin" && <Nav.Link href="/admin_create_user">Admin Create User</Nav.Link>} {/*&& role === "admin"*/}
                         {token && !rememberMe && <Nav.Link>Login Expiration: 15 minutes</Nav.Link>}
                         {token && <Nav.Link href="/" onClick={signOut}>Sign Out</Nav.Link>}
                     </Nav>
