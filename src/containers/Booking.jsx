@@ -12,7 +12,7 @@ const cookies = new Cookies()
 let flightRequestFails = 0
 const Bookings = () => {
     const [userInfo, setUserInfo] = useState(false)
-    const [flights, setFlights] = useState(false), [shownFlights, setShownFlights] = useState(false), [noFlyList, setNoFlyList] = useState(false)
+    const [flights, setFlights] = useState(false), [noFlyList, setNoFlyList] = useState(false) //, [shownFlights, setShownFlights] = useState(false)
     const [id] = useState(useParams().flight_id), [selected, setSelected] = useState()
     const [ticketResponse, setTicketResponse] = useState(2)
     const getUserInfo = async () => {
@@ -62,8 +62,8 @@ const Bookings = () => {
         }
     }
     const searchFlights = fields => { }
-    useEffect(() => { if (!noFlyList && flightRequestFails < 10) getNoFlyList() })
-    useEffect(() => { if (!flights && flightRequestFails < 10) makeFlightRequest() })
+    useEffect(() => { if (!noFlyList && flightRequestFails < 8) getNoFlyList() })
+    useEffect(() => { if (!flights && flightRequestFails < 8) makeFlightRequest() })
     useEffect(() => { if (!userInfo) getUserInfo() })
     const handleSubmit = async fields => {
         const canFly = userInfo => !noFlyList.some(noFly => noFly.name.first === userInfo.firstName && noFly.name.last === userInfo.lastName
@@ -84,7 +84,7 @@ const Bookings = () => {
                     <hr />
                     <h2>Book Flights</h2>
                     <hr />
-                    {flightRequestFails >= 10 && <h3>Flight Could Not Be Requested</h3>}
+                    {flightRequestFails >= 8 && <h3>Flight Could Not Be Requested</h3>}
                     {selected && <>
                         <h3 align='center'>Price: {selected.seatPrice}</h3>
                         <h3 align='center'>Arriving: {new Date(selected.arriveAtReceiver).toLocaleString()}</h3>
@@ -236,7 +236,7 @@ const Bookings = () => {
                                     </div>
                                 </div>
                                 <div className="form-group">
-                                    <button type="submit" className="btn btn-primary mr-2" disabled={flightRequestFails >= 10}>Book Flight</button>
+                                    <button type="submit" className="btn btn-primary mr-2" disabled={flightRequestFails >= 8}>Book Flight</button>
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
                                 <hr />

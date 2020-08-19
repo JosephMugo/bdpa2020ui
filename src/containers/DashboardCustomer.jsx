@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react"
 import { Table, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-bootstrap'
+import superagent from 'superagent'
 import Cookies from "universal-cookie"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
 import { format } from "date-fns"
 import { requestUserInfo, updateUserInfo } from '../services/userService'
 import { requestUserTickets } from '../services/ticketService'
+import flights_key from '../doNotCommit.js'
 
 const cookies = new Cookies()
+let requestFails = 0
 const DashboardCustomer = () => {
     const [userInfo, setUserInfo] = useState(false), [updateResponse, setUpdateResponse] = useState(2)
     const [lastLoginDate, setLastLoginDate] = useState(false), [lastLoginIp, setLastLoginIp] = useState(false)
-    const [userTickets, setUserTickets] = useState(false)
+    const [userTickets, setUserTickets] = useState(false), [airports, setAirports] = useState(false), [flights, setFlights] = useState(false)
+
     const getUserInfo = async () => {
         setUserInfo(true)
         const requestedUserInfo = await requestUserInfo(cookies.get("username"))
@@ -27,10 +31,44 @@ const DashboardCustomer = () => {
         setUserTickets(true)
         const requestedUserTickets = await requestUserTickets(cookies.get("username"))
         console.log("userTickets", requestedUserTickets)
-        if (requestedUserTickets) setUserTickets(requestedUserTickets)
+        if (requestedUserTickets) setUserTickets(requestedUserTickets.map(ticket => ticket.flight_id))
+    }
+    const requestFlights = async () => {
+        setFlights(true)
+        let myQuery, myURL
+        myQuery = encodeURIComponent(JSON.stringify(userTickets))
+        myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
+        try {
+            const response = await superagent.get(myURL).set('key', `${flights_key}`)
+            const flights = response.body.flights
+            console.log("flights", flights)
+            setFlights(flights)
+            requestFails = 0
+        } catch (err) {
+            requestFails++
+            console.error(err, requestFails)
+            setFlights(false)
+        }
+    }
+    const requestAirports = async () => {
+        setAirports(true)
+        const URL = 'https://airports.api.hscc.bdpa.org/v1/info/airports'
+        try {
+            const response = await superagent.get(URL).set('key', `${flights_key}`)
+            const airports = response.body.airports
+            console.log("airports", airports)
+            setAirports(airports)
+            requestFails = 0
+        } catch (err) {
+            requestFails++
+            console.error(err)
+            setAirports(false)
+        }
     }
     useEffect(() => { if (!userInfo) getUserInfo() })
     useEffect(() => { if (!userTickets) getUserTickets() })
+    useEffect(() => { if (!airports && requestFails < 8) requestAirports() })
+    useEffect(() => { if (userTickets && userTickets !== true && !flights && requestFails < 8) requestFlights() })
     const handleSubmit = async info => {
         setUpdateResponse(3)
         const { _id, ...userInfo } = info
@@ -39,6 +77,7 @@ const DashboardCustomer = () => {
         setUpdateResponse(response ? 1 : 0)
     }
     const required = string().required('Required')
+    const getAirportCity = shortName => airports.find(airport => airport.shortName === shortName).city
     return (
         <>
             <h4>Welcome {cookies.get("username")}!</h4>
@@ -46,24 +85,28 @@ const DashboardCustomer = () => {
             {userInfo && lastLoginDate && <p> Last Login Date: {"" + format(new Date(lastLoginDate), "PPpp")}</p>}
 
             <div className='row'>
-                <div className='col-sm-6'>
-                    <h3>Upcoming and Past Flights</h3>
+                {airports && airports !== true && flights && flights !== true && <div className='col-sm-6'>
+                    <h3>Upcoming Flights</h3>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
-                                <th>Flights</th>
-                                <th>Departure Date, Time, Location</th>
-                                <th>Arrival Date, Time, Location</th>
+                                <th>Flight</th>
+                                <th>Departure Time</th>
+                                <th>Arrival Time</th>
+                                <th>View Ticket</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>blah</td>
-                                <td>blah</td>
-                                <td>blah</td>
-                            </tr>
+                            {flights.filter(fl => fl.type !== "past" && fl.type !== "cancelled").map(fl =>
+                                <tr key={fl.flight_id}>
+                                    <td>{getAirportCity(fl.comingFrom) + " to " + getAirportCity(fl.landingAt)}</td>
+                                    <td>{format(fl.departFromSender, "PPpp")}</td>
+                                    <td>{format(fl.arriveAtReceiver, "PPpp")}</td>
+                                    <td><Button href={`/tickets/${fl.flight_id}`}>View</Button></td>
+                                </tr>)}
                         </tbody>
                     </Table>
+                    <h3>Past Flights</h3>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -73,17 +116,18 @@ const DashboardCustomer = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>blah</td>
-                                <td>blah</td>
-                                <td>blah</td>
-                            </tr>
+                            {flights.filter(fl => fl.type === "past" || fl.type === "cancelled").map(fl =>
+                                <tr key={fl.flight_id}>
+                                    <td>{getAirportCity(fl.comingFrom) + " to " + getAirportCity(fl.landingAt)}</td>
+                                    <td>{format(fl.departFromSender, "PPpp")}</td>
+                                    <td>{format(fl.arriveAtReceiver, "PPpp")}</td>
+                                </tr>)}
                         </tbody>
                     </Table>
-                </div>
+                </div>}
                 <div className='col-sm-6'>
                     <h3>Personal Information</h3>
-                    {userInfo && <Formik
+                    {userInfo && userInfo !== true && <Formik
                         initialValues={userInfo}
                         validationSchema={object().shape({
                             firstName: required, lastName: required,

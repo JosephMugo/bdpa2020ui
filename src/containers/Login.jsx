@@ -23,14 +23,9 @@ const Login = () => {
 
     const handleRememberMe = async () => {
         var currentChecked = true
-
-        if (checked === true) {
-            currentChecked = false
-        }
-
+        if (checked === true) currentChecked = false
         setChecked(currentChecked)
-
-        const response = await rememberMe(currentChecked)
+        await rememberMe(currentChecked)
     }
 
     const forgotPassword = () => {

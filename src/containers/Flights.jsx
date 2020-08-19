@@ -2,9 +2,7 @@ import React, { useState } from 'react'
 import superagent from 'superagent'
 import { usePromiseTracker, trackPromise } from 'react-promise-tracker'
 import Loader from 'react-loader-spinner'
-import Booking from './Booking'
 import flights_key from '../doNotCommit.js'
-import withRouter from 'react-router-dom/withRouter'
 
 import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap'
 
@@ -309,7 +307,7 @@ export const Flights = () => {
                             {shownFlights === 'departure' && <td>{fl.departFromReceiver}</td>}
                             <td>{fl.status}</td>
                             {shownFlights === 'departure' && <td>{fl.gate}</td>}
-                           {fl.status=== "scheduled" && <td><Button href={`/booking/${fl.flight_id}`}>Book</Button></td>}
+                            {fl.status === "scheduled" && <td><Button href={`/booking/${fl.flight_id}`}>Book</Button></td>}
                         </tr>
                     ))}
                 </tbody>
