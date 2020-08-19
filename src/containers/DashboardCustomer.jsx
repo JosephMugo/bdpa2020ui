@@ -10,7 +10,6 @@ import { requestUserTickets } from '../services/ticketService'
 import flights_key from '../doNotCommit.js'
 
 const cookies = new Cookies()
-let requestFails = 0
 const DashboardCustomer = () => {
     const [userInfo, setUserInfo] = useState(false), [updateResponse, setUpdateResponse] = useState(2)
     const [lastLoginDate, setLastLoginDate] = useState(false), [lastLoginIp, setLastLoginIp] = useState(false)
@@ -34,21 +33,15 @@ const DashboardCustomer = () => {
         if (requestedUserTickets) setUserTickets(requestedUserTickets.map(ticket => ticket.flight_id))
     }
     const requestFlights = async () => {
-        setFlights(true)
-        let myQuery, myURL
-        myQuery = encodeURIComponent(JSON.stringify(userTickets))
-        myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
+        const myQuery = encodeURIComponent(JSON.stringify(userTickets))
+        const myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
         try {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
             const flights = response.body.flights
             console.log("flights", flights)
             setFlights(flights)
-            requestFails = 0
-        } catch (err) {
-            requestFails++
-            console.error(err, requestFails)
-            setFlights(false)
-        }
+        } catch (err) { if (err.status === 555) requestFlights() }
+        setTimeout(requestFlights, 10000)
     }
     const requestAirports = async () => {
         setAirports(true)
@@ -58,17 +51,15 @@ const DashboardCustomer = () => {
             const airports = response.body.airports
             console.log("airports", airports)
             setAirports(airports)
-            requestFails = 0
         } catch (err) {
-            requestFails++
-            console.error(err)
-            setAirports(false)
+            if (err.status !== 429) setAirports(false)
+            else if (err.status === 555) requestAirports()
         }
     }
     useEffect(() => { if (!userInfo) getUserInfo() })
     useEffect(() => { if (!userTickets) getUserTickets() })
-    useEffect(() => { if (!airports && requestFails < 8) requestAirports() })
-    useEffect(() => { if (userTickets && userTickets !== true && !flights && requestFails < 8) requestFlights() })
+    useEffect(() => { if (!airports) requestAirports() })
+    useEffect(() => { if (airports && airports !== true && userTickets && userTickets !== true && !flights) requestFlights() })
     const handleSubmit = async info => {
         setUpdateResponse(3)
         const { _id, ...userInfo } = info

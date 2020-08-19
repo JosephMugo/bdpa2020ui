@@ -65,8 +65,7 @@ const App = () => {
                     <Nav className="mr-auto">
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/flights">Flights</Nav.Link>
-                        <Nav.Link href="/booking">Booking</Nav.Link>
-                        <Nav.Link href="/tickets">Ticket</Nav.Link>
+                        <Nav.Link href="/booking">Book Flight</Nav.Link>
                         {token && role === "cusomer" && <Nav.Link href="/dashboard_customer">Customer Dashboard</Nav.Link>}
                         {token && role === "admin" && <Nav.Link href="/dashboard_admin">Admin Dashboard</Nav.Link>}
                     </Nav>
@@ -86,7 +85,7 @@ const App = () => {
                     <Route exact path="/flights" component={Flights} />
                     <Route exact path="/booking" component={Booking} />
                     <Route exact path="/booking/:flight_id" component={Booking} />
-                    <Route exact path="/tickets" component={Tickets} />
+                    <Route exact path="/tickets:flight_id" component={Tickets} />
                     <Route exact path="/dashboard_customer" component={DashboardCustomer} />
                     <Route exact path="/dashboard_admin" component={DashboardAdmin} />
                     <Route exact path="/login" component={Login} />
