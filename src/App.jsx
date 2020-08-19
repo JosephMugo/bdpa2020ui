@@ -65,8 +65,9 @@ const App = () => {
                     <Nav className="mr-auto">
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/flights">Flights</Nav.Link>
-                        <Nav.Link href="/booking">Book Flight</Nav.Link>
-                        {token && role === "cusomer" && <Nav.Link href="/dashboard_customer">Customer Dashboard</Nav.Link>}
+                        <Nav.Link href="/booking">Booking</Nav.Link>
+                        <Nav.Link href="/tickets">Ticket</Nav.Link>
+                        {token && role === "customer" && <Nav.Link href="/dashboard_customer">Customer Dashboard</Nav.Link>}
                         {token && role === "admin" && <Nav.Link href="/dashboard_admin">Admin Dashboard</Nav.Link>}
                     </Nav>
                     <Nav>
@@ -96,7 +97,7 @@ const App = () => {
                     <Route exact path="/" component={Home} />
                 </div>
             </Router>
-        </div >
+        </div>
     )
 }
 

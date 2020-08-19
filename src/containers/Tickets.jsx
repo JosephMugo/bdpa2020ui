@@ -31,25 +31,28 @@ const Tickets = () => {
     }
     useEffect(() => { if (!airports) requestAirports() })
     useEffect(() => { if (airports && airports !== true && !flight) requestFlight() })
-    const getAirportCity = shortName => airports.find(airport => airport.shortName === shortName).cit
+    const getAirportCity = shortName => airports.find(airport => airport.shortName === shortName).city
     return (
-        <Table striped bordered hover>
-            <thead>
-                <tr>
-                    <th>Flight</th>
-                    <th>Departure Time</th>
-                    <th>Arrival Time</th>
-                    <th>View Ticket</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{getAirportCity(flight.comingFrom) + " to " + getAirportCity(flight.landingAt)}</td>
-                    <td>{format(flight.departFromSender, "PPpp")}</td>
-                    <td>{format(flight.arriveAtReceiver, "PPpp")}</td>
-                </tr>)
+        <>
+            <div>asdf</div>
+            {airports && airports !== true && flight && flight !== true && <Table striped bordered hover>
+                <thead>
+                    <tr>
+                        <th>Flight</th>
+                        <th>Departure Time</th>
+                        <th>Arrival Time</th>
+                        <th>View Ticket</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{getAirportCity(flight.comingFrom) + " to " + getAirportCity(flight.landingAt)}</td>
+                        <td>{format(flight.departFromSender, "PPpp")}</td>
+                        <td>{format(flight.arriveAtReceiver, "PPpp")}</td>
+                    </tr>)
             </tbody>
-        </Table>
+            </Table>}
+        </>
     )
 }
 

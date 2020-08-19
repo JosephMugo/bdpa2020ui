@@ -37,9 +37,7 @@ const DashboardCustomer = () => {
         const myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
         try {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
-            const flights = response.body.flights
-            console.log("flights", flights)
-            setFlights(flights)
+            setFlights(response.body.flights)
         } catch (err) { if (err.status === 555) requestFlights() }
         setTimeout(requestFlights, 10000)
     }
