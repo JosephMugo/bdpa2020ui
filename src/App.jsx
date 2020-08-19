@@ -67,7 +67,7 @@ const App = () => {
                         <Nav.Link href="/flights">Flights</Nav.Link>
                         <Nav.Link href="/booking">Booking</Nav.Link>
                         <Nav.Link href="/tickets">Ticket</Nav.Link>
-                        {token && <Nav.Link href="/dashboard_customer">Customer Dashboard</Nav.Link>}
+                        {token && role === "cusomer" && <Nav.Link href="/dashboard_customer">Customer Dashboard</Nav.Link>}
                         {token && role === "admin" && <Nav.Link href="/dashboard_admin">Admin Dashboard</Nav.Link>}
                     </Nav>
                     <Nav>
