@@ -115,3 +115,20 @@ export const updateUserInfo = async user => {
     }
     return false
 }
+
+// Get user role
+export const requestUserRole = async (username) => {
+    console.log("Requesting user role for: ", username)
+    const cookies = new Cookies(), token = cookies.get("userToken")
+    const headers = { Authorization: `Bearer ${token}` }
+    const getUrl = baseUserURL + '/user/getCredentials'
+    try {
+        const response = await superagent.get(getUrl, username).set(headers)
+        return response.body
+    } catch (err) {
+        if (err.status === 400) console.log("User not Found")
+        if (err.status === 401) console.log("Unauthorized")
+        else console.log("error", err)
+    }
+    return false
+}

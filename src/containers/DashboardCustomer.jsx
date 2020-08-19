@@ -5,7 +5,7 @@ import Cookies from "universal-cookie"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
 import { format } from "date-fns"
-import { requestUserInfo, updateUserInfo } from '../services/userService'
+import { requestUserInfo, updateUserInfo, requestUserRole } from '../services/userService'
 import { requestUserTickets } from '../services/ticketService'
 import flights_key from '../doNotCommit.js'
 
@@ -15,6 +15,7 @@ const DashboardCustomer = () => {
     const [userInfo, setUserInfo] = useState(false), [updateResponse, setUpdateResponse] = useState(2)
     const [lastLoginDate, setLastLoginDate] = useState(false), [lastLoginIp, setLastLoginIp] = useState(false)
     const [userTickets, setUserTickets] = useState(false), [airports, setAirports] = useState(false), [flights, setFlights] = useState(false)
+    const [userRole, setUserRole] = useState(false)
 
     const getUserInfo = async () => {
         setUserInfo(true)
@@ -65,10 +66,16 @@ const DashboardCustomer = () => {
             setAirports(false)
         }
     }
+    const getUserRole = async () => {
+        setUserRole(true)
+        const requestedUserRole = await requestUserRole(cookies.get("username"))
+        console.log("user role: ", requestedUserRole)
+    }
     useEffect(() => { if (!userInfo) getUserInfo() })
     useEffect(() => { if (!userTickets) getUserTickets() })
     useEffect(() => { if (!airports && requestFails < 8) requestAirports() })
     useEffect(() => { if (userTickets && userTickets !== true && !flights && requestFails < 8) requestFlights() })
+    useEffect(() => { if (!userRole) getUserRole() })
     const handleSubmit = async info => {
         setUpdateResponse(3)
         const { _id, ...userInfo } = info
