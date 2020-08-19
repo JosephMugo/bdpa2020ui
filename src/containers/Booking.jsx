@@ -3,7 +3,7 @@ import superagent from 'superagent'
 import { useParams } from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
-import { parse, isDate, format } from "date-fns"
+import { format } from "date-fns"
 import Cookies from "universal-cookie"
 import { requestUserInfo } from '../services/userService'
 import { addTicket } from "../services/ticketService"

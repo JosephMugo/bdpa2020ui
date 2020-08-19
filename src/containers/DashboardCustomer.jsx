@@ -3,25 +3,34 @@ import { Table, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-boot
 import Cookies from "universal-cookie"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
-import { parse, isDate } from "date-fns"
+import { format } from "date-fns"
 import { requestUserInfo, updateUserInfo } from '../services/userService'
+import { requestUserTickets } from '../services/ticketService'
 
 const cookies = new Cookies()
 const DashboardCustomer = () => {
     const [userInfo, setUserInfo] = useState(false), [updateResponse, setUpdateResponse] = useState(2)
     const [lastLoginDate, setLastLoginDate] = useState(false), [lastLoginIp, setLastLoginIp] = useState(false)
-    let failedUserInfoGets = 0
+    const [userTickets, setUserTickets] = useState(false)
     const getUserInfo = async () => {
+        setUserInfo(true)
         const requestedUserInfo = await requestUserInfo(cookies.get("username"))
         console.log("userInfo", requestedUserInfo)
-        if (requestedUserInfo) setUserInfo(requestedUserInfo)
-        else failedUserInfoGets++
-        setLastLoginDate(requestedUserInfo.lastLoginDate)
-        setLastLoginIp(requestedUserInfo.lastLoginIp)
+        if (requestedUserInfo) {
+            requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy/MM/dd")
+            setUserInfo(requestedUserInfo)
+            setLastLoginDate(requestedUserInfo.lastLoginDate)
+            setLastLoginIp(requestedUserInfo.lastLoginIp)
+        } else window.open("/login", "_top")
     }
-    useEffect(() => {
-        if (!userInfo || failedUserInfoGets > 100) getUserInfo()
-    })
+    const getUserTickets = async () => {
+        setUserTickets(true)
+        const requestedUserTickets = await requestUserTickets(cookies.get("username"))
+        console.log("userTickets", requestedUserTickets)
+        if (requestedUserTickets) setUserTickets(requestedUserTickets)
+    }
+    useEffect(() => { if (!userInfo) getUserInfo() })
+    useEffect(() => { if (!userTickets) getUserTickets() })
     const handleSubmit = async info => {
         setUpdateResponse(3)
         const { _id, ...userInfo } = info
@@ -34,7 +43,7 @@ const DashboardCustomer = () => {
         <>
             <h4>Welcome {cookies.get("username")}!</h4>
             {userInfo && lastLoginIp && <p>Last Login IP: {lastLoginIp}</p>}
-            {userInfo && lastLoginDate && <p> Last Login Date: {"" + new Date(lastLoginDate)}</p>}
+            {userInfo && lastLoginDate && <p> Last Login Date: {"" + format(new Date(lastLoginDate), "PPpp")}</p>}
 
             <div className='row'>
                 <div className='col-sm-6'>

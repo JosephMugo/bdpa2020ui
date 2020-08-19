@@ -10,7 +10,7 @@ export const rememberMe = async (remember = false) => {
     } catch (err) {console.log("error", err)}
     return false
 }
-export const createUser = async (user) => {
+export const createUser = async user => {
     // console.log(user)
     const addUrl = baseUserURL + '/user/add'
     try {
@@ -23,7 +23,7 @@ export const createUser = async (user) => {
     }
     return false
 }
-export const login = async (user) => {
+export const login = async user => {
     const { username, firstName, lastName, password } = user
     const base64String = Buffer.from(`${username}:${firstName}:${lastName}:${password}`, 'ascii').toString("base64")
     console.log(base64String)
@@ -90,12 +90,12 @@ export const requestUserInfo = async (username) => {
     console.log("Requesting", username)
     const cookies = new Cookies(), token = cookies.get("userToken")
     const headers = { Authorization: `Bearer ${token}` }
-    const tokenUrl = baseUserURL + '/user/get'
+    const getUrl = baseUserURL + '/user/get'
     try {
-        const response = await superagent.get(tokenUrl, username).set(headers)
+        const response = await superagent.get(getUrl, username).set(headers)
         return response.body
     } catch (err) {
-        if (err.status === 400) console.log("Unauthorized")
+        if (err.status === 400) console.log("User not Found")
         if (err.status === 401) console.log("Unauthorized")
         else console.log("error", err)
     }
