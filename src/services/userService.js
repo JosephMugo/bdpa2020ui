@@ -132,3 +132,20 @@ export const requestUserRole = async (username) => {
     }
     return false
 }
+
+// Get all users 
+export const requestAllUsers = async () => {
+    console.log("Requesting users")
+    const cookies = new Cookies(), token = cookies.get("userToken")
+    const headers = { Authorization: `Bearer ${token}` }
+    const getUrl = baseUserURL + '/user/getAllUsers'
+    try {
+        const response = await superagent.get(getUrl).set(headers)
+        return response.body
+    } catch (err) {
+        if (err.status === 400) console.log("Users not Found")
+        if (err.status === 401) console.log("Unauthorized")
+        else console.log("error", err)
+    }
+    return false
+}
