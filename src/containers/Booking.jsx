@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { useParams } from 'react-router-dom'
 import superagent from 'superagent'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
-import { object, string, date } from 'yup'
+import { object, string, date, number } from 'yup'
 import { format } from "date-fns"
 import Cookies from "universal-cookie"
 import { requestUserInfo } from '../services/userService'
@@ -21,18 +21,22 @@ const Bookings = () => {
             const requestedUserInfo = await requestUserInfo(cookies.get("username"))
             console.log("userInfo", requestedUserInfo)
             if (requestedUserInfo) {
-                requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy/MM/dd")
+                requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy-MM-dd")
                 requestedUserInfo.cardName = ""
                 requestedUserInfo.cvv = ""
                 requestedUserInfo.expdate = ""
                 requestedUserInfo.address = ""
+                requestedUserInfo.seat = ""
+                requestedUserInfo.checkedBags = ""
+                requestedUserInfo.carryBags = ""
                 setUserInfo(requestedUserInfo)
             }
         } else setUserInfo({
             firstName: "", middleName: "", lastName: "",
             birthdate: null, sex: "", email: "", phone: "",
             cardName: "", card: "", cvv: "", expdate: null,
-            address: "", city: "", state: "", zip: ""
+            address: "", city: "", state: "", zip: "",
+            seat: 0, checkedBags: 0, carryBags: 0
         })
     }
     const getNoFlyList = async () => {
@@ -66,9 +70,10 @@ const Bookings = () => {
     useEffect(() => { if (!flights && flightRequestFails < 8) makeFlightRequest() })
     useEffect(() => { if (!userInfo) getUserInfo() })
     const handleSubmit = async fields => {
+        console.log(fields.birthdate)
         const canFly = userInfo => !noFlyList.some(noFly => noFly.name.first === userInfo.firstName && noFly.name.last === userInfo.lastName
             && (!noFly.name.middle || !userInfo.middleName || noFly.name.middle === userInfo.middleName)
-            && JSON.stringify(Object.values(noFly.birthdate).reverse()) === JSON.stringify(userInfo.birthdate.split('/').map(i => Number(i)))
+            && JSON.stringify(Object.values(noFly.birthdate).reverse()) === JSON.stringify(userInfo.birthdate.split('-').map(i => Number(i)))
             && noFly.sex === userInfo.sex)
         if (canFly(fields)) {
             setTicketResponse(3)
@@ -137,7 +142,9 @@ const Bookings = () => {
                             email: required.email('Email is invalid'), phone: required.matches(/^[0-9]+$/, "Can only contain numbers"),
                             cardName: required,
                             card: required.matches(/^[0-9]+$/, "Can only cantain numbers"), cvv: required.matches(/^[0-9]+$/, "Can only cantain numbers"),
-                            expdate: date().required("Required").min(new Date((new Date()).getYear() + 1900, (new Date()).getMonth()), "Invalid Expiration Date"), address: required, city: required, state: required, zip: required
+                            expdate: date().required("Required").min(new Date((new Date()).getYear() + 1900, (new Date()).getMonth()), "Invalid Expiration Date"),
+                            address: required, city: required, state: required, zip: required,
+                            seat: number().required('Required'), checkedBags: number().required('Required'), carryBags: number().required('Required')
                         })}
                         onSubmit={handleSubmit}
                     >
@@ -162,8 +169,8 @@ const Bookings = () => {
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group col">
-                                        <label htmlFor="birthdate">Date of Birth YYYY/MM/DD</label>
-                                        <Field name="birthdate" type="text" className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
+                                        <label htmlFor="birthdate">Date of Birth</label>
+                                        <Field name="birthdate" type="date" max={format(Date.now(), "yyyy-MM-dd")} className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
                                         <ErrorMessage name="birthdate" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
@@ -208,8 +215,8 @@ const Bookings = () => {
                                     </div>
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="expdate">Expiration Date YYYY/MM</label>
-                                    <Field name="expdate" type="text" className={'form-control' + (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
+                                    <label htmlFor="expdate">Expiration Date</label>
+                                    <Field name="expdate" type="month" min={format(Date.now(), "yyyy-MM")} className={'form-control' + (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
                                     <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
                                 </div>
                                 <h4>Billing Address</h4>
@@ -233,6 +240,24 @@ const Bookings = () => {
                                         <label htmlFor="zip">Zip</label>
                                         <Field name="zip" type="text" className={'form-control' + (errors.zip && touched.zip ? ' is-invalid' : '')} />
                                         <ErrorMessage name="zip" component="div" className="invalid-feedback" />
+                                    </div>
+                                </div>
+                                <h4>Passanger Information</h4>
+                                <div className="form-row">
+                                    <div className="form-group col">
+                                        <label htmlFor="seat">Seat Number</label>
+                                        <Field name="seat" type="number" min="0" max="21" className={'form-control' + (errors.seat && touched.seat ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="seat" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label htmlFor="checkedBags">Checked Bags</label>
+                                        <Field name="checkedBags" type="number" min="0" max="5" className={'form-control' + (errors.checkedBags && touched.checkedBags ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="checkedBags" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label htmlFor="carryBags">Carry-on Bags</label>
+                                        <Field name="carryBags" type="number" min="0" max="2" className={'form-control' + (errors.carryBags && touched.carryBags ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="carryBags" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
                                 <div className="form-group">

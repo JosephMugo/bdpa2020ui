@@ -2,6 +2,7 @@ import React, { useState } from "react"
 // import { Form, Button, Col } from "react-bootstrap"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
+import { format } from "date-fns"
 import { createUser } from "../services/userService"
 import captcha from "../assets/captcha.png"
 const securityQuestions = [
@@ -83,8 +84,8 @@ const Register = () => {
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group col">
-                                        <label htmlFor="birthdate">Date of Birth YYYY/MM/DD</label>
-                                        <Field name="birthdate" type="text" className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
+                                        <label htmlFor="birthdate">Date of Birth</label>
+                                        <Field name="birthdate" type="date" max={format(Date.now(), "yyyy-MM-dd")} className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
                                         <ErrorMessage name="birthdate" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">

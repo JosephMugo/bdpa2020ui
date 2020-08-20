@@ -2,7 +2,7 @@ import React, { useState } from "react"
 // import { Form, Button, Col } from "react-bootstrap"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
-import { parse, isDate } from "date-fns"
+import { format } from "date-fns"
 import { createUser } from "../services/userService"
 const securityQuestions = [
     "What was the house number and street name you lived in as a child?",
@@ -81,9 +81,8 @@ const AdminCreateUser = () => {
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group col">
-                                        <label htmlFor="birthdate">Date of Birth YYYY/MM/DD</label>
-                                        <Field name="birthdate" type="text" className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="birthdate" component="div" className="invalid-feedback" />
+                                        <label htmlFor="birthdate">Date of Birth</label>
+                                        <Field name="birthdate" type="date" max={format(Date.now(), "yyyy-MM-dd")} className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />                                        <ErrorMessage name="birthdate" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
                                         <label>Sex</label>

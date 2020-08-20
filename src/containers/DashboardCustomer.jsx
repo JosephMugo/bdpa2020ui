@@ -20,7 +20,7 @@ const DashboardCustomer = () => {
         const requestedUserInfo = await requestUserInfo(cookies.get("username"))
         console.log("userInfo", requestedUserInfo)
         if (requestedUserInfo) {
-            requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy/MM/dd")
+            requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy-MM-dd")
             setUserInfo(requestedUserInfo)
             setLastLoginDate(requestedUserInfo.lastLoginDate)
             setLastLoginIp(requestedUserInfo.lastLoginIp)
@@ -155,8 +155,8 @@ const DashboardCustomer = () => {
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group col">
-                                        <label htmlFor="birthdate">Date of Birth YYYY/MM/DD</label>
-                                        <Field name="birthdate" type="text" className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
+                                        <label htmlFor="birthdate">Date of Birth</label>
+                                        <Field name="birthdate" type="date" max={format(Date.now(), "yyyy-MM-dd")} className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
                                         <ErrorMessage name="birthdate" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">

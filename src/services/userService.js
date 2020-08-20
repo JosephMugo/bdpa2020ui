@@ -7,7 +7,7 @@ export const rememberMe = async (remember = false) => {
     try {
         if (remember) cookies.set('rememberMe', remember)
         else cookies.remove("rememberMe")
-    } catch (err) {console.log("error", err)}
+    } catch (err) { console.log("error", err) }
     return false
 }
 export const createUser = async user => {
@@ -102,7 +102,6 @@ export const requestUserInfo = async (username) => {
     return false
 }
 export const updateUserInfo = async user => {
-    console.log("Updating", user.username)
     const token = cookies.get("userToken")
     const headers = { Authorization: `Bearer ${token}` }
     const updateUrl = baseUserURL + '/user/update'
