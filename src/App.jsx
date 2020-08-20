@@ -15,16 +15,17 @@ import ForgotPassword from "./containers/ForgotPassword"
 import Register from "./containers/Register"
 import RegisterAdmin from "./containers/RegisterAdmin"
 import AdminCreateUser from "./containers/AdminCreateUser"
-import { requestUserInfo} from './services/userService'
+import { requestUserInfo } from './services/userService'
 import { requestUserTickets } from './services/ticketService'
 import DashboardAttendant from "./containers/DashboardAttendant"
+import Card from 'react-bootstrap/Card'
 
 const cookies = new Cookies()
 const App = () => {
     const [rememberMe] = useState(cookies.get("rememberMe"))
     const [token] = useState(cookies.get("userToken")), [role] = useState(cookies.get("role"))
-    const [userInfo,setUserInfo] = useState([])
-    const [nextTicket,setTicket] = useState([])
+    const [userInfo, setUserInfo] = useState([])
+    const [nextTicket, setTicket] = useState([])
     const signOut = () => {
         console.log("signout")
         cookies.remove("email")
@@ -33,7 +34,7 @@ const App = () => {
         cookies.remove("rememberMe")
         cookies.remove("firstName")
         cookies.remove("airline")
-        cookies.remove("flightnumber")
+        cookies.remove("flightNumber")
         cookies.remove("destination")
         cookies.remove("departingtime")
         idle.stop()
@@ -59,7 +60,7 @@ const App = () => {
     //         const flight_id = ticketData[1].flight_id
     //         console.log(flight_id)
 
-            
+
     //     }
     //     getUserInfo()
     // } else{
@@ -102,8 +103,8 @@ const App = () => {
                         {token && role === "root" && <Nav.Link href="/register_admin">Register Admin</Nav.Link>}
                         {role === "admin" && <Nav.Link href="/admin_create_user">Admin Create User</Nav.Link>} {/*&& role === "admin"*/}
                         {token && !rememberMe && <Nav.Link>Login Expiration: 15 minutes</Nav.Link>}
-                         {token && <Nav.Link>Hello, {cookies.get("firstName")}</Nav.Link>}
-                         {token && <Nav.Link>{cookies.get("email")}</Nav.Link>}
+                        {token && <Nav.Link>Hello, {cookies.get("firstName")}</Nav.Link>}
+                        {token && <Nav.Link>{cookies.get("email")}</Nav.Link>}
                         {token && <Nav.Link href="/" onClick={signOut}>Sign Out</Nav.Link>}
                     </Nav>
                 </Navbar.Collapse>
@@ -126,6 +127,10 @@ const App = () => {
                     <Route exact path="/dashboardattendant" component={DashboardAttendant} />
                 </div>
             </Router>
+            <Card bg="dark" variant="dark" style={{ bottom: "0", color: "white" }}>
+                <Card.Body>Hello, {cookies.get("firstName")} {cookies.get("email")}       Next flight: Departing to {cookies.get("destination")} on {cookies.get("departingtime")} Flight Number: {cookies.get("flightNumber")} Airline: {cookies.get("airline")}</Card.Body>
+
+            </Card>
         </div>
     )
 }

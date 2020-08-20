@@ -11,7 +11,7 @@ export const addTicket = async (flight_id, seatType, seatNum) => {
     const addTicketURL = baseUserURL + '/ticket/add'
     try {
         await superagent.post(addTicketURL, postBody).set(headers)
-        console.log("Ticket saved")
+        console.log("Ticket saved",email)
         const requestedUserTickets = await requestUserTickets(email)
         let userTickets = []
         if (requestedUserTickets) { userTickets = (requestedUserTickets.map(ticket => ticket.flight_id)) }
@@ -27,10 +27,10 @@ export const addTicket = async (flight_id, seatType, seatNum) => {
             }
         }
         console.log(flight)
-        cookies.set("airline", flight.airline)
-        cookies.set("flightnumber", flight.flightnumber)
-        cookies.set("destination", flight.departingTo)
-        cookies.set("departingtime", new Date(flight.departFromReceiver))
+        cookies.set("airline",flight.airline)
+        cookies.set("flightNumber",flight.flightNumber)
+        cookies.set("destination",flight.departingTo)
+        cookies.set("departingtime",new Date(flight.departFromReceiver))
         return true
     } catch (err) { if (err.status === 400) return 5 }
     return false

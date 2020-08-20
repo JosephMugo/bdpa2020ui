@@ -18,7 +18,7 @@ const Login = () => {
         setLoginResponse(3)
         const response = await login(fields)
         setLoginResponse(0 + response)
-        if (response) window.setTimeout(() => window.open("/dashboard_customer", "_top"), 1000)
+        //if (response) window.setTimeout(() => window.open("/dashboard_customer", "_top"), 1000)
     }
 
     const handleRememberMe = async () => {
