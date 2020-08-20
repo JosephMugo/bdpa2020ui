@@ -16,9 +16,9 @@ const Bookings = () => {
     const [id] = useState(useParams().flight_id), [selected, setSelected] = useState()
     const [ticketResponse, setTicketResponse] = useState(2)
     const getUserInfo = async () => {
-        if (cookies.get("username")) {
+        if (cookies.get("email")) {
             setUserInfo(true)
-            const requestedUserInfo = await requestUserInfo(cookies.get("username"))
+            const requestedUserInfo = await requestUserInfo(cookies.get("email"))
             console.log("userInfo", requestedUserInfo)
             if (requestedUserInfo) {
                 requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy-MM-dd")
@@ -192,7 +192,7 @@ const Bookings = () => {
                                     </div>
                                     <div className="form-group col">
                                         <label htmlFor="email">Email Address</label>
-                                        <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
+                                        <Field name="email" type="email" disabled={userInfo} className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>

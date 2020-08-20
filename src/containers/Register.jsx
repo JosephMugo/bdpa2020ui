@@ -35,11 +35,10 @@ const Register = () => {
                         initialValues={{
                             title: "", firstName: "", middleName: "", lastName: "", suffix: "",
                             birthdate: "", sex: "", city: "", state: "", zip: "", country: "",
-                            email: "", phone: "", username: "", password: "",
+                            email: "", phone: "", password: "",
                             securityQuestion1: "", securityQuestion2: "", securityQuestion3: "", captcha: ""
                         }}
                         validationSchema={object().shape({
-                            username: required.matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
                             firstName: required, lastName: required,
                             birthdate: date().required("Required").max(new Date(), "Invalid Date of Birth"),
                             sex: required, city: required, state: required, zip: required, country: required,
@@ -134,11 +133,6 @@ const Register = () => {
                                     </div>
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="username">Username</label>
-                                    <Field name="username" type="text" className={'form-control' + (errors.username && touched.username ? ' is-invalid' : '')} />
-                                    <ErrorMessage name="username" component="div" className="invalid-feedback" />
-                                </div>
-                                <div className="form-group">
                                     <label htmlFor="password">Password</label>
                                     <Field name="password" type="password" className={'form-control' + (errors.password && touched.password ? ' is-invalid' : '')} />
                                     <ErrorMessage name="password" component="div" className="invalid-feedback" />
@@ -169,7 +163,7 @@ const Register = () => {
                                     <button type="submit" className="btn btn-primary mr-2">Register</button>
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
-                                <h5>{["Username Already Taken", "User Registered!", "", "Loading..."][registerResponse]}</h5>
+                                <h5>{["Email Already Taken", "User Registered!", "", "Loading..."][registerResponse]}</h5>
                             </Form>
                         )}
                     </Formik>

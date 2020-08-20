@@ -17,7 +17,7 @@ const DashboardCustomer = () => {
 
     const getUserInfo = async () => {
         setUserInfo(true)
-        const requestedUserInfo = await requestUserInfo(cookies.get("username"))
+        const requestedUserInfo = await requestUserInfo(cookies.get("email"))
         console.log("userInfo", requestedUserInfo)
         if (requestedUserInfo) {
             requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy-MM-dd")
@@ -28,7 +28,7 @@ const DashboardCustomer = () => {
     }
     const getUserTickets = async () => {
         setUserTickets(true)
-        const requestedUserTickets = await requestUserTickets(cookies.get("username"))
+        const requestedUserTickets = await requestUserTickets(cookies.get("email"))
         console.log("userTickets", requestedUserTickets)
         if (requestedUserTickets) setUserTickets(requestedUserTickets.map(ticket => ticket.flight_id))
     }
@@ -70,7 +70,7 @@ const DashboardCustomer = () => {
     const getAirportCity = shortName => airports.find(airport => airport.shortName === shortName).city
     return (
         <>
-            <h4>Welcome {cookies.get("username")}!</h4>
+            {userInfo && userInfo !== true && <h4>Welcome {userInfo.firstName}!</h4>}
             {userInfo && lastLoginIp && <p>Last Login IP: {lastLoginIp}</p>}
             {userInfo && lastLoginDate && <p> Last Login Date: {"" + format(new Date(lastLoginDate), "PPpp")}</p>}
 
@@ -199,8 +199,8 @@ const DashboardCustomer = () => {
                                         <Field name="phone" type="text" className={'form-control'} />
                                     </div>
                                     <div className="form-group col">
-                                        <label htmlFor="email">Email Adress</label>
-                                        <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
+                                        <label htmlFor="email">Email Address</label>
+                                        <Field name="email" type="email" disabled={true} className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>

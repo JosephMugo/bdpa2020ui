@@ -4,9 +4,9 @@ const baseUserURL = "http://localhost:3535"
 
 const cookies = new Cookies()
 export const addTicket = async (flight_id, seat) => {
-    const token = cookies.get("userToken"), username = cookies.get("username")
+    const token = cookies.get("userToken"), email = cookies.get("email")
     const headers = { Authorization: `Bearer ${token}` }
-    const postBody = { username, flight_id, seat }
+    const postBody = { email, flight_id, seat }
     const addTicketURL = baseUserURL + '/ticket/add'
     try {
         const response = await superagent.post(addTicketURL, postBody).set(headers)
@@ -15,13 +15,13 @@ export const addTicket = async (flight_id, seat) => {
     } catch (err) { console.log(err) }
     return false
 }
-export const requestUserTickets = async username => {
-    console.log("Requesting tickets", username)
+export const requestUserTickets = async email => {
+    console.log("Requesting tickets", email)
     const token = cookies.get("userToken")
     const headers = { Authorization: `Bearer ${token}` }
     const getUrl = baseUserURL + '/ticket/get'
     try {
-        const response = await superagent.get(getUrl, username).set(headers)
+        const response = await superagent.get(getUrl, email).set(headers)
         return response.body
     } catch (err) {
         if (err.status === 400) console.log("User not Found")

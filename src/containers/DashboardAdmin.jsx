@@ -18,9 +18,9 @@ const DashboardAdmin = () => {
     })
 
     const handleClick = async (event) => {
-        const username = event.target.id
-        console.log('Deleting user:', username)
-        const deletedUser = await requestDeleteUser(username);
+        const email = event.target.id
+        console.log('Deleting user:', email)
+        const deletedUser = await requestDeleteUser(email);
         setGotUsers(false)
     }
     return (
@@ -31,17 +31,17 @@ const DashboardAdmin = () => {
                 <tr>
                     <th>First Name</th>
                     <th>Last Name</th>
-                    <th>Username</th>
+                    <th>Email</th>
                     <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
                 {users.map((user) => (
-                    <tr key={user.username}>
+                    <tr key={user.email}>
                         <td>{user.firstName}</td>
                         <td>{user.lastName}</td>
-                        <td>{user.username}</td>
-                        <td><Button id={user.username} className="deleteButton" variant="danger" onClick={handleClick}>Delete</Button></td>
+                        <td>{user.email}</td>
+                        <td><Button id={user.email} className="deleteButton" variant="danger" onClick={handleClick}>Delete</Button></td>
                     </tr>
                 ))}
             </tbody>
