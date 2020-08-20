@@ -38,6 +38,7 @@ const DashboardAdmin = () => {
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
+                    <th>Ban</th>
                     <th>Delete</th>
                 </tr>
             </thead>
@@ -47,6 +48,7 @@ const DashboardAdmin = () => {
                         <td>{user.firstName}</td>
                         <td>{user.lastName}</td>
                         <td>{user.email}</td>
+                        <td><Button id={user.email} className="banButton" variant="warning">{ user.isBanned ? 'ON' : 'OFF' }</Button></td>
                         <td><Button id={user.email} className="deleteButton" variant="danger" onClick={handleClick}>Delete</Button></td>
                     </tr>
                 ))}
