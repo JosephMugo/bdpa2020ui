@@ -19,7 +19,7 @@ export const Flights = () => {
     const [searchCategory, setSearchCategory] = useState('flightNumber')
     const [searchTerm, setSearchTerm] = useState('')
 
-    const [sortOrder, setSortOrder] = useState('')
+    const [sortOrder, setSortOrder] = useState('desc')
 
     const [pages, setPages] = useState([])
 
