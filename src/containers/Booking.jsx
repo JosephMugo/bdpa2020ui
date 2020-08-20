@@ -297,7 +297,7 @@ const Bookings = () => {
                                     <button type="submit" className="btn btn-primary mr-2">Book Flight</button>
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
-                                <h3 align='center'>Price: {selected.seats[selectedSeat].priceDollars}</h3>
+                                <h3 align='center'>Price: {selected.seats[selectedSeat].priceDollars} or FFMS: {selected.seats[selectedSeat].priceFfms}</h3>
                                 <hr />
                                 <h5>{["Ticket Not Saved", "Ticket Saved", "", "Loading...", "You're on the No Fly List", "Seat Taken"][ticketResponse]}</h5>
                             </Form>
