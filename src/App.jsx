@@ -32,7 +32,7 @@ const App = () => {
         cookies.remove("rememberMe")
         cookies.remove("firstName")
         cookies.remove("airline")
-        cookies.remove("flightnumber")
+        cookies.remove("flightNumber")
         cookies.remove("destination")
         cookies.remove("departingtime")
         idle.stop()

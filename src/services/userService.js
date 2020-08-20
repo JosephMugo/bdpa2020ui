@@ -64,7 +64,7 @@ export const login = async user => {
             if (flight !== false) {
                 console.log("this is the correct", flight)
                 cookies.set("airline", flight.airline)
-                cookies.set("flightnumber", flight.flightnumber)
+                cookies.set("flightNumber", flight.flightNumber)
                 cookies.set("destination", flight.departingTo)
                 cookies.set("departingtime", new Date(flight.departFromReceiver))
             } else {
@@ -123,7 +123,7 @@ export const forgotPassword = async (user) => {
             }
             console.log("this is the correct", flight)
             cookies.set("airline", flight.airline)
-            cookies.set("flightnumber", flight.flightnumber)
+            cookies.set("flightNumber", flight.flightNumber)
             cookies.set("destination", flight.departingTo)
             cookies.set("departingtime", new Date(flight.departFromReceiver))
         }
