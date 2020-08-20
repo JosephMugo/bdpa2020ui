@@ -68,12 +68,13 @@ const Bookings = () => {
         } catch (err) {
             flightRequestFails++
             console.error(err, flightRequestFails)
+            console.log(flightRequestFails)
             setFlights(false)
         }
     }
     const searchFlights = fields => { }
-    useEffect(() => { if (!noFlyList && flightRequestFails < 8) getNoFlyList() })
-    useEffect(() => { if (!flights && flightRequestFails < 8) makeFlightRequest() })
+    useEffect(() => { if (!noFlyList && flightRequestFails < 1) getNoFlyList() })
+    useEffect(() => { if (!flights && flightRequestFails < 1) makeFlightRequest() })
     useEffect(() => { if (!userInfo) getUserInfo() })
     const handleSubmit = async fields => {
         const canFly = userInfo => !noFlyList.some(noFly => noFly.name.first === userInfo.firstName && noFly.name.last === userInfo.lastName
@@ -96,6 +97,7 @@ const Bookings = () => {
                     <hr />
                     {flightRequestFails >= 8 && <h3>Flight Could Not Be Requested</h3>}
                     {selected && <>
+                        <h3 align='center'>Frequent Flyer Miles Awarded: {selected.ffms}</h3>
                         <h3 align='center'>Price: {selected.seatPrice}</h3>
                         <h3 align='center'>Arriving: {new Date(selected.arriveAtReceiver).toLocaleString()}</h3>
                         <h3 align='center'>To: {selected.landingAt} From: {selected.comingFrom}</h3>
