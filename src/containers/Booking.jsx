@@ -76,7 +76,6 @@ const Bookings = () => {
     useEffect(() => { if (!flights && flightRequestFails < 8) makeFlightRequest() })
     useEffect(() => { if (!userInfo) getUserInfo() })
     const handleSubmit = async fields => {
-        console.log(fields.birthdate)
         const canFly = userInfo => !noFlyList.some(noFly => noFly.name.first === userInfo.firstName && noFly.name.last === userInfo.lastName
             && (!noFly.name.middle || !userInfo.middleName || noFly.name.middle === userInfo.middleName)
             && JSON.stringify(Object.values(noFly.birthdate).reverse()) === JSON.stringify(userInfo.birthdate.split('-').map(i => Number(i)))
