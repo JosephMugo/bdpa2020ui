@@ -170,3 +170,20 @@ export const requestDeleteUser = async email => {
     }
     return false
 }
+
+// Update Ban state
+export const requestUserBan = async email => {
+    console.log("Requesting user role for: ", email)
+    const cookies = new Cookies(), token = cookies.get("userToken")
+    const headers = { Authorization: `Bearer ${token}` }
+    const getUrl = baseUserURL + `/user/ban/${email}`
+    try {
+        const response = await superagent.post(getUrl, email).set(headers)
+        return response.body
+    } catch (err) {
+        if (err.status === 400) console.log("User not Found")
+        if (err.status === 401) console.log("Unauthorized")
+        else console.log("error", err)
+    }
+    return false
+}

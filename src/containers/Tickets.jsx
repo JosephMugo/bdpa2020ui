@@ -24,8 +24,16 @@ const Tickets = () => {
     }
     const requestFlight = async () => {
         setCallFlight(false)
-        const myQuery = encodeURIComponent(JSON.stringify([id]))
-        const myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
+        let myTargetIds, myURL
+        if (id) myTargetIds = [id]
+
+        var queryObject = {}
+        queryObject["flight_id"] = `${myTargetIds}`
+        console.log(queryObject)
+        var query = encodeURIComponent(JSON.stringify(queryObject))
+
+        myURL = "https://airports.api.hscc.bdpa.org/v2/flights?regexMatch=" + query
+        console.log(myURL)
         try {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
             setFlight(response.body.flights[0])
