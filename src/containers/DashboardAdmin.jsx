@@ -26,8 +26,8 @@ const DashboardAdmin = () => {
     const handleBanClick = async (event) => {
         const email = event.target.id
         console.log('Changing user ban state')
-        const banUser = await requestUserBan(email)
         setGotUsers(false)
+        const banUser = await requestUserBan(email)
     }
 
     const handleDeleteClick = async (event) => {

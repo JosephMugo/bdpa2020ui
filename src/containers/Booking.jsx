@@ -93,7 +93,7 @@ const Bookings = () => {
             && noFly.sex === userInfo.sex)
         if (canFly(fields)) {
             setTicketResponse(3)
-            const response = await addTicket(id, fields.seatNum)
+            const response = await addTicket(id, fields.seatType, fields.seatNum)
             setTicketResponse(0 + response)
             payment === 'ffms' && await addffms(-selected.ffms)
             payment === 'money' && await addffms(selected.ffms)
