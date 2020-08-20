@@ -11,7 +11,7 @@ const Tickets = () => {
     const [airports, setAirports] = useState(false)
     const requestAirports = async () => {
         setAirports(true)
-        const URL = 'https://airports.api.hscc.bdpa.org/v1/info/airports'
+        const URL = 'https://airports.api.hscc.bdpa.org/v2/info/airports'
         try {
             const response = await superagent.get(URL).set('key', `${flights_key}`)
             const airports = response.body.airports

@@ -42,17 +42,23 @@ const Bookings = () => {
     const getNoFlyList = async () => {
         try {
             setNoFlyList(true)
-            const response = await superagent.get('https://airports.api.hscc.bdpa.org/v1/info/no-fly-list').set('key', `${flights_key}`)
+            const response = await superagent.get('https://airports.api.hscc.bdpa.org/v2/info/no-fly-list').set('key', `${flights_key}`)
             console.log(response.body.noFlyList)
             setNoFlyList(response.body.noFlyList)
         } catch (err) { setNoFlyList(false) }
     }
     const makeFlightRequest = async (fields) => {
         setFlights(true)
-        let myTargetIds, myQuery, myURL
+        let myTargetIds, myURL
         if (id) myTargetIds = [id]
-        myQuery = encodeURIComponent(JSON.stringify(myTargetIds))
-        myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
+
+        var queryObject = {}
+        queryObject["flight_id"] = `${myTargetIds}`
+        console.log(queryObject)
+        var query = encodeURIComponent(JSON.stringify(queryObject))
+
+        myURL = "https://airports.api.hscc.bdpa.org/v2/flights?regexMatch=" + query
+        console.log(myURL)
         try {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
             const flights = response.body.flights
