@@ -34,8 +34,14 @@ const DashboardCustomer = () => {
     }
     const requestFlights = async () => {
         setCallFlights(false)
-        const myQuery = encodeURIComponent(JSON.stringify(userTickets))
-        const myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
+
+        var queryObject = {}
+        queryObject["flight_id"] = `${userTickets}`
+        console.log(queryObject)
+        var query = encodeURIComponent(JSON.stringify(queryObject))
+
+        const myURL = "https://airports.api.hscc.bdpa.org/v2/flights?regexMatch=" + query
+
         try {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
             setFlights(response.body.flights)
@@ -44,7 +50,7 @@ const DashboardCustomer = () => {
     }
     const requestAirports = async () => {
         setAirports(true)
-        const URL = 'https://airports.api.hscc.bdpa.org/v1/info/airports'
+        const URL = 'https://airports.api.hscc.bdpa.org/v2/info/airports'
         try {
             const response = await superagent.get(URL).set('key', `${flights_key}`)
             const airports = response.body.airports
