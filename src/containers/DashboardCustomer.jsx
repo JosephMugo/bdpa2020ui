@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { Table, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-bootstrap'
-import superagent from 'superagent'
 import Cookies from "universal-cookie"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
@@ -8,7 +7,6 @@ import { format } from "date-fns"
 import { requestUserInfo, updateUserInfo } from '../services/userService'
 import { requestUserTickets } from '../services/ticketService'
 import { requestFlights, requestAirports } from '../services/flightService'
-import flights_key from '../doNotCommit.js'
 
 const cookies = new Cookies()
 const DashboardCustomer = () => {

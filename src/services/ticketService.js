@@ -1,6 +1,6 @@
 import superagent from "superagent";
 import Cookies from "universal-cookie";
-import {requestFlights} from './flightService'
+import { requestFlights } from './flightService'
 const baseUserURL = "http://localhost:3535"
 
 const cookies = new Cookies()
@@ -14,25 +14,25 @@ export const addTicket = async (flight_id, seatType, seatNum) => {
         console.log("Ticket saved")
         const requestedUserTickets = await requestUserTickets(email)
         let userTickets = []
-        if (requestedUserTickets){userTickets = (requestedUserTickets.map(ticket => ticket.flight_id))}
+        if (requestedUserTickets) { userTickets = (requestedUserTickets.map(ticket => ticket.flight_id)) }
         const flightsInfo = await requestFlights(userTickets)
-        console.log("this is flight info",flightsInfo[0].departFromReceiver)
+        console.log("this is flight info", flightsInfo[0].departFromReceiver)
         let maxNum = 0;
         let flight;
         let i;
-        for(i =0;i<flightsInfo.length;i++){
-             if (flightsInfo[i].departFromReceiver > maxNum){
-                 maxNum = flightsInfo[i].departFromReceiver
-                 flight = flightsInfo[i]
-             }
+        for (i = 0; i < flightsInfo.length; i++) {
+            if (flightsInfo[i].departFromReceiver > maxNum) {
+                maxNum = flightsInfo[i].departFromReceiver
+                flight = flightsInfo[i]
+            }
         }
         console.log(flight)
-        cookies.set("airline",flight.airline)
-        cookies.set("flightnumber",flight.flightnumber)
-        cookies.set("destination",flight.departingTo)
-        cookies.set("departingtime",new Date(flight.departFromReceiver))
+        cookies.set("airline", flight.airline)
+        cookies.set("flightnumber", flight.flightnumber)
+        cookies.set("destination", flight.departingTo)
+        cookies.set("departingtime", new Date(flight.departFromReceiver))
         return true
-    } catch (err) { console.log(err) }
+    } catch (err) { if (err.status === 400) return 5 }
     return false
 }
 export const requestUserTickets = async email => {

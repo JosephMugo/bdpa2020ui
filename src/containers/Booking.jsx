@@ -299,7 +299,7 @@ const Bookings = () => {
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
                                 <hr />
-                                <h5>{["Ticket Not Saved", "Ticket Saved", "", "Loading...", "You're on the No Fly List"][ticketResponse]}</h5>
+                                <h5>{["Ticket Not Saved", "Ticket Saved", "", "Loading...", "You're on the No Fly List", "Seat Taken"][ticketResponse]}</h5>
                             </Form>
                         )}
                     </Formik>}
