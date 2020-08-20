@@ -247,7 +247,7 @@ const Bookings = () => {
                                         <ErrorMessage name="zip" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
-                                <h4>Passanger Information</h4>
+                                <h4>Passenger Information</h4>
                                 <div className="form-row">
                                     <div className="form-group col">
                                         <label htmlFor="seat">Seat Number</label>
