@@ -17,6 +17,7 @@ import RegisterAdmin from "./containers/RegisterAdmin"
 import AdminCreateUser from "./containers/AdminCreateUser"
 import { requestUserInfo} from './services/userService'
 import { requestUserTickets } from './services/ticketService'
+import DashboardAttendant from "./containers/DashboardAttendant"
 
 const cookies = new Cookies()
 const App = () => {
@@ -122,6 +123,7 @@ const App = () => {
                     <Route exact path="/register_admin" component={RegisterAdmin} />
                     <Route exact path="/admin_create_user" component={AdminCreateUser} />
                     <Route exact path="/" component={Home} />
+                    <Route exact path="/dashboardattendant" component={DashboardAttendant} />
                 </div>
             </Router>
         </div>
