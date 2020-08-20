@@ -31,7 +31,10 @@ const App = () => {
         cookies.remove("role")
         cookies.remove("rememberMe")
         cookies.remove("firstName")
-        cookies.remove("email")
+        cookies.remove("airline")
+        cookies.remove("flightnumber")
+        cookies.remove("destination")
+        cookies.remove("departingtime")
         idle.stop()
         idle.reset()
     }
