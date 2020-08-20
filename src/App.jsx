@@ -15,17 +15,23 @@ import ForgotPassword from "./containers/ForgotPassword"
 import Register from "./containers/Register"
 import RegisterAdmin from "./containers/RegisterAdmin"
 import AdminCreateUser from "./containers/AdminCreateUser"
+import { requestUserInfo} from './services/userService'
+import { requestUserTickets } from './services/ticketService'
 
 const cookies = new Cookies()
 const App = () => {
     const [rememberMe] = useState(cookies.get("rememberMe"))
     const [token] = useState(cookies.get("userToken")), [role] = useState(cookies.get("role"))
+    const [userInfo,setUserInfo] = useState([])
+    const [nextTicket,setTicket] = useState([])
     const signOut = () => {
         console.log("signout")
         cookies.remove("email")
         cookies.remove("userToken")
         cookies.remove("role")
         cookies.remove("rememberMe")
+        cookies.remove("firstName")
+        cookies.remove("email")
         idle.stop()
         idle.reset()
     }
@@ -39,6 +45,23 @@ const App = () => {
     }
 
     // Auto logout feature
+    // if (token && userInfo.username === undefined){
+    //     const getUserInfo = async()=>{
+    //         const username = cookies.get("username")
+    //         const userData = await requestUserInfo(username)
+    //        // console.log("this shouldn't be empty",userData)
+    //         setUserInfo(userData)
+    //         const ticketData = await requestUserTickets(username)
+    //         const flight_id = ticketData[1].flight_id
+    //         console.log(flight_id)
+
+            
+    //     }
+    //     getUserInfo()
+    // } else{
+    //     console.log("this is info",userInfo)
+    //     console.log(userInfo.username)
+    // }
     if (!rememberMe && token) {
         var idle = new IdleJs({
             idle: 900000, // idle time in ms; 900,000 ms = 15 minutes
@@ -75,6 +98,8 @@ const App = () => {
                         {token && role === "root" && <Nav.Link href="/register_admin">Register Admin</Nav.Link>}
                         {role === "admin" && <Nav.Link href="/admin_create_user">Admin Create User</Nav.Link>} {/*&& role === "admin"*/}
                         {token && !rememberMe && <Nav.Link>Login Expiration: 15 minutes</Nav.Link>}
+                         {token && <Nav.Link>Hello, {cookies.get("firstName")}</Nav.Link>}
+                         {token && <Nav.Link>{cookies.get("email")}</Nav.Link>}
                         {token && <Nav.Link href="/" onClick={signOut}>Sign Out</Nav.Link>}
                     </Nav>
                 </Navbar.Collapse>

@@ -29,6 +29,7 @@ export const login = async user => {
     console.log(base64String)
     const headers = { Authorization: `Basic ${base64String}` }
     const tokenUrl = baseUserURL + '/token'
+    const getUrl = baseUserURL + '/user/get'
     try {
         const response = await superagent.post(tokenUrl, email).set(headers)
         const { token, role } = response.body
@@ -37,6 +38,10 @@ export const login = async user => {
         cookies.set('email', email)
         cookies.set('userToken', token)
         cookies.set('role', role)
+        const headers2 = { Authorization: `Bearer ${token}` }
+         const response2 = await superagent.get(getUrl, email).set(headers2)
+         cookies.set('firstName',response2.body.firstName)
+         cookies.set('email',response2.body.email)
 
         // Remove failed login cookies
         cookies.remove('loginAttempt')
