@@ -3,10 +3,10 @@ import Cookies from "universal-cookie";
 const baseUserURL = "http://localhost:3535"
 
 const cookies = new Cookies()
-export const addTicket = async flight_id => {
+export const addTicket = async (flight_id, seat) => {
     const token = cookies.get("userToken"), username = cookies.get("username")
     const headers = { Authorization: `Bearer ${token}` }
-    const postBody = { username, flight_id }
+    const postBody = { username, flight_id, seat }
     const addTicketURL = baseUserURL + '/ticket/add'
     try {
         const response = await superagent.post(addTicketURL, postBody).set(headers)

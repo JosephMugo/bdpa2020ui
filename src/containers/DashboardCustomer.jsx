@@ -33,6 +33,7 @@ const DashboardCustomer = () => {
         if (requestedUserTickets) setUserTickets(requestedUserTickets.map(ticket => ticket.flight_id))
     }
     const requestFlights = async () => {
+        if (!flights) setFlights(true)
         const myQuery = encodeURIComponent(JSON.stringify(userTickets))
         const myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
         try {
@@ -87,7 +88,7 @@ const DashboardCustomer = () => {
                         </thead>
                         <tbody>
                             {flights.filter(fl => fl.type !== "past" && fl.type !== "cancelled").map(fl =>
-                                <tr key={fl.flight_id}>
+                                <tr key={fl.flight_id + fl.seat}>
                                     <td>{getAirportCity(fl.comingFrom) + " to " + getAirportCity(fl.landingAt)}</td>
                                     <td>{format(fl.departFromSender, "PPpp")}</td>
                                     <td>{format(fl.arriveAtReceiver, "PPpp")}</td>

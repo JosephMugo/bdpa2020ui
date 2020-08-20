@@ -26,9 +26,9 @@ const Bookings = () => {
                 requestedUserInfo.cvv = ""
                 requestedUserInfo.expdate = ""
                 requestedUserInfo.address = ""
-                requestedUserInfo.seat = ""
-                requestedUserInfo.checkedBags = ""
-                requestedUserInfo.carryBags = ""
+                requestedUserInfo.seat = 1
+                requestedUserInfo.checkedBags = 0
+                requestedUserInfo.carryBags = 0
                 setUserInfo(requestedUserInfo)
             }
         } else setUserInfo({
@@ -77,7 +77,7 @@ const Bookings = () => {
             && noFly.sex === userInfo.sex)
         if (canFly(fields)) {
             setTicketResponse(3)
-            const response = await addTicket(id)
+            const response = await addTicket(id,fields.seat)
             setTicketResponse(0 + response)
         } else setTicketResponse(4)
     }
@@ -246,7 +246,7 @@ const Bookings = () => {
                                 <div className="form-row">
                                     <div className="form-group col">
                                         <label htmlFor="seat">Seat Number</label>
-                                        <Field name="seat" type="number" min="0" max="21" className={'form-control' + (errors.seat && touched.seat ? ' is-invalid' : '')} />
+                                        <Field name="seat" type="number" min="1" max="21" className={'form-control' + (errors.seat && touched.seat ? ' is-invalid' : '')} />
                                         <ErrorMessage name="seat" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
