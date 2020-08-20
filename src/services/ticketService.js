@@ -3,19 +3,16 @@ import Cookies from "universal-cookie";
 const baseUserURL = "http://localhost:3535"
 
 const cookies = new Cookies()
-export const addTicket = async (flight_id, seat) => {
+export const addTicket = async (flight_id, seatType, seatNum) => {
     const token = cookies.get("userToken"), email = cookies.get("email")
     const headers = { Authorization: `Bearer ${token}` }
-    const postBody = { email, flight_id, seat }
+    const postBody = { email, flight_id, seatType, seatNum }
     const addTicketURL = baseUserURL + '/ticket/add'
     try {
         await superagent.post(addTicketURL, postBody).set(headers)
         console.log("Ticket saved")
         return true
-    } catch (err) {
-        if (err.status === 400) console.log(400)
-        console.log(err)
-    }
+    } catch (err) { console.log(err) }
     return false
 }
 export const requestUserTickets = async email => {
@@ -61,7 +58,7 @@ export const addffms = async ffms_num => {
 
     const updateUrl = baseUserURL + '/user/update'
     try {
-        const response = await superagent.post(updateUrl, {ffms: newValue}).set(headers)
+        const response = await superagent.post(updateUrl, { ffms: newValue }).set(headers)
         return response.body
     } catch (err) {
         if (err.status === 401) console.log("Bad credentials")

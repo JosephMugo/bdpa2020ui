@@ -1,7 +1,7 @@
 import superagent from "superagent";
 import Cookies from "universal-cookie";
 import { requestUserTickets } from '../services/ticketService'
-import {requestFlights} from './flightService'
+import { requestFlights } from './flightService'
 import { set } from "date-fns";
 
 const baseUserURL = "http://localhost:3535"
@@ -45,26 +45,26 @@ export const login = async user => {
         cookies.set('role', role)
         const headers2 = { Authorization: `Bearer ${token}` }
         const response2 = await superagent.get(getUrl, email).set(headers2)
-        cookies.set('firstName',response2.body.firstName)
+        cookies.set('firstName', response2.body.firstName)
         const requestedUserTickets = await requestUserTickets(email)
         let userTickets = []
-        if (requestedUserTickets){userTickets = (requestedUserTickets.map(ticket => ticket.flight_id))}
+        if (requestedUserTickets) { userTickets = (requestedUserTickets.map(ticket => ticket.flight_id)) }
         const flightsInfo = await requestFlights(userTickets)
-        console.log("this is flight info",flightsInfo[0].departFromReceiver)
+        console.log("this is flight info", flightsInfo[0].departFromReceiver)
         let maxNum = 0;
         let flight;
         let i;
-        for(i =0;i<flightsInfo.length;i++){
-             if (flightsInfo[i].departFromReceiver > maxNum){
-                 maxNum = flightsInfo[i].departFromReceiver
-                 flight = flightsInfo[i]
-             }
+        for (i = 0; i < flightsInfo.length; i++) {
+            if (flightsInfo[i].departFromReceiver > maxNum) {
+                maxNum = flightsInfo[i].departFromReceiver
+                flight = flightsInfo[i]
+            }
         }
-        console.log("this is the correct",flight)
-        cookies.set("airline",flight.airline)
-        cookies.set("flightnumber",flight.flightnumber)
-        cookies.set("destination",flight.departingTo)
-        cookies.set("departingtime",new Date(flight.departFromReceiver))
+        console.log("this is the correct", flight)
+        cookies.set("airline", flight.airline)
+        cookies.set("flightnumber", flight.flightnumber)
+        cookies.set("destination", flight.departingTo)
+        cookies.set("departingtime", new Date(flight.departFromReceiver))
         // Remove failed login cookies
         cookies.remove('loginAttempt')
         return true
