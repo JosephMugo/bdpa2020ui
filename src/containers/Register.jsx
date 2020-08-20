@@ -127,7 +127,7 @@ const Register = () => {
                                         <ErrorMessage name="phone" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
-                                        <label htmlFor="email">Email Adress</label>
+                                        <label htmlFor="email">Email Address</label>
                                         <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                     </div>
