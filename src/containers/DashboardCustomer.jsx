@@ -56,10 +56,7 @@ const DashboardCustomer = () => {
             const airports = response.body.airports
             console.log("airports", airports)
             setAirports(airports)
-        } catch (err) {
-            if (err.status !== 429) setAirports(false)
-            else if (err.status === 555) requestAirports()
-        }
+        } catch (err) { if (err.status === 555) setTimeout(requestAirports, 1000) }
     }
     useEffect(() => { if (!userInfo) getUserInfo() })
     useEffect(() => { if (!userTickets) getUserTickets() })

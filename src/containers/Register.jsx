@@ -33,7 +33,7 @@ const Register = () => {
                     <hr />
                     <Formik
                         initialValues={{
-                            title: "", firstName: "", middleName: "", lastName: "", suffix: "",
+                            ffms: 0, title: "", firstName: "", middleName: "", lastName: "", suffix: "",
                             birthdate: "", sex: "", city: "", state: "", zip: "", country: "",
                             email: "", phone: "", password: "",
                             securityQuestion1: "", securityQuestion2: "", securityQuestion3: "", captcha: ""
@@ -58,7 +58,11 @@ const Register = () => {
                         {({ errors, touched }) => (
                             <Form>
                                 <div className="form-row">
-                                    <div className="form-group col-2">
+                                    <div className="form-group col-1">
+                                        <label htmlFor="ffms">FFMS</label>
+                                        <Field name="ffms" disabled type="text" className="form-control" />
+                                    </div>
+                                    <div className="form-group col-1">
                                         <label htmlFor="title">Title</label>
                                         <Field name="title" type="text" className="form-control" />
                                     </div>
@@ -155,7 +159,7 @@ const Register = () => {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="captcha">What's</label>
-                                    <img src={captcha} alt="captcha"/>
+                                    <img src={captcha} alt="captcha" />
                                     <Field name="captcha" type="text" className={'form-control' + (errors.captcha && touched.captcha ? ' is-invalid' : '')} />
                                     <ErrorMessage name="captcha" component="div" className="invalid-feedback" />
                                 </div>
