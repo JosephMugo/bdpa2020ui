@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { requestAllUsers } from "../services/userService"
+import { requestAllUsers, requestDeleteUser } from "../services/userService"
 import Table from 'react-bootstrap/Table'
 import { Button } from "react-bootstrap"
 import '../styles/DashboardAdmin.css'
@@ -16,6 +16,13 @@ const DashboardAdmin = () => {
     useEffect(() => {
         if (!gotUsers) { getUserInfo() }
     })
+
+    const handleClick = async (event) => {
+        const username = event.target.id
+        console.log('Deleting user:', username)
+        const deletedUser = await requestDeleteUser(username);
+        setGotUsers(false)
+    }
     return (
     <div>
         <h3>Users</h3>
@@ -34,7 +41,7 @@ const DashboardAdmin = () => {
                         <td>{user.firstName}</td>
                         <td>{user.lastName}</td>
                         <td>{user.username}</td>
-                        <td><Button className="deleteButton" variant="danger">Delete</Button></td>
+                        <td><Button id={user.username} className="deleteButton" variant="danger" onClick={handleClick}>Delete</Button></td>
                     </tr>
                 ))}
             </tbody>

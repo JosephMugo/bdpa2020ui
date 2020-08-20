@@ -148,3 +148,20 @@ export const requestAllUsers = async () => {
     }
     return false
 }
+
+// Delete user 
+export const requestDeleteUser = async (username) => {
+    const cookies = new Cookies(), token = cookies.get("userToken")
+    const headers = { Authorization: `Bearer ${token}` }
+    const getUrl = baseUserURL + `/user/deleteUser/${username}`
+    try {
+        const response = await superagent.delete(getUrl, username).set(headers)
+        console.log(response)
+        return response.body
+    } catch (err) {
+        if (err.status === 400) console.log("User not Found")
+        if (err.status === 401) console.log("Unauthorized")
+        else console.log("error", err)
+    }
+    return false
+}
