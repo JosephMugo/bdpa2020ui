@@ -68,7 +68,7 @@ const Bookings = () => {
         } catch (err) { if (err.status !== 429) setTimeout(() => setFlights(false), 1000) }
     }
     const searchFlights = fields => { }
-    function SelectField(props) {
+    const SelectField = (props) => {
         const [field, state, { setValue, setTouched }] = useField(props.field.name);
         const onChange = ({ value }) => {
             setValue(value)
@@ -86,7 +86,7 @@ const Bookings = () => {
             && noFly.sex === userInfo.sex)
         if (canFly(fields)) {
             setTicketResponse(3)
-            const response = await addTicket(id, fields.seatType, fields.seatNum)
+            const response = await addTicket(id, fields.seatNum)
             setTicketResponse(0 + response)
             await addffms(selected.ffms)
         } else setTicketResponse(4)
