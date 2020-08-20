@@ -40,7 +40,7 @@ const DashboardCustomer = () => {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
             setFlights(response.body.flights)
         } catch (err) { if (err.status === 555) requestFlights() }
-        setTimeout(requestFlights, 10000)
+        setTimeout(requestFlights, 30000)
     }
     const requestAirports = async () => {
         setAirports(true)
@@ -75,7 +75,7 @@ const DashboardCustomer = () => {
             {userInfo && lastLoginDate && <p> Last Login Date: {"" + format(new Date(lastLoginDate), "PPpp")}</p>}
 
             <div className='row'>
-                {airports && airports !== true && flights && flights !== true && <div className='col-sm-6'>
+                {airports && airports !== true && flights && <div className='col-sm-6'>
                     <h3>Upcoming Flights</h3>
                     <Table striped bordered hover>
                         <thead>

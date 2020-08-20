@@ -9,10 +9,13 @@ export const addTicket = async (flight_id, seat) => {
     const postBody = { email, flight_id, seat }
     const addTicketURL = baseUserURL + '/ticket/add'
     try {
-        const response = await superagent.post(addTicketURL, postBody).set(headers)
-        console.log("addTicket response", response)
+        await superagent.post(addTicketURL, postBody).set(headers)
+        console.log("Ticket saved")
         return true
-    } catch (err) { console.log(err) }
+    } catch (err) {
+        if (err.status === 400) console.log(400)
+        console.log(err)
+    }
     return false
 }
 export const requestUserTickets = async email => {
