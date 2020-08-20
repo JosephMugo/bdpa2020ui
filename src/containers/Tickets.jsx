@@ -48,7 +48,7 @@ const Tickets = () => {
             {airports && airports !== true && flight && <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>Passanger Name</th>
+                        <th>Passenger Name</th>
                         <th>Flight</th>
                         <th>Airline</th>
                         <th>Flight Number</th>

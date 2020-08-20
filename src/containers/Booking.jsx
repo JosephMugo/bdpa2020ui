@@ -63,7 +63,7 @@ const Bookings = () => {
             setFlights(flights)
             setSelected(flights[0])
             console.log("selected", flights[0])
-        } catch (err) { if (err.status === 555) setTimeout(() => setFlights(false), 1000) }
+        } catch (err) { if (err.status !== 429) setTimeout(() => setFlights(false), 1000) }
     }
     const searchFlights = fields => { }
     function SelectField(props) {
@@ -97,6 +97,7 @@ const Bookings = () => {
                     <h2>Book Flights</h2>
                     <hr />
                     {selected && <>
+                        <h3 align='center'>Frequent Flyer Miles Awarded: {selected.ffms}</h3>
                         <h3 align='center'>Price: {selected.seatPrice}</h3>
                         <h3 align='center'>Arriving: {new Date(selected.arriveAtReceiver).toLocaleString()}</h3>
                         <h3 align='center'>To: {selected.landingAt} From: {selected.comingFrom}</h3>
@@ -248,7 +249,7 @@ const Bookings = () => {
                                         <ErrorMessage name="zip" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
-                                <h4>Passanger Information</h4>
+                                <h4>Passenger Information</h4>
                                 <div className="form-row">
                                     <div className="form-group col">
                                         <label>Seat Type</label>

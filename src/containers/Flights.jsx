@@ -7,6 +7,9 @@ import flights_key from '../doNotCommit.js'
 import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap'
 
 export const Flights = () => {
+    const currentTime = new Date()
+    const bookingLimit = 36 * 60 * 60 * 1000 // 36 hours in milliseconds
+
     const [airports, setAirports] = useState([])
 
     const [flights, setFlights] = useState([])
@@ -79,8 +82,8 @@ export const Flights = () => {
                     flightNumber: fl.flightNumber,
                     flight_id: fl.flight_id,
                     bookable: fl.bookable,
-                    arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleString(),
-                    departFromReceiver: new Date(fl.departFromReceiver).toLocaleString(),
+                    arriveAtReceiver: new Date(fl.arriveAtReceiver),
+                    departFromReceiver: new Date(fl.departFromReceiver),
                     status: fl.status,
                     gate: fl.gate,
                 }
@@ -129,8 +132,8 @@ export const Flights = () => {
                     flightNumber: fl.flightNumber,
                     flight_id: fl.flight_id,
                     bookable: fl.bookable,
-                    arriveAtReceiver: new Date(fl.arriveAtReceiver).toLocaleString(),
-                    departFromReceiver: new Date(fl.departFromReceiver).toLocaleString(),
+                    arriveAtReceiver: new Date(fl.arriveAtReceiver),
+                    departFromReceiver: new Date(fl.departFromReceiver),
                     status: fl.status,
                     gate: fl.gate,
                 }
@@ -265,6 +268,7 @@ export const Flights = () => {
                             <Dropdown.Item onClick={() => updateSearchCategory('departingToCity')}>Departing To City</Dropdown.Item>
                             <Dropdown.Item onClick={() => updateSearchCategory('arriveAtReceiver')}>Arrival Time</Dropdown.Item>
                             <Dropdown.Item onClick={() => updateSearchCategory('departFromReceiver')}>Departure Time</Dropdown.Item>
+                            <Dropdown.Item onClick={() => updateSearchCategory('status')}>Status</Dropdown.Item>
                         </DropdownButton>
                         <FormControl value={searchTerm} onChange={updateSearchTerm} placeholder={`Search with ${searchCategory}`} />
                         <InputGroup.Append>
@@ -303,11 +307,11 @@ export const Flights = () => {
                             <td>{fl.flightNumber}</td>
                             {fl.bookable === true && <td>Available</td>}
                             {fl.bookable === false && <td>N/A</td>}
-                            <td>{fl.arriveAtReceiver}</td>
-                            {shownFlights === 'departure' && <td>{fl.departFromReceiver}</td>}
+                            <td>{fl.arriveAtReceiver.toLocaleString()}</td>
+                            {shownFlights === 'departure' && <td>{fl.departFromReceiver.toLocaleString()}</td>}
                             <td>{fl.status}</td>
                             {shownFlights === 'departure' && <td>{fl.gate}</td>}
-                            {fl.status === "scheduled" && <td><Button href={`/booking/${fl.flight_id}`}>Book</Button></td>}
+                            {shownFlights === 'departure' && fl.status === "scheduled" && fl.departFromReceiver - currentTime > bookingLimit && <td><Button href={`/booking/${fl.flight_id}`}>Book</Button></td>}
                         </tr>
                     ))}
                 </tbody>

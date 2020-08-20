@@ -9,7 +9,7 @@ const securityQuestions = [
     "What primary school did you attend?",
     "What is your favorite food?"
 ]
-const AdminCreateUser = () => {
+const AdminCreateAttendant = () => {
     const [registerResponse, setRegisterResponse] = useState(2)
     const handleSubmit = async (fields) => {
         const { captcha, ...info } = fields
@@ -24,9 +24,9 @@ const AdminCreateUser = () => {
             <div align='center'>
                 <div className='col-sm-8'>
                     <hr />
-                    <h2>Admin Customer Account Creation</h2>
+                    <h2>Admin Attendant Account Creation</h2>
                     <hr />
-                    <p>Create a customer account</p>
+                    <p>Create an attendant account</p>
                     <hr />
                     <Formik
                         initialValues={{
@@ -133,6 +133,11 @@ const AdminCreateUser = () => {
                                     <Field name="password" type="password" className={'form-control' + (errors.password && touched.password ? ' is-invalid' : '')} />
                                     <ErrorMessage name="password" component="div" className="invalid-feedback" />
                                 </div>
+                                <div className="form-group">
+                                    <label htmlFor="airline">Assigned Airline</label>
+                                    <Field name="airline" type="airline" className={'form-control' + (errors.airline && touched.airline ? ' is-invalid' : '')} />
+                                    <ErrorMessage name="airline" component="div" className="invalid-feedback" />
+                                </div>
                                 <h4>Security Questions</h4>
                                 <div className="form-group">
                                     <label htmlFor="securityQuestion1">{securityQuestions[0]}</label>
@@ -169,5 +174,5 @@ const AdminCreateUser = () => {
         </>
     )
 }
-export default AdminCreateUser
+export default AdminCreateAttendant
 
