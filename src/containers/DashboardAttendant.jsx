@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Table, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-bootstrap'
+import { Table, Button, ButtonGroup, DropdownButton, Dropdown, ButtonToolbar, InputGroup, FormControl } from 'react-bootstrap'
 import superagent from 'superagent'
 import Cookies from "universal-cookie"
 import { Formik, Field, Form, ErrorMessage } from 'formik'
@@ -10,9 +10,10 @@ import { requestUserTickets } from '../services/ticketService'
 import flights_key from '../doNotCommit.js'
 import { usePromiseTracker, trackPromise } from 'react-promise-tracker'
 import Loader from 'react-loader-spinner'
-import { Table, Button, ButtonGroup, ButtonToolbar, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap'
 
-export const Flights = () => {
+
+
+export const DashboardAttendant = () => {
     const [airports, setAirports] = useState([])
 
     const [flights, setFlights] = useState([])
@@ -324,4 +325,4 @@ export const Flights = () => {
     )
 }
 
-export default Flights
+export default DashboardAttendant
