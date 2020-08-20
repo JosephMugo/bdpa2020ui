@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react"
 import { useParams } from 'react-router-dom'
 import superagent from 'superagent'
-import { Formik, Field, Form, ErrorMessage } from 'formik'
+import { Formik, Field, Form, ErrorMessage, useField } from 'formik'
+import Select from 'react-select';
 import { object, string, date, number } from 'yup'
 import { format } from "date-fns"
 import Cookies from "universal-cookie"
@@ -9,11 +10,11 @@ import { requestUserInfo } from '../services/userService'
 import { addTicket } from "../services/ticketService"
 import flights_key from '../doNotCommit.js'
 const cookies = new Cookies()
-let flightRequestFails = 0
 const Bookings = () => {
     const [userInfo, setUserInfo] = useState(false)
     const [flights, setFlights] = useState(false), [noFlyList, setNoFlyList] = useState(false) //, [shownFlights, setShownFlights] = useState(false)
     const [id] = useState(useParams().flight_id), [selected, setSelected] = useState()
+    const [seatTypes, setSeatTypes] = useState(false), [maxSeats, setMaxSeats] = useState(0)
     const [ticketResponse, setTicketResponse] = useState(2)
     const getUserInfo = async () => {
         if (cookies.get("email")) {
@@ -26,17 +27,18 @@ const Bookings = () => {
                 requestedUserInfo.cvv = ""
                 requestedUserInfo.expdate = ""
                 requestedUserInfo.address = ""
-                requestedUserInfo.seat = 1
+                requestedUserInfo.seatType = ""
+                requestedUserInfo.seatNum = 1
                 requestedUserInfo.checkedBags = 0
                 requestedUserInfo.carryBags = 0
                 setUserInfo(requestedUserInfo)
             }
         } else setUserInfo({
             firstName: "", middleName: "", lastName: "",
-            birthdate: null, sex: "", email: "", phone: "",
-            cardName: "", card: "", cvv: "", expdate: null,
+            birthdate: "", sex: "", email: "", phone: "",
+            cardName: "", card: "", cvv: "", expdate: "",
             address: "", city: "", state: "", zip: "",
-            seat: 0, checkedBags: 0, carryBags: 0
+            seatType: "", seatNum: 0, checkedBags: 0, carryBags: 0
         })
     }
     const getNoFlyList = async () => {
@@ -45,35 +47,35 @@ const Bookings = () => {
             const response = await superagent.get('https://airports.api.hscc.bdpa.org/v2/info/no-fly-list').set('key', `${flights_key}`)
             console.log(response.body.noFlyList)
             setNoFlyList(response.body.noFlyList)
-        } catch (err) { setNoFlyList(false) }
+        } catch (err) { if (err.status === 555) setTimeout(() => setNoFlyList(false), 1000) }
     }
     const makeFlightRequest = async (fields) => {
         setFlights(true)
-        let myTargetIds, myURL
-        if (id) myTargetIds = [id]
-
         var queryObject = {}
-        queryObject["flight_id"] = `${myTargetIds}`
-        console.log(queryObject)
+        queryObject["flight_id"] = `${[id]}`
         var query = encodeURIComponent(JSON.stringify(queryObject))
-
-        myURL = "https://airports.api.hscc.bdpa.org/v2/flights?regexMatch=" + query
+        const myURL = "https://airports.api.hscc.bdpa.org/v2/flights?regexMatch=" + query
         console.log(myURL)
         try {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
             const flights = response.body.flights
+            setSeatTypes(Object.keys(flights[0].seats).map(type => { return { value: type, label: type } }))
             setFlights(flights)
-            if (id) setSelected(flights[0])
-            flightRequestFails = 0
-        } catch (err) {
-            flightRequestFails++
-            console.error(err, flightRequestFails)
-            setFlights(false)
-        }
+            setSelected(flights[0])
+            console.log("selected", flights[0])
+        } catch (err) { if (err.status === 555) setTimeout(() => setFlights(false), 1000) }
     }
     const searchFlights = fields => { }
-    useEffect(() => { if (!noFlyList && flightRequestFails < 8) getNoFlyList() })
-    useEffect(() => { if (!flights && flightRequestFails < 8) makeFlightRequest() })
+    function SelectField(props) {
+        const [field, state, { setValue, setTouched }] = useField(props.field.name);
+        const onChange = ({ value }) => {
+            setValue(value)
+            setMaxSeats(selected.seats[value].total)
+        }
+        return <Select {...props} onChange={onChange} onBlur={setTouched} />;
+    }
+    useEffect(() => { if (!noFlyList) getNoFlyList() })
+    useEffect(() => { if (!flights && id) makeFlightRequest() })
     useEffect(() => { if (!userInfo) getUserInfo() })
     const handleSubmit = async fields => {
         const canFly = userInfo => !noFlyList.some(noFly => noFly.name.first === userInfo.firstName && noFly.name.last === userInfo.lastName
@@ -82,7 +84,7 @@ const Bookings = () => {
             && noFly.sex === userInfo.sex)
         if (canFly(fields)) {
             setTicketResponse(3)
-            const response = await addTicket(id,fields.seat)
+            const response = await addTicket(id, fields.seatType, fields.seatNum)
             setTicketResponse(0 + response)
         } else setTicketResponse(4)
     }
@@ -94,7 +96,6 @@ const Bookings = () => {
                     <hr />
                     <h2>Book Flights</h2>
                     <hr />
-                    {flightRequestFails >= 8 && <h3>Flight Could Not Be Requested</h3>}
                     {selected && <>
                         <h3 align='center'>Price: {selected.seatPrice}</h3>
                         <h3 align='center'>Arriving: {new Date(selected.arriveAtReceiver).toLocaleString()}</h3>
@@ -139,7 +140,7 @@ const Bookings = () => {
                                 </div>
                             </Form>)}
                     </Formik>}
-                    {userInfo && userInfo !== true && <Formik
+                    {userInfo && userInfo !== true && selected && selected !== true && seatTypes && <Formik
                         initialValues={userInfo}
                         validationSchema={object().shape({
                             firstName: required, lastName: required,
@@ -149,7 +150,7 @@ const Bookings = () => {
                             card: required.matches(/^[0-9]+$/, "Can only cantain numbers"), cvv: required.matches(/^[0-9]+$/, "Can only cantain numbers"),
                             expdate: date().required("Required").min(new Date((new Date()).getYear() + 1900, (new Date()).getMonth()), "Invalid Expiration Date"),
                             address: required, city: required, state: required, zip: required,
-                            seat: number().required('Required'), checkedBags: number().required('Required'), carryBags: number().required('Required')
+                            seatType: required, seatNum: number().required('Required'), checkedBags: number().required('Required'), carryBags: number().required('Required')
                         })}
                         onSubmit={handleSubmit}
                     >
@@ -250,23 +251,28 @@ const Bookings = () => {
                                 <h4>Passanger Information</h4>
                                 <div className="form-row">
                                     <div className="form-group col">
-                                        <label htmlFor="seat">Seat Number</label>
-                                        <Field name="seat" type="number" min="1" max="21" className={'form-control' + (errors.seat && touched.seat ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="seat" component="div" className="invalid-feedback" />
+                                        <label>Seat Type</label>
+                                        <Field component={SelectField} name="seatType" options={seatTypes} className={errors.seatType && touched.seatType ? ' is-invalid' : ''} />
+                                        <ErrorMessage name="seatType" component="div" className="invalid-feedback" />
+                                    </div>
+                                    <div className="form-group col">
+                                        <label htmlFor="seatNum">Seat Number</label>
+                                        <Field name="seatNum" type="number" min="1" max={maxSeats} className={'form-control' + (errors.seatNum && touched.seatNum ? ' is-invalid' : '')} />
+                                        <ErrorMessage name="seatNum" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
                                         <label htmlFor="checkedBags">Checked Bags</label>
-                                        <Field name="checkedBags" type="number" min="0" max="5" className={'form-control' + (errors.checkedBags && touched.checkedBags ? ' is-invalid' : '')} />
+                                        <Field name="checkedBags" type="number" min="0" max={selected.baggage.checked.max} className={'form-control' + (errors.checkedBags && touched.checkedBags ? ' is-invalid' : '')} />
                                         <ErrorMessage name="checkedBags" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
                                         <label htmlFor="carryBags">Carry-on Bags</label>
-                                        <Field name="carryBags" type="number" min="0" max="2" className={'form-control' + (errors.carryBags && touched.carryBags ? ' is-invalid' : '')} />
+                                        <Field name="carryBags" type="number" min="0" max={selected.baggage.carry.max} className={'form-control' + (errors.carryBags && touched.carryBags ? ' is-invalid' : '')} />
                                         <ErrorMessage name="carryBags" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
                                 <div className="form-group">
-                                    <button type="submit" className="btn btn-primary mr-2" disabled={flightRequestFails >= 8}>Book Flight</button>
+                                    <button type="submit" className="btn btn-primary mr-2">Book Flight</button>
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
                                 <hr />
