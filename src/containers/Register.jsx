@@ -58,11 +58,8 @@ const Register = () => {
                         {({ errors, touched }) => (
                             <Form>
                                 <div className="form-row">
-                                    <div className="form-group col-1">
-                                        <label htmlFor="ffms">FFMS</label>
-                                        <Field name="ffms" disabled type="text" className="form-control" />
-                                    </div>
-                                    <div className="form-group col-1">
+                                    <Field name="ffms" hidden disabled type="text" className="form-control" />
+                                    <div className="form-group col-2">
                                         <label htmlFor="title">Title</label>
                                         <Field name="title" type="text" className="form-control" />
                                     </div>
