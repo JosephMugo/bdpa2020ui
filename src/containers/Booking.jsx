@@ -16,9 +16,9 @@ const Bookings = () => {
     const [id] = useState(useParams().flight_id), [selected, setSelected] = useState()
     const [ticketResponse, setTicketResponse] = useState(2)
     const getUserInfo = async () => {
-        if (cookies.get("username")) {
+        if (cookies.get("email")) {
             setUserInfo(true)
-            const requestedUserInfo = await requestUserInfo(cookies.get("username"))
+            const requestedUserInfo = await requestUserInfo(cookies.get("email"))
             console.log("userInfo", requestedUserInfo)
             if (requestedUserInfo) {
                 requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy-MM-dd")
@@ -42,17 +42,23 @@ const Bookings = () => {
     const getNoFlyList = async () => {
         try {
             setNoFlyList(true)
-            const response = await superagent.get('https://airports.api.hscc.bdpa.org/v1/info/no-fly-list').set('key', `${flights_key}`)
+            const response = await superagent.get('https://airports.api.hscc.bdpa.org/v2/info/no-fly-list').set('key', `${flights_key}`)
             console.log(response.body.noFlyList)
             setNoFlyList(response.body.noFlyList)
         } catch (err) { setNoFlyList(false) }
     }
     const makeFlightRequest = async (fields) => {
         setFlights(true)
-        let myTargetIds, myQuery, myURL
+        let myTargetIds, myURL
         if (id) myTargetIds = [id]
-        myQuery = encodeURIComponent(JSON.stringify(myTargetIds))
-        myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
+
+        var queryObject = {}
+        queryObject["flight_id"] = `${myTargetIds}`
+        console.log(queryObject)
+        var query = encodeURIComponent(JSON.stringify(queryObject))
+
+        myURL = "https://airports.api.hscc.bdpa.org/v2/flights?regexMatch=" + query
+        console.log(myURL)
         try {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
             const flights = response.body.flights
@@ -70,7 +76,6 @@ const Bookings = () => {
     useEffect(() => { if (!flights && flightRequestFails < 8) makeFlightRequest() })
     useEffect(() => { if (!userInfo) getUserInfo() })
     const handleSubmit = async fields => {
-        console.log(fields.birthdate)
         const canFly = userInfo => !noFlyList.some(noFly => noFly.name.first === userInfo.firstName && noFly.name.last === userInfo.lastName
             && (!noFly.name.middle || !userInfo.middleName || noFly.name.middle === userInfo.middleName)
             && JSON.stringify(Object.values(noFly.birthdate).reverse()) === JSON.stringify(userInfo.birthdate.split('-').map(i => Number(i)))
@@ -192,7 +197,7 @@ const Bookings = () => {
                                     </div>
                                     <div className="form-group col">
                                         <label htmlFor="email">Email Address</label>
-                                        <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
+                                        <Field name="email" type="email" disabled={userInfo} className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>

@@ -13,11 +13,11 @@ const cookies = new Cookies()
 const DashboardCustomer = () => {
     const [userInfo, setUserInfo] = useState(false), [updateResponse, setUpdateResponse] = useState(2)
     const [lastLoginDate, setLastLoginDate] = useState(false), [lastLoginIp, setLastLoginIp] = useState(false)
-    const [userTickets, setUserTickets] = useState(false), [airports, setAirports] = useState(false), [flights, setFlights] = useState(false)
+    const [userTickets, setUserTickets] = useState(false), [airports, setAirports] = useState(false), [flights, setFlights] = useState(false), [callFlights, setCallFlights] = useState(true)
 
     const getUserInfo = async () => {
         setUserInfo(true)
-        const requestedUserInfo = await requestUserInfo(cookies.get("username"))
+        const requestedUserInfo = await requestUserInfo(cookies.get("email"))
         console.log("userInfo", requestedUserInfo)
         if (requestedUserInfo) {
             requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy-MM-dd")
@@ -28,23 +28,29 @@ const DashboardCustomer = () => {
     }
     const getUserTickets = async () => {
         setUserTickets(true)
-        const requestedUserTickets = await requestUserTickets(cookies.get("username"))
+        const requestedUserTickets = await requestUserTickets(cookies.get("email"))
         console.log("userTickets", requestedUserTickets)
         if (requestedUserTickets) setUserTickets(requestedUserTickets.map(ticket => ticket.flight_id))
     }
     const requestFlights = async () => {
-        if (!flights) setFlights(true)
-        const myQuery = encodeURIComponent(JSON.stringify(userTickets))
-        const myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
+        setCallFlights(false)
+
+        var queryObject = {}
+        queryObject["flight_id"] = `${userTickets}`
+        console.log(queryObject)
+        var query = encodeURIComponent(JSON.stringify(queryObject))
+
+        const myURL = "https://airports.api.hscc.bdpa.org/v2/flights?regexMatch=" + query
+
         try {
             const response = await superagent.get(myURL).set('key', `${flights_key}`)
             setFlights(response.body.flights)
         } catch (err) { if (err.status === 555) requestFlights() }
-        setTimeout(requestFlights, 10000)
+        setTimeout(requestFlights, 30000)
     }
     const requestAirports = async () => {
         setAirports(true)
-        const URL = 'https://airports.api.hscc.bdpa.org/v1/info/airports'
+        const URL = 'https://airports.api.hscc.bdpa.org/v2/info/airports'
         try {
             const response = await superagent.get(URL).set('key', `${flights_key}`)
             const airports = response.body.airports
@@ -58,7 +64,7 @@ const DashboardCustomer = () => {
     useEffect(() => { if (!userInfo) getUserInfo() })
     useEffect(() => { if (!userTickets) getUserTickets() })
     useEffect(() => { if (!airports) requestAirports() })
-    useEffect(() => { if (airports && airports !== true && userTickets && userTickets !== true && !flights) requestFlights() })
+    useEffect(() => { if (airports && airports !== true && userTickets && userTickets !== true && callFlights) requestFlights() })
     const handleSubmit = async info => {
         setUpdateResponse(3)
         const { _id, ...userInfo } = info
@@ -70,12 +76,12 @@ const DashboardCustomer = () => {
     const getAirportCity = shortName => airports.find(airport => airport.shortName === shortName).city
     return (
         <>
-            <h4>Welcome {cookies.get("username")}!</h4>
+            {userInfo && userInfo !== true && <h4>Welcome {userInfo.firstName}!</h4>}
             {userInfo && lastLoginIp && <p>Last Login IP: {lastLoginIp}</p>}
             {userInfo && lastLoginDate && <p> Last Login Date: {"" + format(new Date(lastLoginDate), "PPpp")}</p>}
 
             <div className='row'>
-                {airports && airports !== true && flights && flights !== true && <div className='col-sm-6'>
+                {airports && airports !== true && flights && <div className='col-sm-6'>
                     <h3>Upcoming Flights</h3>
                     <Table striped bordered hover>
                         <thead>
@@ -199,8 +205,8 @@ const DashboardCustomer = () => {
                                         <Field name="phone" type="text" className={'form-control'} />
                                     </div>
                                     <div className="form-group col">
-                                        <label htmlFor="email">Email Adress</label>
-                                        <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
+                                        <label htmlFor="email">Email Address</label>
+                                        <Field name="email" type="email" disabled={true} className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>

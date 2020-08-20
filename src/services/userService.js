@@ -18,29 +18,28 @@ export const createUser = async user => {
         console.log("User registered")
         return true
     } catch (err) {
-        if (err.status === 409) { console.log("Username taken") }
+        if (err.status === 409) { console.log("Email taken") }
         else console.log("Bad credentials")
     }
     return false
 }
 export const login = async user => {
-    const { username, firstName, lastName, password } = user
-    const base64String = Buffer.from(`${username}:${firstName}:${lastName}:${password}`, 'ascii').toString("base64")
+    const { email, password } = user
+    const base64String = Buffer.from(`${email}:${password}`, 'ascii').toString("base64")
     console.log(base64String)
     const headers = { Authorization: `Basic ${base64String}` }
     const tokenUrl = baseUserURL + '/token'
     const getUrl = baseUserURL + '/user/get'
     try {
-        const response = await superagent.post(tokenUrl, username).set(headers)
-       // const response = await requestUserInfo(username)
-        const { token, role} = response.body
+        const response = await superagent.post(tokenUrl, email).set(headers)
+        const { token, role } = response.body
         console.log("token", token)
-        console.log(username, role)
-        cookies.set('username', username)
+        console.log(email, role)
+        cookies.set('email', email)
         cookies.set('userToken', token)
         cookies.set('role', role)
         const headers2 = { Authorization: `Bearer ${token}` }
-         const response2 = await superagent.get(getUrl, username).set(headers2)
+         const response2 = await superagent.get(getUrl, email).set(headers2)
          cookies.set('firstName',response2.body.firstName)
          cookies.set('email',response2.body.email)
 
@@ -61,18 +60,18 @@ export const login = async user => {
 }
 
 export const forgotPassword = async (user) => {
-    const { username, securityQuestion1, securityQuestion2, securityQuestion3 } = user
-    console.log(`${username}:${securityQuestion1}:${securityQuestion2}:${securityQuestion3}`)
-    const base64String = Buffer.from(`${username}:${securityQuestion1}:${securityQuestion2}:${securityQuestion3}`, 'ascii').toString("base64")
+    const { email, securityQuestion1, securityQuestion2, securityQuestion3 } = user
+    console.log(`${email}:${securityQuestion1}:${securityQuestion2}:${securityQuestion3}`)
+    const base64String = Buffer.from(`${email}:${securityQuestion1}:${securityQuestion2}:${securityQuestion3}`, 'ascii').toString("base64")
     console.log(base64String)
     const headers = { Authorization: `SecurityQuestion ${base64String}` }
     const tokenUrl = baseUserURL + '/token'
     try {
-        const response = await superagent.post(tokenUrl, username).set(headers)
-        const { token, role} = response.body
+        const response = await superagent.post(tokenUrl, email).set(headers)
+        const { token, role } = response.body
         console.log("token", token)
-        console.log(username, role)
-        cookies.set('username', username)
+        console.log(email, role)
+        cookies.set('email', email)
         cookies.set('userToken', token)
         cookies.set('role', role)
 
@@ -92,13 +91,13 @@ export const forgotPassword = async (user) => {
     return false
 }
 
-export const requestUserInfo = async (username) => {
-    console.log("Requesting", username)
+export const requestUserInfo = async email => {
+    console.log("Requesting", email)
     const cookies = new Cookies(), token = cookies.get("userToken")
     const headers = { Authorization: `Bearer ${token}` }
     const getUrl = baseUserURL + '/user/get'
     try {
-        const response = await superagent.get(getUrl, username).set(headers)
+        const response = await superagent.get(getUrl, email).set(headers)
         return response.body
     } catch (err) {
         if (err.status === 400) console.log("User not Found")
@@ -122,13 +121,13 @@ export const updateUserInfo = async user => {
 }
 
 // Get user role
-export const requestUserRole = async (username) => {
-    console.log("Requesting user role for: ", username)
+export const requestUserRole = async email => {
+    console.log("Requesting user role for: ", email)
     const cookies = new Cookies(), token = cookies.get("userToken")
     const headers = { Authorization: `Bearer ${token}` }
     const getUrl = baseUserURL + '/user/getCredentials'
     try {
-        const response = await superagent.get(getUrl, username).set(headers)
+        const response = await superagent.get(getUrl, email).set(headers)
         return response.body
     } catch (err) {
         if (err.status === 400) console.log("User not Found")
@@ -156,12 +155,12 @@ export const requestAllUsers = async () => {
 }
 
 // Delete user 
-export const requestDeleteUser = async (username) => {
+export const requestDeleteUser = async email => {
     const cookies = new Cookies(), token = cookies.get("userToken")
     const headers = { Authorization: `Bearer ${token}` }
-    const getUrl = baseUserURL + `/user/deleteUser/${username}`
+    const getUrl = baseUserURL + `/user/deleteUser/${email}`
     try {
-        const response = await superagent.delete(getUrl, username).set(headers)
+        const response = await superagent.delete(getUrl, email).set(headers)
         console.log(response)
         return response.body
     } catch (err) {

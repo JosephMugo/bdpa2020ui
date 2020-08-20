@@ -3,6 +3,12 @@ import { requestAllUsers, requestDeleteUser } from "../services/userService"
 import Table from 'react-bootstrap/Table'
 import { Button } from "react-bootstrap"
 import '../styles/DashboardAdmin.css'
+import {
+    BrowserRouter as Router,
+    Link,
+    Route,
+    Switch,
+  } from 'react-router-dom';
 
 const DashboardAdmin = () => {
     const [gotUsers, setGotUsers] = useState(false)
@@ -18,9 +24,9 @@ const DashboardAdmin = () => {
     })
 
     const handleClick = async (event) => {
-        const username = event.target.id
-        console.log('Deleting user:', username)
-        const deletedUser = await requestDeleteUser(username);
+        const email = event.target.id
+        console.log('Deleting user:', email)
+        const deletedUser = await requestDeleteUser(email);
         setGotUsers(false)
     }
     return (
@@ -31,21 +37,33 @@ const DashboardAdmin = () => {
                 <tr>
                     <th>First Name</th>
                     <th>Last Name</th>
-                    <th>Username</th>
+                    <th>Email</th>
                     <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
                 {users.map((user) => (
-                    <tr key={user.username}>
+                    <tr key={user.email}>
                         <td>{user.firstName}</td>
                         <td>{user.lastName}</td>
-                        <td>{user.username}</td>
-                        <td><Button id={user.username} className="deleteButton" variant="danger" onClick={handleClick}>Delete</Button></td>
+                        <td>{user.email}</td>
+                        <td><Button id={user.email} className="deleteButton" variant="danger" onClick={handleClick}>Delete</Button></td>
                     </tr>
                 ))}
             </tbody>
         </Table>
+        <div>
+        <Link to="/AdminCreateUser">
+            <button type="button">
+                Create User
+            </button>
+         </Link>
+         <Link to="/AdminCreateAttendant">
+            <button type="button">
+                Create Attendant
+            </button>
+         </Link>
+        </div>
     </div>
     )
 }

@@ -9,12 +9,12 @@ const securityQuestions = [
     "What is your favorite food?"
 ]
 const Register = () => {
-    const [validUsername, setUsernameValidity] = useState(2)
+    const [validEmail, setEmailValidity] = useState(2)
     const handleSubmit = async (fields) => {
         const { captcha, ...info } = fields
-        setUsernameValidity(3)
+        setEmailValidity(3)
         const response = await createUser(info)
-        setUsernameValidity(0 + response)
+        setEmailValidity(0 + response)
         if (response) window.setTimeout(() => window.open("/login", "_top"), 1000)
     }
     const required = Yup.string().required('Required')
@@ -33,11 +33,10 @@ const Register = () => {
                         initialValues={{
                             title: "", firstName: "", middleName: "", lastName: "", suffix: "",
                             birthdate: "", sex: "", city: "", state: "", zip: "", country: "",
-                            email: "", phone: "", username: "", password: "",
+                            email: "", phone: "", password: "",
                             securityQuestion1: "", securityQuestion2: "", securityQuestion3: "", captcha: ""
                         }}
                         validationSchema={Yup.object().shape({
-                            username: required.matches(/^[a-zA-Z0-9]+$/, "Cannot contain special characters or spaces"),
                             firstName: required, lastName: required,
                             birthdate: required, sex: required,
                             city: required, state: required, zip: required, country: required,
@@ -81,9 +80,9 @@ const Register = () => {
                                     </div>
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="username">Username</label>
-                                    <Field name="username" type="text" className={'form-control' + (errors.username && touched.username ? ' is-invalid' : '')} />
-                                    <ErrorMessage name="username" component="div" className="invalid-feedback" />
+                                    <label htmlFor="email">Email Adress</label>
+                                    <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
+                                    <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="password">Password</label>
@@ -115,7 +114,7 @@ const Register = () => {
                                     <button type="submit" className="btn btn-primary mr-2">Register</button>
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
-                                <h5>{["Username Already Taken", "User Registered!", "", "Loading..."][validUsername]}</h5>
+                                <h5>{["Email Already Taken", "User Registered!", "", "Loading..."][validEmail]}</h5>
                             </Form>
                         )}
                     </Formik>

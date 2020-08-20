@@ -4,13 +4,12 @@ import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
 import { format } from "date-fns"
 import { createUser } from "../services/userService"
-import captcha from "../assets/captcha.png"
 const securityQuestions = [
     "What was the house number and street name you lived in as a child?",
     "What primary school did you attend?",
     "What is your favorite food?"
 ]
-const Register = () => {
+const AdminCreateAttendant = () => {
     const [registerResponse, setRegisterResponse] = useState(2)
     const handleSubmit = async (fields) => {
         const { captcha, ...info } = fields
@@ -18,7 +17,6 @@ const Register = () => {
         setRegisterResponse(3)
         const response = await createUser(info)
         setRegisterResponse(0 + response)
-        if (response) window.setTimeout(() => window.open("/login", "_top"), 1000)
     }
     const required = string().required('Required')
     return (
@@ -26,10 +24,9 @@ const Register = () => {
             <div align='center'>
                 <div className='col-sm-8'>
                     <hr />
-                    <h2>Register Customer Account</h2>
+                    <h2>Admin Attendant Account Creation</h2>
                     <hr />
-                    <p>You are only moments away from joining the best website in the world! Please enter some personal information and we'll get your account set up right away.</p>
-                    <p>As a customer, you are given access to a wide variety of services. Join today!</p>
+                    <p>Create an attendant account</p>
                     <hr />
                     <Formik
                         initialValues={{
@@ -84,8 +81,7 @@ const Register = () => {
                                 <div className="form-row">
                                     <div className="form-group col">
                                         <label htmlFor="birthdate">Date of Birth</label>
-                                        <Field name="birthdate" type="date" max={format(Date.now(), "yyyy-MM-dd")} className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="birthdate" component="div" className="invalid-feedback" />
+                                        <Field name="birthdate" type="date" max={format(Date.now(), "yyyy-MM-dd")} className={'form-control' + (errors.birthdate && touched.birthdate ? ' is-invalid' : '')} />                                        <ErrorMessage name="birthdate" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
                                         <label>Sex</label>
@@ -127,7 +123,7 @@ const Register = () => {
                                         <ErrorMessage name="phone" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
-                                        <label htmlFor="email">Email Adress</label>
+                                        <label htmlFor="email">Email Address</label>
                                         <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                     </div>
@@ -136,6 +132,11 @@ const Register = () => {
                                     <label htmlFor="password">Password</label>
                                     <Field name="password" type="password" className={'form-control' + (errors.password && touched.password ? ' is-invalid' : '')} />
                                     <ErrorMessage name="password" component="div" className="invalid-feedback" />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="airline">Assigned Airline</label>
+                                    <Field name="airline" type="airline" className={'form-control' + (errors.airline && touched.airline ? ' is-invalid' : '')} />
+                                    <ErrorMessage name="airline" component="div" className="invalid-feedback" />
                                 </div>
                                 <h4>Security Questions</h4>
                                 <div className="form-group">
@@ -154,8 +155,7 @@ const Register = () => {
                                     <ErrorMessage name="securityQuestion3" component="div" className="invalid-feedback" />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="captcha">What's</label>
-                                    <img src={captcha} alt="captcha"/>
+                                    <label htmlFor="captcha">What's 47+31?</label>
                                     <Field name="captcha" type="text" className={'form-control' + (errors.captcha && touched.captcha ? ' is-invalid' : '')} />
                                     <ErrorMessage name="captcha" component="div" className="invalid-feedback" />
                                 </div>
@@ -174,4 +174,5 @@ const Register = () => {
         </>
     )
 }
-export default Register
+export default AdminCreateAttendant
+

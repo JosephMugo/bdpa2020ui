@@ -33,9 +33,9 @@ const ForgotPassword = () => {
 
         // if (question1 === requestedUserInfo.securityQuestion1)
 
-        // setUsernameValidity(3)
+        // setEmailValidity(3)
         // const response = await createUser(info)
-        // setUsernameValidity(0 + response)
+        // setEmailValidity(0 + response)
         // if (response) window.setTimeout(() => window.open("/login", "_top"), 1000)
     }
 
@@ -52,9 +52,9 @@ const ForgotPassword = () => {
                     <h2 align='center'>Forgot Password</h2>
                     <hr />
                     <Formik
-                        initialValues={{ username: "", securityQuestion1: "", securityQuestion2: "", securityQuestion3: "" }}
+                        initialValues={{ email: "", securityQuestion1: "", securityQuestion2: "", securityQuestion3: "" }}
                         validationSchema={Yup.object().shape({
-                            username: required,
+                            email: required,
                             securityQuestion1: required,
                             securityQuestion2: required,
                             securityQuestion3: required,
@@ -64,9 +64,9 @@ const ForgotPassword = () => {
                         {({ errors, touched }) => (
                             <Form>
                                 <div className="form-group">
-                                    <label htmlFor="username">Username</label>
-                                    <Field name="username" type="text" className={'form-control' + (errors.username && touched.username ? ' is-invalid' : '')} />
-                                    <ErrorMessage name="username" component="div" className="invalid-feedback" />
+                                    <label htmlFor="email">Email</label>
+                                    <Field name="email" type="email" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
+                                    <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group col">
