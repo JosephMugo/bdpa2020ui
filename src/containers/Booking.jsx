@@ -11,6 +11,7 @@ import { addffms, requestffms, addTicket } from "../services/ticketService"
 import flights_key from '../doNotCommit.js'
 const cookies = new Cookies()
 const Bookings = () => {
+    const [payment, setPayment] = useState('money')
     const [userInfo, setUserInfo] = useState(false)
     const [flights, setFlights] = useState(false), [noFlyList, setNoFlyList] = useState(false) //, [shownFlights, setShownFlights] = useState(false)
     const [id] = useState(useParams().flight_id), [selected, setSelected] = useState()
@@ -79,6 +80,12 @@ const Bookings = () => {
     useEffect(() => { if (!noFlyList) getNoFlyList() })
     useEffect(() => { if (!flights && id) makeFlightRequest() })
     useEffect(() => { if (!userInfo) getUserInfo() })
+
+    const switchPayment = (test) => {
+        setPayment(test)
+        console.log(test)
+    }
+
     const handleSubmit = async fields => {
         const canFly = userInfo => !noFlyList.some(noFly => noFly.name.first === userInfo.firstName && noFly.name.last === userInfo.lastName
             && (!noFly.name.middle || !userInfo.middleName || noFly.name.middle === userInfo.middleName)
@@ -88,7 +95,8 @@ const Bookings = () => {
             setTicketResponse(3)
             const response = await addTicket(id, fields.seatNum)
             setTicketResponse(0 + response)
-            await addffms(selected.ffms)
+            payment === 'ffms' && await addffms(-selected.ffms)
+            payment === 'money' && await addffms(selected.ffms)
         } else setTicketResponse(4)
     }
     const required = string().required('Required')
@@ -150,10 +158,10 @@ const Bookings = () => {
                             firstName: required, lastName: required,
                             birthdate: date().required("Required").max(new Date(), "Invalid Date of Birth"), sex: required,
                             email: required.email('Email is invalid'), phone: required.matches(/^[0-9]+$/, "Can only contain numbers"),
-                            cardName: required,
-                            card: required.matches(/^[0-9]+$/, "Can only cantain numbers"), cvv: required.matches(/^[0-9]+$/, "Can only cantain numbers"),
-                            expdate: date().required("Required").min(new Date((new Date()).getYear() + 1900, (new Date()).getMonth()), "Invalid Expiration Date"),
-                            address: required, city: required, state: required, zip: required,
+                            // cardName: required,
+                            // card: required.matches(/^[0-9]+$/, "Can only cantain numbers"), cvv: required.matches(/^[0-9]+$/, "Can only cantain numbers"),
+                            // expdate: date().required("Required").min(new Date((new Date()).getYear() + 1900, (new Date()).getMonth()), "Invalid Expiration Date"),
+                            // address: required, city: required, state: required, zip: required,
                             seatType: required, seatNum: number().required('Required'), checkedBags: number().required('Required'), carryBags: number().required('Required')
                         })}
                         onSubmit={handleSubmit}
@@ -206,52 +214,63 @@ const Bookings = () => {
                                         <ErrorMessage name="email" component="div" className="invalid-feedback" />
                                     </div>
                                 </div>
-                                <h4>Payment Information</h4>
-                                <div className="form-group">
-                                    <label htmlFor="cardName">Cardholder Name</label>
-                                    <Field name="cardName" type="text" className={'form-control' + (errors.cardName && touched.cardName ? ' is-invalid' : '')} />
-                                    <ErrorMessage name="cardName" component="div" className="invalid-feedback" />
-                                </div>
-                                <div className="form-row">
-                                    <div className="form-group col">
-                                        <label htmlFor="card">Card Number</label>
-                                        <Field name="card" type="text" className={'form-control' + (errors.card && touched.card ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="card" component="div" className="invalid-feedback" />
+                                <button onClick={() => switchPayment('money')} className="btn btn-primary mr-2">Pay using money</button><button onClick={() => switchPayment('ffms')} className="btn btn-primary mr-2">Pay using frequent flier miles</button>
+                                <hr />
+                                {payment === 'money' &&
+                                    <div>
+                                        <h4>Payment Information</h4>
+                                        <div className="form-group">
+                                            <label htmlFor="cardName">Cardholder Name</label>
+                                            <Field required name="cardName" type="text" className={'form-control' + (errors.cardName && touched.cardName ? ' is-invalid' : '')} />
+                                            <ErrorMessage name="cardName" component="div" className="invalid-feedback" />
+                                        </div>
+                                        <div className="form-row">
+                                            <div className="form-group col">
+                                                <label htmlFor="card">Card Number</label>
+                                                <Field required name="card" type="text" className={'form-control' + (errors.card && touched.card ? ' is-invalid' : '')} />
+                                                <ErrorMessage name="card" component="div" className="invalid-feedback" />
+                                            </div>
+                                            <div className="form-group col-3">
+                                                <label htmlFor="cvv">CVV</label>
+                                                <Field required name="cvv" type="expdate" className={'form-control' + (errors.cvv && touched.cvv ? ' is-invalid' : '')} />
+                                                <ErrorMessage name="cvv" component="div" className="invalid-feedback" />
+                                            </div>
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="expdate">Expiration Date</label>
+                                            <Field required name="expdate" type="month" min={format(Date.now(), "yyyy-MM")} className={'form-control' + (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
+                                            <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
+                                        </div>
+                                        <h4>Billing Address</h4>
+                                        <div className="form-row">
+                                            <div className="form-group col">
+                                                <label htmlFor="address">Address</label>
+                                                <Field required name="address" type="text" className={'form-control' + (errors.address && touched.address ? ' is-invalid' : '')} />
+                                                <ErrorMessage name="address" component="div" className="invalid-feedback" />
+                                            </div>
+                                            <div className="form-group col">
+                                                <label htmlFor="city">City</label>
+                                                <Field required name="city" type="text" className={'form-control' + (errors.city && touched.city ? ' is-invalid' : '')} />
+                                                <ErrorMessage name="city" component="div" className="invalid-feedback" />
+                                            </div>
+                                            <div className="form-group col">
+                                                <label htmlFor="state">State</label>
+                                                <Field required name="state" type="text" className={'form-control' + (errors.state && touched.state ? ' is-invalid' : '')} />
+                                                <ErrorMessage name="state" component="div" className="invalid-feedback" />
+                                            </div>
+                                            <div className="form-group col">
+                                                <label htmlFor="zip">Zip</label>
+                                                <Field required name="zip" type="text" className={'form-control' + (errors.zip && touched.zip ? ' is-invalid' : '')} />
+                                                <ErrorMessage name="zip" component="div" className="invalid-feedback" />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="form-group col-3">
-                                        <label htmlFor="cvv">CVV</label>
-                                        <Field name="cvv" type="expdate" className={'form-control' + (errors.cvv && touched.cvv ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="cvv" component="div" className="invalid-feedback" />
+                                }
+                                {payment === 'ffms' &&
+                                    <div>
+                                        <p>This flight will cost {selected.ffms} frequent flier miles</p>
                                     </div>
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="expdate">Expiration Date</label>
-                                    <Field name="expdate" type="month" min={format(Date.now(), "yyyy-MM")} className={'form-control' + (errors.expdate && touched.expdate ? ' is-invalid' : '')} />
-                                    <ErrorMessage name="expdate" component="div" className="invalid-feedback" />
-                                </div>
-                                <h4>Billing Address</h4>
-                                <div className="form-row">
-                                    <div className="form-group col">
-                                        <label htmlFor="address">Address</label>
-                                        <Field name="address" type="text" className={'form-control' + (errors.address && touched.address ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="address" component="div" className="invalid-feedback" />
-                                    </div>
-                                    <div className="form-group col">
-                                        <label htmlFor="city">City</label>
-                                        <Field name="city" type="text" className={'form-control' + (errors.city && touched.city ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="city" component="div" className="invalid-feedback" />
-                                    </div>
-                                    <div className="form-group col">
-                                        <label htmlFor="state">State</label>
-                                        <Field name="state" type="text" className={'form-control' + (errors.state && touched.state ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="state" component="div" className="invalid-feedback" />
-                                    </div>
-                                    <div className="form-group col">
-                                        <label htmlFor="zip">Zip</label>
-                                        <Field name="zip" type="text" className={'form-control' + (errors.zip && touched.zip ? ' is-invalid' : '')} />
-                                        <ErrorMessage name="zip" component="div" className="invalid-feedback" />
-                                    </div>
-                                </div>
+                                }
                                 <h4>Passenger Information</h4>
                                 <div className="form-row">
                                     <div className="form-group col">
