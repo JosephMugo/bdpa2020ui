@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { requestAllUsers, requestDeleteUser } from "../services/userService"
+import { requestAllUsers, requestDeleteUser, requestUserBan } from "../services/userService"
 import Table from 'react-bootstrap/Table'
 import { Button } from "react-bootstrap"
 import '../styles/DashboardAdmin.css'
@@ -23,7 +23,14 @@ const DashboardAdmin = () => {
         if (!gotUsers) { getUserInfo() }
     })
 
-    const handleClick = async (event) => {
+    const handleBanClick = async (event) => {
+        const email = event.target.id
+        console.log('Changing user ban state')
+        const banUser = await requestUserBan(email)
+        setGotUsers(false)
+    }
+
+    const handleDeleteClick = async (event) => {
         const email = event.target.id
         console.log('Deleting user:', email)
         const deletedUser = await requestDeleteUser(email);
@@ -48,8 +55,8 @@ const DashboardAdmin = () => {
                         <td>{user.firstName}</td>
                         <td>{user.lastName}</td>
                         <td>{user.email}</td>
-                        <td><Button id={user.email} className="banButton" variant="warning">{ user.isBanned ? 'ON' : 'OFF' }</Button></td>
-                        <td><Button id={user.email} className="deleteButton" variant="danger" onClick={handleClick}>Delete</Button></td>
+                        <td><Button id={user.email} className="banButton" variant="warning" onClick={handleBanClick}>{ user.isBanned ? 'ON' : 'OFF' }</Button></td>
+                        <td><Button id={user.email} className="deleteButton" variant="danger" onClick={handleDeleteClick}>Delete</Button></td>
                     </tr>
                 ))}
             </tbody>
