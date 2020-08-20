@@ -46,6 +46,11 @@ const DashboardAdmin = () => {
                 ))}
             </tbody>
         </Table>
+        <div>
+        <link></link>
+        
+        <Button href="#AdminCreateUser">Create User</Button> <Button href="#AdminCreateAttendant">Create Attendant</Button>{' '}
+        </div>
     </div>
     )
 }
