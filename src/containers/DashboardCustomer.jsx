@@ -66,6 +66,7 @@ const DashboardCustomer = () => {
             {userInfo && userInfo !== true && <h4>Welcome {userInfo.firstName}!</h4>}
             {userInfo && lastLoginIp && <p>Last Login IP: {lastLoginIp}</p>}
             {userInfo && lastLoginDate && <p> Last Login Date: {"" + format(new Date(lastLoginDate), "PPpp")}</p>}
+            <p>Frequent Flier Miles: {userInfo.ffms} miles!</p>
 
             <div className='row'>
                 {airports && airports !== true && flights && <div className='col-sm-6'>

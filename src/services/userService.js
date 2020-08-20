@@ -134,6 +134,7 @@ export const updateUserInfo = async user => {
     const updateUrl = baseUserURL + '/user/update'
     try {
         const response = await superagent.post(updateUrl, user).set(headers)
+        cookies.set("firstName",user.firstName)
         return response.body
     } catch (err) {
         if (err.status === 401) console.log("Bad credentials")
