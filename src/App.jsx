@@ -94,6 +94,7 @@ const App = () => {
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/flights">Flights</Nav.Link>
                         <Nav.Link href="/booking">Booking</Nav.Link>
+                        {token && role === "flightattendant" && <Nav.Link href="/dashboardattendant">Flight Attendant Dashboard</Nav.Link>}
                         {token && role === "customer" && <Nav.Link href="/dashboard_customer">Customer Dashboard</Nav.Link>}
                         {token && role === "admin" && <Nav.Link href="/dashboard_admin">Admin Dashboard</Nav.Link>}
                     </Nav>
@@ -101,7 +102,7 @@ const App = () => {
                         {!token && <Nav.Link href="/login">Login</Nav.Link>}
                         {!token && <Nav.Link href="/register">Register</Nav.Link>}
                         {token && role === "root" && <Nav.Link href="/register_admin">Register Admin</Nav.Link>}
-                        {role === "admin" && <Nav.Link href="/admin_create_user">Admin Create User</Nav.Link>} {/*&& role === "admin"*/}
+                        {token && role === "admin" && <Nav.Link href="/admin_create_user">Admin Create User</Nav.Link>} {/*&& role === "admin"*/}
                         {token && !rememberMe && <Nav.Link>Login Expiration: 15 minutes</Nav.Link>}
                         {token && <Nav.Link>Hello, {cookies.get("firstName")}</Nav.Link>}
                         {token && <Nav.Link>{cookies.get("email")}</Nav.Link>}
