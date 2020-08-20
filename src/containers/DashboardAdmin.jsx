@@ -3,6 +3,12 @@ import { requestAllUsers, requestDeleteUser } from "../services/userService"
 import Table from 'react-bootstrap/Table'
 import { Button } from "react-bootstrap"
 import '../styles/DashboardAdmin.css'
+import {
+    BrowserRouter as Router,
+    Link,
+    Route,
+    Switch,
+  } from 'react-router-dom';
 
 const DashboardAdmin = () => {
     const [gotUsers, setGotUsers] = useState(false)
@@ -47,9 +53,16 @@ const DashboardAdmin = () => {
             </tbody>
         </Table>
         <div>
-        <link></link>
-        
-        <Button href="#AdminCreateUser">Create User</Button> <Button href="#AdminCreateAttendant">Create Attendant</Button>{' '}
+        <Link to="/AdminCreateUser">
+            <button type="button">
+                Create User
+            </button>
+         </Link>
+         <Link to="/AdminCreateAttendant">
+            <button type="button">
+                Create Attendant
+            </button>
+         </Link>
         </div>
     </div>
     )
