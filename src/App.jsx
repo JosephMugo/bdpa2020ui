@@ -127,10 +127,11 @@ const App = () => {
                     <Route exact path="/dashboardattendant" component={DashboardAttendant} />
                 </div>
             </Router>
-            <Card bg="dark" variant="dark" style={{ bottom: "0", color: "white" }}>
-                <Card.Body>Hello, {cookies.get("firstName")} {cookies.get("email")}       Next flight: Departing to {cookies.get("destination")} on {cookies.get("departingtime")} Flight Number: {cookies.get("flightNumber")} Airline: {cookies.get("airline")}</Card.Body>
-
+            {token &&
+            <Card id="footer" bg="dark" variant="dark" style={{ bottom: "0", color: "white" }}>
+                <Card.Body>Hello, {cookies.get("firstName")} | {cookies.get("email")} | Next flight: Departing to {cookies.get("destination")} on {cookies.get("departingtime")} | Flight Number: {cookies.get("flightNumber")} | Airline: {cookies.get("airline")}</Card.Body>
             </Card>
+            }
         </div>
     )
 }

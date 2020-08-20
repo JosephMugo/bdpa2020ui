@@ -2,6 +2,14 @@
     max-width: 1800px;
     margin: auto;
     padding: 20px;
+    margin-bottom: 60px;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border-radius: 0;
 }
 
 .fade-in {
