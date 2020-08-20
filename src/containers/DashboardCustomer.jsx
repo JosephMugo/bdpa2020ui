@@ -13,7 +13,7 @@ const cookies = new Cookies()
 const DashboardCustomer = () => {
     const [userInfo, setUserInfo] = useState(false), [updateResponse, setUpdateResponse] = useState(2)
     const [lastLoginDate, setLastLoginDate] = useState(false), [lastLoginIp, setLastLoginIp] = useState(false)
-    const [userTickets, setUserTickets] = useState(false), [airports, setAirports] = useState(false), [flights, setFlights] = useState(false)
+    const [userTickets, setUserTickets] = useState(false), [airports, setAirports] = useState(false), [flights, setFlights] = useState(false), [callFlights, setCallFlights] = useState(true)
 
     const getUserInfo = async () => {
         setUserInfo(true)
@@ -33,7 +33,7 @@ const DashboardCustomer = () => {
         if (requestedUserTickets) setUserTickets(requestedUserTickets.map(ticket => ticket.flight_id))
     }
     const requestFlights = async () => {
-        if (!flights) setFlights(true)
+        setCallFlights(false)
         const myQuery = encodeURIComponent(JSON.stringify(userTickets))
         const myURL = "https://airports.api.hscc.bdpa.org/v1/flights/with-ids?ids=" + myQuery
         try {
@@ -58,7 +58,7 @@ const DashboardCustomer = () => {
     useEffect(() => { if (!userInfo) getUserInfo() })
     useEffect(() => { if (!userTickets) getUserTickets() })
     useEffect(() => { if (!airports) requestAirports() })
-    useEffect(() => { if (airports && airports !== true && userTickets && userTickets !== true && !flights) requestFlights() })
+    useEffect(() => { if (airports && airports !== true && userTickets && userTickets !== true && callFlights) requestFlights() })
     const handleSubmit = async info => {
         setUpdateResponse(3)
         const { _id, ...userInfo } = info
