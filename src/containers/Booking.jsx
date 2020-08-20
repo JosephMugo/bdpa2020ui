@@ -5,8 +5,8 @@ import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date, number } from 'yup'
 import { format } from "date-fns"
 import Cookies from "universal-cookie"
-import { requestUserInfo } from '../services/userService'
-import { addTicket } from "../services/ticketService"
+import { requestUserInfo, updateUserInfo } from '../services/userService'
+import { addffms, requestffms, addTicket } from "../services/ticketService"
 import flights_key from '../doNotCommit.js'
 const cookies = new Cookies()
 let flightRequestFails = 0
@@ -19,6 +19,8 @@ const Bookings = () => {
         if (cookies.get("email")) {
             setUserInfo(true)
             const requestedUserInfo = await requestUserInfo(cookies.get("email"))
+            const requestingffms = await requestffms(cookies.get("email"))
+            console.log("request ffms", requestingffms)
             console.log("userInfo", requestedUserInfo)
             if (requestedUserInfo) {
                 requestedUserInfo.birthdate = format(new Date(requestedUserInfo.birthdate), "yyyy-MM-dd")
@@ -84,6 +86,7 @@ const Bookings = () => {
         if (canFly(fields)) {
             setTicketResponse(3)
             const response = await addTicket(id,fields.seat)
+            await addffms(selected.ffms)
             setTicketResponse(0 + response)
         } else setTicketResponse(4)
     }
@@ -95,7 +98,7 @@ const Bookings = () => {
                     <hr />
                     <h2>Book Flights</h2>
                     <hr />
-                    {flightRequestFails >= 8 && <h3>Flight Could Not Be Requested</h3>}
+                    {flightRequestFails >= 1 && <h3>Flight Could Not Be Requested</h3>}
                     {selected && <>
                         <h3 align='center'>Frequent Flyer Miles Awarded: {selected.ffms}</h3>
                         <h3 align='center'>Price: {selected.seatPrice}</h3>
