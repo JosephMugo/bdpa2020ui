@@ -29,14 +29,20 @@ export const login = async user => {
     console.log(base64String)
     const headers = { Authorization: `Basic ${base64String}` }
     const tokenUrl = baseUserURL + '/token'
+    const getUrl = baseUserURL + '/user/get'
     try {
         const response = await superagent.post(tokenUrl, username).set(headers)
-        const { token, role } = response.body
+       // const response = await requestUserInfo(username)
+        const { token, role} = response.body
         console.log("token", token)
         console.log(username, role)
         cookies.set('username', username)
         cookies.set('userToken', token)
         cookies.set('role', role)
+        const headers2 = { Authorization: `Bearer ${token}` }
+         const response2 = await superagent.get(getUrl, username).set(headers2)
+         cookies.set('firstName',response2.body.firstName)
+         cookies.set('email',response2.body.email)
 
         // Remove failed login cookies
         cookies.remove('loginAttempt')
@@ -63,7 +69,7 @@ export const forgotPassword = async (user) => {
     const tokenUrl = baseUserURL + '/token'
     try {
         const response = await superagent.post(tokenUrl, username).set(headers)
-        const { token, role } = response.body
+        const { token, role} = response.body
         console.log("token", token)
         console.log(username, role)
         cookies.set('username', username)
