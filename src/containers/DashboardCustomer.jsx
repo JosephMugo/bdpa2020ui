@@ -5,7 +5,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik'
 import { object, string, date } from 'yup'
 import { format } from "date-fns"
 import { requestUserInfo, updateUserInfo } from '../services/userService'
-import { requestUserTickets } from '../services/ticketService'
+import { requestUserTickets, deleteTicket } from '../services/ticketService'
 import { requestFlights, requestAirports } from '../services/flightService'
 
 const cookies = new Cookies()
@@ -52,6 +52,12 @@ const DashboardCustomer = () => {
         setUserInfo(response)
         setUpdateResponse(response ? 1 : 0)
     }
+
+    const delTicket = async (flight_id) => {
+        const response = await deleteTicket(flight_id)
+        console.log(response)
+    }
+
     const required = string().required('Required')
     const getAirportCity = shortName => airports.find(airport => airport.shortName === shortName).city
     return (
@@ -80,6 +86,7 @@ const DashboardCustomer = () => {
                                     <td>{format(fl.departFromSender, "PPpp")}</td>
                                     <td>{format(fl.arriveAtReceiver, "PPpp")}</td>
                                     <td><Button href={`/tickets/${fl.flight_id}`}>View</Button></td>
+                                    <td><Button onClick={() => deleteTicket(fl.flight_id)}>Delete</Button></td>
                                 </tr>)}
                         </tbody>
                     </Table>

@@ -35,6 +35,24 @@ export const addTicket = async (flight_id, seatType, seatNum) => {
     } catch (err) { if (err.status === 400) return 5 }
     return false
 }
+
+export const deleteTicket = async (flight_id) => {
+    const token = cookies.get("userToken"), email = cookies.get("email")
+    const headers = { Authorization: `Bearer ${token}` }
+    const postBody = { email, flight_id }
+    const deleteTicketURL = baseUserURL + '/ticket/delete'
+    try {
+        await superagent.post(deleteTicketURL, postBody).set(headers)
+        console.log("Ticket deleted")
+        const requestedUserTickets = await requestUserTickets(email)
+        let userTickets = []
+        return true
+    } catch (err) {
+        if (err.status === 400) console.log(400)
+        console.log(err)
+    }
+}
+
 export const requestUserTickets = async email => {
     console.log("Requesting tickets", email)
     const token = cookies.get("userToken")

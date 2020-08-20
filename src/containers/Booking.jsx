@@ -15,7 +15,7 @@ const Bookings = () => {
     const [userInfo, setUserInfo] = useState(false)
     const [flights, setFlights] = useState(false), [noFlyList, setNoFlyList] = useState(false) //, [shownFlights, setShownFlights] = useState(false)
     const [id] = useState(useParams().flight_id), [selected, setSelected] = useState()
-    const [seatTypes, setSeatTypes] = useState(false), [maxSeats, setMaxSeats] = useState(0)
+    const [seatTypes, setSeatTypes] = useState(false), [selectedSeat, setSelectedSeat] = useState("economy")
     const [ticketResponse, setTicketResponse] = useState(2)
     const getUserInfo = async () => {
         if (cookies.get("email")) {
@@ -73,7 +73,7 @@ const Bookings = () => {
         const [field, state, { setValue, setTouched }] = useField(props.field.name);
         const onChange = ({ value }) => {
             setValue(value)
-            setMaxSeats(selected.seats[value].total)
+            setSelectedSeat(value)
         }
         return <Select {...props} onChange={onChange} onBlur={setTouched} />;
     }
@@ -109,7 +109,6 @@ const Bookings = () => {
                     <hr />
                     {selected && <>
                         <h3 align='center'>Frequent Flyer Miles Awarded: {selected.ffms}</h3>
-                        <h3 align='center'>Price: {selected.seatPrice}</h3>
                         <h3 align='center'>Arriving: {new Date(selected.arriveAtReceiver).toLocaleString()}</h3>
                         <h3 align='center'>To: {selected.landingAt} From: {selected.comingFrom}</h3>
                     </>}
@@ -280,7 +279,7 @@ const Bookings = () => {
                                     </div>
                                     <div className="form-group col">
                                         <label htmlFor="seatNum">Seat Number</label>
-                                        <Field name="seatNum" type="number" min="1" max={maxSeats} className={'form-control' + (errors.seatNum && touched.seatNum ? ' is-invalid' : '')} />
+                                        <Field name="seatNum" type="number" min="1" max={selected.seats[selectedSeat].total} className={'form-control' + (errors.seatNum && touched.seatNum ? ' is-invalid' : '')} />
                                         <ErrorMessage name="seatNum" component="div" className="invalid-feedback" />
                                     </div>
                                     <div className="form-group col">
@@ -298,6 +297,7 @@ const Bookings = () => {
                                     <button type="submit" className="btn btn-primary mr-2">Book Flight</button>
                                     <button type="reset" className="btn btn-secondary">Reset</button>
                                 </div>
+                                <h3 align='center'>Price: {selected.seats[selectedSeat].priceDollars}</h3>
                                 <hr />
                                 <h5>{["Ticket Not Saved", "Ticket Saved", "", "Loading...", "You're on the No Fly List", "Seat Taken"][ticketResponse]}</h5>
                             </Form>
