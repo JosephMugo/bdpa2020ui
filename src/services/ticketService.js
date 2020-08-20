@@ -26,6 +26,7 @@ export const addTicket = async (flight_id, seatType, seatNum) => {
                  flight = flightsInfo[i]
              }
         }
+        console.log(flight)
         cookies.set("airline",flight.airline)
         cookies.set("flightnumber",flight.flightnumber)
         cookies.set("destination",flight.departingTo)

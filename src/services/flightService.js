@@ -15,3 +15,12 @@ export const requestFlights = async (userTickets) => {
     }
     else return []
 }
+export const requestAirports = async () => {
+    const URL = 'https://airports.api.hscc.bdpa.org/v2/info/airports'
+    try {
+        const response = await superagent.get(URL).set('key', `${flights_key}`)
+        const airports = response.body.airports
+        console.log("airports", airports)
+        return airports
+    } catch (err) { if (err.status === 555) setTimeout(requestAirports, 5000) }
+}

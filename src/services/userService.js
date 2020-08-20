@@ -47,24 +47,30 @@ export const login = async user => {
         const response2 = await superagent.get(getUrl, email).set(headers2)
         cookies.set('firstName', response2.body.firstName)
         const requestedUserTickets = await requestUserTickets(email)
-        let userTickets = []
-        if (requestedUserTickets) { userTickets = (requestedUserTickets.map(ticket => ticket.flight_id)) }
-        const flightsInfo = await requestFlights(userTickets)
-        console.log("this is flight info", flightsInfo[0].departFromReceiver)
-        let maxNum = 0;
-        let flight;
-        let i;
-        for (i = 0; i < flightsInfo.length; i++) {
-            if (flightsInfo[i].departFromReceiver > maxNum) {
-                maxNum = flightsInfo[i].departFromReceiver
-                flight = flightsInfo[i]
+        if (requestedUserTickets.length > 0) {
+            let userTickets = []
+            if (requestedUserTickets) { userTickets = (requestedUserTickets.map(ticket => ticket.flight_id)) }
+            const flightsInfo = await requestFlights(userTickets)
+            //console.log("this is flight info",flightsInfo[0].departFromReceiver)
+            let maxNum = 0;
+            let flight = false;
+            let i;
+            for (i = 0; i < flightsInfo.length; i++) {
+                if (flightsInfo[i].departFromReceiver > maxNum) {
+                    maxNum = flightsInfo[i].departFromReceiver
+                    flight = flightsInfo[i]
+                }
+            }
+            if (flight !== false) {
+                console.log("this is the correct", flight)
+                cookies.set("airline", flight.airline)
+                cookies.set("flightnumber", flight.flightnumber)
+                cookies.set("destination", flight.departingTo)
+                cookies.set("departingtime", new Date(flight.departFromReceiver))
+            } else {
+                console.log("this is filghts", flight)
             }
         }
-        console.log("this is the correct", flight)
-        cookies.set("airline", flight.airline)
-        cookies.set("flightnumber", flight.flightnumber)
-        cookies.set("destination", flight.departingTo)
-        cookies.set("departingtime", new Date(flight.departFromReceiver))
         // Remove failed login cookies
         cookies.remove('loginAttempt')
         return true
@@ -88,6 +94,7 @@ export const forgotPassword = async (user) => {
     console.log(base64String)
     const headers = { Authorization: `SecurityQuestion ${base64String}` }
     const tokenUrl = baseUserURL + '/token'
+    const getUrl = baseUserURL + '/user/get'
     try {
         const response = await superagent.post(tokenUrl, email).set(headers)
         const { token, role } = response.body
@@ -96,7 +103,30 @@ export const forgotPassword = async (user) => {
         cookies.set('email', email)
         cookies.set('userToken', token)
         cookies.set('role', role)
-
+        const headers2 = { Authorization: `Bearer ${token}` }
+        const response2 = await superagent.get(getUrl, email).set(headers2)
+        cookies.set('firstName', response2.body.firstName)
+        const requestedUserTickets = await requestUserTickets(email)
+        if (requestedUserTickets.length > 0) {
+            let userTickets = []
+            if (requestedUserTickets) { userTickets = (requestedUserTickets.map(ticket => ticket.flight_id)) }
+            const flightsInfo = await requestFlights(userTickets)
+            console.log("this is flight info", flightsInfo[0].departFromReceiver)
+            let maxNum = 0;
+            let flight;
+            let i;
+            for (i = 0; i < flightsInfo.length; i++) {
+                if (flightsInfo[i].departFromReceiver > maxNum) {
+                    maxNum = flightsInfo[i].departFromReceiver
+                    flight = flightsInfo[i]
+                }
+            }
+            console.log("this is the correct", flight)
+            cookies.set("airline", flight.airline)
+            cookies.set("flightnumber", flight.flightnumber)
+            cookies.set("destination", flight.departingTo)
+            cookies.set("departingtime", new Date(flight.departFromReceiver))
+        }
         // Remove failed login cookies
         cookies.remove('loginAttempt')
         return true
@@ -134,7 +164,7 @@ export const updateUserInfo = async user => {
     const updateUrl = baseUserURL + '/user/update'
     try {
         const response = await superagent.post(updateUrl, user).set(headers)
-        cookies.set("firstName",user.firstName)
+        cookies.set("firstName", user.firstName)
         return response.body
     } catch (err) {
         if (err.status === 401) console.log("Bad credentials")

@@ -7,7 +7,7 @@ import { object, string, date } from 'yup'
 import { format } from "date-fns"
 import { requestUserInfo, updateUserInfo } from '../services/userService'
 import { requestUserTickets } from '../services/ticketService'
-import { requestFlights } from '../services/flightService'
+import { requestFlights, requestAirports } from '../services/flightService'
 import flights_key from '../doNotCommit.js'
 
 const cookies = new Cookies()
@@ -38,19 +38,14 @@ const DashboardCustomer = () => {
         const userFlights = await requestFlights(userTickets)
         setFlights(userFlights)
     }
-    const requestAirports = async () => {
+    const getAirports = async () => {
         setAirports(true)
-        const URL = 'https://airports.api.hscc.bdpa.org/v2/info/airports'
-        try {
-            const response = await superagent.get(URL).set('key', `${flights_key}`)
-            const airports = response.body.airports
-            console.log("airports", airports)
-            setAirports(airports)
-        } catch (err) { if (err.status === 555) setTimeout(requestAirports, 1000) }
+        const airports = await requestAirports()
+        setAirports(airports)
     }
     useEffect(() => { if (!userInfo) getUserInfo() })
     useEffect(() => { if (!userTickets) getUserTickets() })
-    useEffect(() => { if (!airports) requestAirports() })
+    useEffect(() => { if (!airports) getAirports() })
     useEffect(() => { if (airports && airports !== true && userTickets && userTickets !== true && callFlights) getFlights() })
     const handleSubmit = async info => {
         setUpdateResponse(3)
