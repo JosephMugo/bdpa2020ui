@@ -1,30 +1,30 @@
 import superagent from "superagent";
 import Cookies from "universal-cookie";
-import {requestFlights} from './flightService'
+import { requestFlights } from './flightService'
 const baseUserURL = "http://localhost:3535"
 
 const cookies = new Cookies()
-export const addTicket = async (flight_id, seat) => {
+export const addTicket = async (flight_id, seatType, seatNum) => {
     const token = cookies.get("userToken"), email = cookies.get("email")
     const headers = { Authorization: `Bearer ${token}` }
-    const postBody = { email, flight_id, seat }
+    const postBody = { email, flight_id, seatType, seatNum }
     const addTicketURL = baseUserURL + '/ticket/add'
     try {
         await superagent.post(addTicketURL, postBody).set(headers)
         console.log("Ticket saved",email)
         const requestedUserTickets = await requestUserTickets(email)
         let userTickets = []
-        if (requestedUserTickets){userTickets = (requestedUserTickets.map(ticket => ticket.flight_id))}
+        if (requestedUserTickets) { userTickets = (requestedUserTickets.map(ticket => ticket.flight_id)) }
         const flightsInfo = await requestFlights(userTickets)
-        console.log("this is flight info",flightsInfo[0].departFromReceiver)
+        console.log("this is flight info", flightsInfo[0].departFromReceiver)
         let maxNum = 0;
         let flight;
         let i;
-        for(i =0;i<flightsInfo.length;i++){
-             if (flightsInfo[i].departFromReceiver > maxNum){
-                 maxNum = flightsInfo[i].departFromReceiver
-                 flight = flightsInfo[i]
-             }
+        for (i = 0; i < flightsInfo.length; i++) {
+            if (flightsInfo[i].departFromReceiver > maxNum) {
+                maxNum = flightsInfo[i].departFromReceiver
+                flight = flightsInfo[i]
+            }
         }
         console.log(flight)
         cookies.set("airline",flight.airline)
@@ -32,10 +32,7 @@ export const addTicket = async (flight_id, seat) => {
         cookies.set("destination",flight.departingTo)
         cookies.set("departingtime",new Date(flight.departFromReceiver))
         return true
-    } catch (err) {
-        if (err.status === 400) console.log(400)
-        console.log(err)
-    }
+    } catch (err) { if (err.status === 400) return 5 }
     return false
 }
 export const requestUserTickets = async email => {
@@ -81,7 +78,7 @@ export const addffms = async ffms_num => {
 
     const updateUrl = baseUserURL + '/user/update'
     try {
-        const response = await superagent.post(updateUrl, {ffms: newValue}).set(headers)
+        const response = await superagent.post(updateUrl, { ffms: newValue }).set(headers)
         return response.body
     } catch (err) {
         if (err.status === 401) console.log("Bad credentials")
