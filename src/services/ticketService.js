@@ -1,5 +1,6 @@
 import superagent from "superagent";
 import Cookies from "universal-cookie";
+import {requestFlights} from './flightService'
 const baseUserURL = "http://localhost:3535"
 
 const cookies = new Cookies()
@@ -11,6 +12,24 @@ export const addTicket = async (flight_id, seat) => {
     try {
         await superagent.post(addTicketURL, postBody).set(headers)
         console.log("Ticket saved")
+        const requestedUserTickets = await requestUserTickets(email)
+        let userTickets = []
+        if (requestedUserTickets){userTickets = (requestedUserTickets.map(ticket => ticket.flight_id))}
+        const flightsInfo = await requestFlights(userTickets)
+        console.log("this is flight info",flightsInfo[0].departFromReceiver)
+        let maxNum = 0;
+        let flight;
+        let i;
+        for(i =0;i<flightsInfo.length;i++){
+             if (flightsInfo[i].departFromReceiver > maxNum){
+                 maxNum = flightsInfo[i].departFromReceiver
+                 flight = flightsInfo[i]
+             }
+        }
+        cookies.set("airline",flight.airline)
+        cookies.set("flightnumber",flight.flightnumber)
+        cookies.set("destination",flight.departingTo)
+        cookies.set("departingtime",new Date(flight.departFromReceiver))
         return true
     } catch (err) {
         if (err.status === 400) console.log(400)
